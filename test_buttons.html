@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test - Hohmann Bau</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Button Funktionalitäts-Test</h1>
+        
+        <!-- Admin Panel Buttons Test -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Admin Panel Buttons</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span>Homepage</span>
+                    <button onclick="editContent('home')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Leistungen</span>
+                    <button onclick="editContent('services')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Bilder verwalten</span>
+                    <button onclick="manageMedia('images')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Öffnen
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quote Management Test -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Angebots-Management</h2>
+            <div class="border p-4 rounded">
+                <h3 class="font-semibold mb-2">Einfamilienhaus Neubau</h3>
+                <p class="text-gray-600 mb-4">Thomas Weber • Budget: 250.000€ - 500.000€</p>
+                <div class="flex gap-2">
+                    <button onclick="showQuoteDetails('test-123')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+                        Details ansehen
+                    </button>
+                    <button onclick="createOffer('test-123')" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                        Angebot erstellen
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Management Test -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Bewerbungs-Management</h2>
+            <div class="border p-4 rounded">
+                <h3 class="font-semibold mb-2">Michael Klein - Bauleiter</h3>
+                <p class="text-gray-600 mb-4">michael.klein@email.de</p>
+                <div class="flex gap-2">
+                    <button onclick="showApplicationDetails('app-456')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+                        Details ansehen
+                    </button>
+                    <button onclick="downloadCV('michael_klein.pdf')" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                        CV herunterladen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Content Management Functions
+        function editContent(pageType) {
+            console.log('✅ editContent called with:', pageType);
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Inhalt bearbeiten: ${pageType.charAt(0).toUpperCase() + pageType.slice(1)}</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <form>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Titel</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Seitentitel eingeben">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                                    <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Beschreibung eingeben"></textarea>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <button type="button" onclick="alert('Inhalt gespeichert!')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                                    <i data-lucide="save" class="w-4 h-4 mr-2 inline"></i>Speichern
+                                </button>
+                                <button type="button" onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Abbrechen</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        // Media Management Functions
+        function manageMedia(type) {
+            console.log('✅ manageMedia called with:', type);
+            alert(`${type === 'images' ? 'Bilder' : 'Dokumente'} verwalten wird geöffnet...\n\nHier würde normalerweise der Medien-Manager geöffnet werden.`);
+        }
+
+        // Quote Management Functions
+        function showQuoteDetails(quoteId) {
+            console.log('✅ showQuoteDetails called with:', quoteId);
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Angebots-Details</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Name</label>
+                                    <p class="text-gray-900">Thomas Weber</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">E-Mail</label>
+                                    <p class="text-gray-900">thomas@weber-family.de</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Projekttyp</label>
+                                <p class="text-gray-900">Neubau</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Budget</label>
+                                <p class="text-gray-900">250.000€ - 500.000€</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex gap-4">
+                            <button onclick="createOffer('${quoteId}')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                                <i data-lucide="calculator" class="w-4 h-4 mr-2 inline"></i>Angebot erstellen
+                            </button>
+                            <button onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Schließen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function createOffer(quoteId) {
+            console.log('✅ createOffer called with:', quoteId);
+            alert('Angebots-Erstellung wird geöffnet...\n\nHier würde normalerweise ein Angebots-Editor geöffnet werden.');
+        }
+
+        // Application Management Functions
+        function showApplicationDetails(appId) {
+            console.log('✅ showApplicationDetails called with:', appId);
+            alert('Bewerbungs-Details werden geöffnet...\n\nHier würden normalerweise alle Details der Bewerbung angezeigt werden.');
+        }
+
+        function downloadCV(filename) {
+            console.log('✅ downloadCV called with:', filename);
+            alert(`CV Download: ${filename}\n\nIn der echten Anwendung würde hier der Download starten.`);
+        }
+
+        // Modal Management
+        function closeModal(element) {
+            console.log('✅ closeModal called');
+            const modal = element.closest('.fixed.inset-0') || element.closest('div[class*="fixed inset-0"]');
+            if (modal) {
+                document.body.removeChild(modal);
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            console.log('🚀 Page loaded and icons initialized');
+        });
+    </script>
+</body>
+</html>
