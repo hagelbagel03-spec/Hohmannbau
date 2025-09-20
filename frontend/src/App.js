@@ -83,11 +83,20 @@ const HeroSection = () => {
           Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen
         </p>
         <Button 
-          className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 text-lg font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
+          className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 text-lg font-medium rounded-lg transition-all duration-300 transform hover:scale-105 mr-4"
           onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}
         >
           Kontakt aufnehmen
         </Button>
+        <a href="/angebot">
+          <Button 
+            variant="outline"
+            className="border-white text-white hover:bg-white hover:text-green-800 px-8 py-3 text-lg font-medium rounded-lg transition-all duration-300"
+          >
+            <Calculator className="w-5 h-5 mr-2" />
+            Angebot anfordern
+          </Button>
+        </a>
       </div>
     </section>
   );
