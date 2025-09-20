@@ -1,6 +1,6 @@
 <?php
 // Konfigurationsdatei für Hohmann Bau
-define('BASE_URL', '/hohmann_bau_php');
+define('BASE_URL', '');
 define('SITE_NAME', 'Hohmann Bau');
 
 // Fehler-Anzeige für Entwicklung
