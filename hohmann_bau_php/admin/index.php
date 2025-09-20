@@ -196,11 +196,11 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                                 <ul class="space-y-2">
                                     <li class="flex justify-between items-center">
                                         <span>Bilder verwalten</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Öffnen</button>
+                                        <button onclick="manageMedia('images')" class="text-blue-600 hover:underline text-sm">Öffnen</button>
                                     </li>
                                     <li class="flex justify-between items-center">
                                         <span>Dokumente</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Öffnen</button>
+                                        <button onclick="manageMedia('documents')" class="text-blue-600 hover:underline text-sm">Öffnen</button>
                                     </li>
                                 </ul>
                             </div>
