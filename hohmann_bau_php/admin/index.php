@@ -422,8 +422,8 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                         <p class="text-gray-600 text-sm mb-2">michael.klein@email.de • +49 123 456789</p>
                         <p class="text-gray-700 text-sm">Sehr geehrte Damen und Herren, hiermit bewerbe ich mich um die ausgeschriebene Stelle...</p>
                         <div class="mt-4">
-                            <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Details ansehen</button>
-                            <button class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 ml-2">CV herunterladen</button>
+                            <button onclick="showApplicationDetails('${app.id}')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Details ansehen</button>
+                            <button onclick="downloadCV('${app.cv_filename}')" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 ml-2">CV herunterladen</button>
                         </div>
                     </div>
                 `;
