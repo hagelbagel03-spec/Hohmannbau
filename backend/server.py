@@ -122,6 +122,40 @@ class ContactInfoUpdate(BaseModel):
     email: Optional[str] = None
     opening_hours: Optional[str] = None
 
+class SupportTicket(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+    status: str = "open"  # open, in_progress, closed
+    priority: str = "normal"  # low, normal, high, urgent
+    assigned_to: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SupportTicketCreate(BaseModel):
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+
+class HelpArticle(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    content: str
+    category: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class HelpArticleCreate(BaseModel):
+    title: str
+    content: str
+    category: str
+    order: int = 0
+
 class ContactMessage(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
