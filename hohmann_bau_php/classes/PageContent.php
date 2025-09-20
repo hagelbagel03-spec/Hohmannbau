@@ -2,8 +2,8 @@
 class PageContent {
     private $pdo;
     
-    public function __construct($database) {
-        $this->pdo = $database;
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
     
     public function getContent($pageName) {
