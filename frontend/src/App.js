@@ -23,6 +23,7 @@ function App() {
               <Navigation />
               <HomePage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/leistungen" element={
