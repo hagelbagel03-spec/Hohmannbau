@@ -170,23 +170,23 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                                 <ul class="space-y-2">
                                     <li class="flex justify-between items-center">
                                         <span>Homepage</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
+                                        <button onclick="editContent('home')" class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
                                     </li>
                                     <li class="flex justify-between items-center">
                                         <span>Leistungen</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
+                                        <button onclick="editContent('services')" class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
                                     </li>
                                     <li class="flex justify-between items-center">
                                         <span>Projekte</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
+                                        <button onclick="editContent('projects')" class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
                                     </li>
                                     <li class="flex justify-between items-center">
                                         <span>Team</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
+                                        <button onclick="editContent('team')" class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
                                     </li>
                                     <li class="flex justify-between items-center">
                                         <span>Kontakt</span>
-                                        <button class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
+                                        <button onclick="editContent('contact')" class="text-blue-600 hover:underline text-sm">Bearbeiten</button>
                                     </li>
                                 </ul>
                             </div>
