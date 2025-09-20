@@ -1027,45 +1027,58 @@ const AdminPanel = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="content">Inhalte</TabsTrigger>
-            <TabsTrigger value="projects">Projekte</TabsTrigger>
-            <TabsTrigger value="messages">Nachrichten</TabsTrigger>
-            <TabsTrigger value="contact">Kontakt</TabsTrigger>
-            <TabsTrigger value="team">Team</TabsTrigger>
-          </TabsList>
+        <div className="flex gap-8">
+          {/* Left Sidebar Navigation */}
+          <div className="w-64 flex-shrink-0">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Navigation</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="space-y-1">
+                  {[
+                    { value: 'dashboard', label: 'Dashboard', icon: '📊' },
+                    { value: 'content', label: 'Inhalte', icon: '📝' },
+                    { value: 'projects', label: 'Projekte', icon: '🏗️' },
+                    { value: 'messages', label: 'Nachrichten', icon: '💬' },
+                    { value: 'contact', label: 'Kontakt', icon: '📞' },
+                    { value: 'support', label: 'Support', icon: '🆘' },
+                    { value: 'team', label: 'Team', icon: '👥' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.value}
+                      onClick={() => setActiveTab(tab.value)}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 ${
+                        activeTab === tab.value 
+                          ? 'bg-green-100 text-green-800 font-medium' 
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <span className="text-lg">{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <div className="mt-8">
-            <TabsContent value="dashboard">
-              <Dashboard />
-            </TabsContent>
-
-            <TabsContent value="content">
-              <ContentManagement />
-            </TabsContent>
-
-            <TabsContent value="projects">
-              <ProjectsManagement />
-            </TabsContent>
-
-            <TabsContent value="messages">
-              <ContactMessagesManagement />
-            </TabsContent>
-
-            <TabsContent value="contact">
-              <ContactManagement />
-            </TabsContent>
-
-            <TabsContent value="team">
+          {/* Main Content Area */}
+          <div className="flex-1">
+            {activeTab === 'dashboard' && <Dashboard />}
+            {activeTab === 'content' && <ContentManagement />}
+            {activeTab === 'projects' && <ProjectsManagement />}
+            {activeTab === 'messages' && <ContactMessagesManagement />}
+            {activeTab === 'contact' && <ContactManagement />}
+            {activeTab === 'support' && <SupportManagement />}
+            {activeTab === 'team' && (
               <div className="text-center py-12">
                 <h3 className="text-lg font-medium text-gray-900">Team-Verwaltung</h3>
                 <p className="text-gray-600 mt-2">Team-Management wird in der nächsten Version verfügbar sein.</p>
               </div>
-            </TabsContent>
+            )}
           </div>
-        </Tabs>
+        </div>
       </div>
     </div>
   );
