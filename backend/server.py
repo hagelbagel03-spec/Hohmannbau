@@ -593,6 +593,11 @@ async def get_job_postings():
     jobs = await db.job_postings.find({"is_active": True}).sort("created_at", -1).to_list(1000)
     return [JobPosting(**job) for job in jobs]
 
+@api_router.get("/admin/jobs", response_model=List[JobPosting])
+async def get_all_job_postings():
+    jobs = await db.job_postings.find().sort("created_at", -1).to_list(1000)
+    return [JobPosting(**job) for job in jobs]
+
 @api_router.post("/jobs", response_model=JobPosting)
 async def create_job_posting(job: JobPostingCreate):
     job_dict = job.dict()
@@ -600,6 +605,43 @@ async def create_job_posting(job: JobPostingCreate):
     job_data = prepare_for_mongo(job_obj.dict())
     await db.job_postings.insert_one(job_data)
     return job_obj
+
+@api_router.put("/jobs/{job_id}", response_model=JobPosting)
+async def update_job_posting(job_id: str, job_update: JobPostingCreate):
+    update_data = job_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.job_postings.update_one(
+        {"id": job_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    
+    updated_job = await db.job_postings.find_one({"id": job_id})
+    return JobPosting(**updated_job)
+
+@api_router.delete("/jobs/{job_id}")
+async def delete_job_posting(job_id: str):
+    result = await db.job_postings.delete_one({"id": job_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    return {"message": "Job posting deleted successfully"}
+
+@api_router.put("/jobs/{job_id}/toggle")
+async def toggle_job_active(job_id: str):
+    job = await db.job_postings.find_one({"id": job_id})
+    if not job:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    
+    new_status = not job.get('is_active', True)
+    await db.job_postings.update_one(
+        {"id": job_id},
+        {"$set": {"is_active": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": f"Job posting {'activated' if new_status else 'deactivated'} successfully"}
 
 @api_router.post("/applications", response_model=Application)
 async def create_application(
