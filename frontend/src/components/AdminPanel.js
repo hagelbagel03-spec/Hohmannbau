@@ -173,6 +173,340 @@ const Dashboard = () => {
   );
 };
 
+// Content Management Component
+const ContentManagement = () => {
+  const [pages, setPages] = useState([
+    { name: 'home', label: 'Homepage', description: 'Hero-Bereich und Startseite' },
+    { name: 'services', label: 'Leistungen', description: 'Dienstleistungen und Services' },
+    { name: 'projects', label: 'Projekte', description: 'Projektübersicht und Referenzen' },
+    { name: 'team', label: 'Team', description: 'Team-Seite und Mitarbeiter' },
+    { name: 'contact', label: 'Kontakt', description: 'Kontaktseite und Informationen' }
+  ]);
+  const [selectedPage, setSelectedPage] = useState(null);
+  const [pageContent, setPageContent] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+
+  const fetchPageContent = async (pageName) => {
+    try {
+      const response = await axios.get(`${API}/content/${pageName}`);
+      setPageContent(response.data.content || {});
+    } catch (error) {
+      setPageContent({});
+    }
+  };
+
+  const savePageContent = async () => {
+    try {
+      await axios.post(`${API}/content`, {
+        page_name: selectedPage.name,
+        content: pageContent
+      });
+      alert('Inhalte erfolgreich gespeichert!');
+      setIsEditing(false);
+    } catch (error) {
+      alert('Fehler beim Speichern der Inhalte.');
+    }
+  };
+
+  const handlePageSelect = (page) => {
+    setSelectedPage(page);
+    fetchPageContent(page.name);
+    setIsEditing(false);
+  };
+
+  const updateContent = (key, value) => {
+    setPageContent(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Inhalte verwalten</h2>
+        {selectedPage && (
+          <div className="space-x-2">
+            {isEditing ? (
+              <>
+                <Button onClick={savePageContent} className="bg-green-700 hover:bg-green-800">
+                  Speichern
+                </Button>
+                <Button onClick={() => setIsEditing(false)} variant="outline">
+                  Abbrechen
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-blue-700">
+                Bearbeiten
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Page Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Seite auswählen</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {pages.map((page) => (
+              <Card 
+                key={page.name}
+                className={`cursor-pointer transition-colors ${
+                  selectedPage?.name === page.name ? 'bg-green-50 border-green-200' : 'hover:bg-gray-50'
+                }`}
+                onClick={() => handlePageSelect(page)}
+              >
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base">{page.label}</CardTitle>
+                  <CardDescription className="text-sm">{page.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Content Editor */}
+        <div className="lg:col-span-2">
+          {selectedPage ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Inhalte bearbeiten: {selectedPage.label}</CardTitle>
+                <CardDescription>
+                  Bearbeiten Sie die Inhalte für die {selectedPage.label}-Seite
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isEditing ? (
+                  <div className="space-y-4">
+                    {selectedPage.name === 'home' && (
+                      <>
+                        <div>
+                          <Label htmlFor="hero_title">Hauptüberschrift</Label>
+                          <Input
+                            id="hero_title"
+                            value={pageContent.hero_title || ''}
+                            onChange={(e) => updateContent('hero_title', e.target.value)}
+                            placeholder="Bauen mit Vertrauen"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="hero_subtitle">Untertitel</Label>
+                          <Input
+                            id="hero_subtitle"
+                            value={pageContent.hero_subtitle || ''}
+                            onChange={(e) => updateContent('hero_subtitle', e.target.value)}
+                            placeholder="Ihr zuverlässiger Partner für..."
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="hero_image">Hintergrundbild URL</Label>
+                          <Input
+                            id="hero_image"
+                            value={pageContent.hero_image || ''}
+                            onChange={(e) => updateContent('hero_image', e.target.value)}
+                            placeholder="https://..."
+                          />
+                        </div>
+                      </>
+                    )}
+                    
+                    {(selectedPage.name === 'services' || selectedPage.name === 'projects' || selectedPage.name === 'team' || selectedPage.name === 'contact') && (
+                      <>
+                        <div>
+                          <Label htmlFor="title">Seitentitel</Label>
+                          <Input
+                            id="title"
+                            value={pageContent.title || ''}
+                            onChange={(e) => updateContent('title', e.target.value)}
+                            placeholder={`${selectedPage.label} Titel`}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="subtitle">Untertitel</Label>
+                          <Input
+                            id="subtitle"
+                            value={pageContent.subtitle || ''}
+                            onChange={(e) => updateContent('subtitle', e.target.value)}
+                            placeholder={`${selectedPage.label} Untertitel`}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="description">Beschreibung</Label>
+                          <Textarea
+                            id="description"
+                            value={pageContent.description || ''}
+                            onChange={(e) => updateContent('description', e.target.value)}
+                            placeholder={`Beschreibung für ${selectedPage.label}`}
+                            rows={4}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-gray-600">
+                      Klicken Sie auf "Bearbeiten" um die Inhalte dieser Seite zu ändern.
+                    </p>
+                    {Object.keys(pageContent).length > 0 && (
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h4 className="font-semibold mb-2">Aktuelle Inhalte:</h4>
+                        <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+                          {JSON.stringify(pageContent, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-12">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Seite auswählen</h3>
+                <p className="text-gray-600">Wählen Sie eine Seite aus der Liste links aus, um deren Inhalte zu bearbeiten.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Contact Management Component  
+const ContactManagement = () => {
+  const [contactInfo, setContactInfo] = useState({
+    address: '',
+    phone: '',
+    email: '',
+    opening_hours: ''
+  });
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    fetchContactInfo();
+  }, []);
+
+  const fetchContactInfo = async () => {
+    try {
+      const response = await axios.get(`${API}/contact-info`);
+      setContactInfo(response.data);
+    } catch (error) {
+      console.error('Error fetching contact info:', error);
+    }
+  };
+
+  const saveContactInfo = async () => {
+    try {
+      await axios.put(`${API}/contact-info`, contactInfo);
+      alert('Kontaktinformationen erfolgreich gespeichert!');
+      setIsEditing(false);
+    } catch (error) {
+      alert('Fehler beim Speichern der Kontaktinformationen.');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Kontaktinformationen</h2>
+        <div className="space-x-2">
+          {isEditing ? (
+            <>
+              <Button onClick={saveContactInfo} className="bg-green-700 hover:bg-green-800">
+                Speichern
+              </Button>
+              <Button onClick={() => setIsEditing(false)} variant="outline">
+                Abbrechen
+              </Button>
+            </>
+          ) : (
+            <Button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-blue-700">
+              Bearbeiten
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Kontaktdaten verwalten</CardTitle>
+          <CardDescription>
+            Bearbeiten Sie die Kontaktinformationen, die auf der Website angezeigt werden.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isEditing ? (
+            <>
+              <div>
+                <Label htmlFor="address">Adresse</Label>
+                <Input
+                  id="address"
+                  value={contactInfo.address}
+                  onChange={(e) => setContactInfo({...contactInfo, address: e.target.value})}
+                  placeholder="Straße, PLZ Ort"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Telefon</Label>
+                <Input
+                  id="phone"
+                  value={contactInfo.phone}
+                  onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
+                  placeholder="+49 123 456 789"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">E-Mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={contactInfo.email}
+                  onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})}
+                  placeholder="info@hohmann-bau.de"
+                />
+              </div>
+              <div>
+                <Label htmlFor="opening_hours">Öffnungszeiten</Label>
+                <Input
+                  id="opening_hours"
+                  value={contactInfo.opening_hours}
+                  onChange={(e) => setContactInfo({...contactInfo, opening_hours: e.target.value})}
+                  placeholder="Mo-Fr: 08:00-17:00 Uhr"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Adresse</Label>
+                <p className="text-gray-700">{contactInfo.address}</p>
+              </div>
+              <div>
+                <Label>Telefon</Label>
+                <p className="text-gray-700">{contactInfo.phone}</p>
+              </div>
+              <div>
+                <Label>E-Mail</Label>
+                <p className="text-gray-700">{contactInfo.email}</p>
+              </div>
+              <div>
+                <Label>Öffnungszeiten</Label>
+                <p className="text-gray-700">{contactInfo.opening_hours}</p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Projects Management
 const ProjectsManagement = () => {
   const [projects, setProjects] = useState([]);
