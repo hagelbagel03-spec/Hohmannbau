@@ -32,7 +32,7 @@ const Navigation = ({ activeSection, setActiveSection }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="font-bold text-2xl text-green-800">Hohmann Bau</div>
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
                 key={item.id}
@@ -44,6 +44,20 @@ const Navigation = ({ activeSection, setActiveSection }) => {
                 {item.label}
               </button>
             ))}
+            <a 
+              href="/karriere" 
+              className="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors flex items-center"
+            >
+              <Briefcase className="w-4 h-4 mr-1" />
+              Karriere
+            </a>
+            <a 
+              href="/angebot" 
+              className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center"
+            >
+              <Calculator className="w-4 h-4 mr-1" />
+              Angebot anfordern
+            </a>
           </div>
         </div>
       </div>
