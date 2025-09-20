@@ -436,6 +436,318 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
             lucide.createIcons();
             loadDashboardStats();
         });
+
+        // Content Management Functions
+        function editContent(pageType) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Inhalt bearbeiten: ${pageType.charAt(0).toUpperCase() + pageType.slice(1)}</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <form id="contentForm">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Titel</label>
+                                    <input type="text" id="title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Seitentitel eingeben">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Untertitel</label>
+                                    <input type="text" id="subtitle" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Untertitel eingeben">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                                    <textarea id="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Beschreibung eingeben"></textarea>
+                                </div>
+                                ${pageType === 'home' ? `
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Hero Bild URL</label>
+                                    <input type="url" id="heroImage" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="https://example.com/image.jpg">
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <button type="button" onclick="saveContent('${pageType}')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                                    <i data-lucide="save" class="w-4 h-4 mr-2 inline"></i>Speichern
+                                </button>
+                                <button type="button" onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Abbrechen</button>
+                            </div>
+                        </form>
+                        <div id="saveMessage" class="hidden mt-4 p-4 rounded-lg"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            
+            // Load existing content
+            fetch(`<?= BASE_URL ?>/api/index.php/content/${pageType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.content) {
+                        document.getElementById('title').value = data.content.title || '';
+                        document.getElementById('subtitle').value = data.content.subtitle || '';
+                        document.getElementById('description').value = data.content.description || '';
+                        if (pageType === 'home' && data.content.hero_image) {
+                            document.getElementById('heroImage').value = data.content.hero_image;
+                        }
+                    }
+                })
+                .catch(error => console.log('Could not load existing content'));
+            
+            lucide.createIcons();
+        }
+
+        function saveContent(pageType) {
+            const title = document.getElementById('title').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const description = document.getElementById('description').value;
+            
+            const content = {
+                title: title,
+                subtitle: subtitle,
+                description: description
+            };
+            
+            if (pageType === 'home') {
+                const heroImage = document.getElementById('heroImage').value;
+                if (heroImage) {
+                    content.hero_image = heroImage;
+                    content.hero_title = title;
+                    content.hero_subtitle = subtitle;
+                }
+            }
+            
+            fetch(`<?= BASE_URL ?>/api/index.php/content`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    page_name: pageType,
+                    content: content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('saveMessage');
+                messageDiv.className = 'mt-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800';
+                messageDiv.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5 mr-2 inline"></i>Inhalt erfolgreich gespeichert!';
+                messageDiv.classList.remove('hidden');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    closeModal(messageDiv);
+                }, 2000);
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('saveMessage');
+                messageDiv.className = 'mt-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800';
+                messageDiv.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5 mr-2 inline"></i>Fehler beim Speichern!';
+                messageDiv.classList.remove('hidden');
+                lucide.createIcons();
+            });
+        }
+
+        // Media Management Functions
+        function manageMedia(type) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">${type === 'images' ? 'Bilder' : 'Dokumente'} verwalten</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6">
+                            <i data-lucide="upload" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Dateien hochladen</h4>
+                            <p class="text-gray-600 mb-4">Ziehen Sie Dateien hierher oder klicken Sie zum Auswählen</p>
+                            <input type="file" id="fileUpload" multiple class="hidden" accept="${type === 'images' ? 'image/*' : '.pdf,.doc,.docx'}">
+                            <button onclick="document.getElementById('fileUpload').click()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                                Dateien auswählen
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mediaGrid">
+                            ${type === 'images' ? `
+                                <div class="border rounded-lg p-4 text-center">
+                                    <img src="https://via.placeholder.com/150" class="w-full h-24 object-cover rounded mb-2">
+                                    <p class="text-sm text-gray-600">beispiel.jpg</p>
+                                    <button class="text-red-600 text-xs hover:underline mt-1">Löschen</button>
+                                </div>
+                            ` : `
+                                <div class="border rounded-lg p-4 text-center">
+                                    <i data-lucide="file" class="w-12 h-12 mx-auto text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-600">dokument.pdf</p>
+                                    <button class="text-red-600 text-xs hover:underline mt-1">Löschen</button>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button onclick="closeModal(this)" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">Schließen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        // Quote Management Functions
+        function showQuoteDetails(quoteId) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Angebots-Details</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Name</label>
+                                    <p class="text-gray-900">Thomas Weber</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">E-Mail</label>
+                                    <p class="text-gray-900">thomas@weber-family.de</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Projekttyp</label>
+                                <p class="text-gray-900">Neubau</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Budget</label>
+                                <p class="text-gray-900">250.000€ - 500.000€</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Beschreibung</label>
+                                <p class="text-gray-900">Wir möchten ein Einfamilienhaus mit ca. 150m² Wohnfläche bauen. Das Haus soll energieeffizient sein und über einen Keller verfügen.</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Status</label>
+                                <select class="mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                    <option>Neu</option>
+                                    <option>In Bearbeitung</option>
+                                    <option>Angebot erstellt</option>
+                                    <option>Abgeschlossen</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex gap-4">
+                            <button onclick="createOffer('${quoteId}')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                                <i data-lucide="calculator" class="w-4 h-4 mr-2 inline"></i>Angebot erstellen
+                            </button>
+                            <button onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Schließen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function createOffer(quoteId) {
+            alert('Angebots-Erstellung wird geöffnet...\n\nHier würde normalerweise ein Angebots-Editor geöffnet werden, wo Sie ein detailliertes Angebot erstellen können.');
+        }
+
+        // Application Management Functions
+        function showApplicationDetails(appId) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Bewerbungs-Details</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Name</label>
+                                    <p class="text-gray-900">Michael Klein</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">E-Mail</label>
+                                    <p class="text-gray-900">michael.klein@email.de</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Position</label>
+                                <p class="text-gray-900">Bauleiter (m/w/d)</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Anschreiben</label>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <p class="text-gray-900">Sehr geehrte Damen und Herren, hiermit bewerbe ich mich um die ausgeschriebene Stelle als Bauleiter. Mit über 8 Jahren Berufserfahrung bringe ich umfassende Kenntnisse im Projektmanagement mit...</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Status</label>
+                                <select class="mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                    <option>Neu</option>
+                                    <option>Geprüft</option>
+                                    <option>Einladung verschickt</option>
+                                    <option>Abgelehnt</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex gap-4">
+                            <button onclick="downloadCV('michael_klein_cv.pdf')" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                                <i data-lucide="download" class="w-4 h-4 mr-2 inline"></i>CV herunterladen
+                            </button>
+                            <button onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Schließen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function downloadCV(filename) {
+            if (filename && filename !== 'null') {
+                window.open(`<?= BASE_URL ?>/uploads/cv/${filename}`, '_blank');
+            } else {
+                alert('Kein CV verfügbar');
+            }
+        }
+
+        // Modal Management
+        function closeModal(element) {
+            const modal = element.closest('.fixed.inset-0') || element.closest('div[class*="fixed inset-0"]');
+            if (modal) {
+                document.body.removeChild(modal);
+                document.body.style.overflow = 'auto';
+            }
+        }
     </script>
 </body>
 </html>
