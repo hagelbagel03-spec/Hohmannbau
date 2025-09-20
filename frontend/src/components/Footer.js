@@ -47,6 +47,9 @@ const Footer = () => {
               <button onClick={() => navigate('/angebot')} className="block hover:text-white transition-colors">
                 Angebot anfordern
               </button>
+              <button onClick={() => navigate('/admin')} className="block hover:text-white transition-colors">
+                Admin-Panel
+              </button>
               <p>Notdienst 24/7</p>
               <p>Kostenlose Beratung</p>
             </div>
