@@ -360,8 +360,8 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                         </div>
                         <p class="text-gray-700">Guten Tag, wir planen einen Anbau und suchen einen zuverlässigen Partner...</p>
                         <div class="mt-4">
-                            <button class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">Antworten</button>
-                            <button class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 ml-2">Als erledigt markieren</button>
+                            <button onclick="replyToMessage('msg-123')" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">Antworten</button>
+                            <button onclick="markMessageComplete('msg-123')" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 ml-2">Als erledigt markieren</button>
                         </div>
                     </div>
                 `;
