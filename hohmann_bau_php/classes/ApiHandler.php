@@ -38,8 +38,10 @@ class ApiHandler {
                     return $this->handleApplications($method, $data);
                 case 'quote-request':
                     return $this->handleQuoteRequest($method, $data);
-                case 'health':
-                    return json_encode(['status' => 'healthy', 'timestamp' => date('c')]);
+                case 'messages':
+                    return $this->handleMessages($method, $data);
+                case 'message-action':
+                    return $this->handleMessageAction($method, $data);
                 default:
                     http_response_code(404);
                     return json_encode(['error' => 'Endpoint not found']);
