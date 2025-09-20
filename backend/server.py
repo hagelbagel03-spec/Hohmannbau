@@ -60,6 +60,68 @@ def verify_jwt_token(token: str) -> dict:
         return None
 
 # Pydantic Models
+class PageContent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page_name: str  # home, services, projects, team, contact
+    content: dict  # JSON object with page-specific content
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PageContentCreate(BaseModel):
+    page_name: str
+    content: dict
+
+class PageContentUpdate(BaseModel):
+    content: dict
+
+class Service(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    features: List[str]
+    icon: str
+    image: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ServiceCreate(BaseModel):
+    title: str
+    description: str
+    features: List[str]
+    icon: str
+    image: str
+    order: int = 0
+
+class Feature(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    icon: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FeatureCreate(BaseModel):
+    title: str
+    description: str
+    icon: str
+    order: int = 0
+
+class ContactInfo(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    address: str
+    phone: str
+    email: str
+    opening_hours: str
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactInfoUpdate(BaseModel):
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    opening_hours: Optional[str] = None
+
 class ContactMessage(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
