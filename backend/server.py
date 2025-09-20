@@ -787,6 +787,77 @@ async def startup_event():
         }
         await db.admins.insert_one(default_admin)
         logger.info("Default admin created: username=admin, password=admin123")
+    
+    # Create default page contents if none exist
+    pages_to_create = [
+        {
+            "page_name": "home",
+            "content": {
+                "hero_title": "Bauen mit Vertrauen",
+                "hero_subtitle": "Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen",
+                "hero_image": "https://images.unsplash.com/photo-1599995903128-531fc7fb694b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc1ODM3ODEyMHww&ixlib=rb-4.1.0&q=85"
+            }
+        },
+        {
+            "page_name": "services",
+            "content": {
+                "title": "Unsere Leistungen",
+                "subtitle": "Umfassende Baulösungen aus einer Hand",
+                "description": "Von der ersten Idee bis zur schlüsselfertigen Übergabe begleiten wir Sie durch Ihr gesamtes Bauvorhaben. Unsere erfahrenen Fachkräfte garantieren höchste Qualität und termingerechte Ausführung."
+            }
+        },
+        {
+            "page_name": "projects",
+            "content": {
+                "title": "Unsere Projekte",
+                "subtitle": "Referenzen aus verschiedenen Bereichen",
+                "description": "Entdecken Sie unsere erfolgreich abgeschlossenen Bauprojekte und lassen Sie sich von der Vielfalt und Qualität unserer Arbeit überzeugen."
+            }
+        },
+        {
+            "page_name": "team",
+            "content": {
+                "title": "Unser Team",
+                "subtitle": "Erfahrene Fachkräfte für Ihr Projekt",
+                "description": "Lernen Sie die Menschen kennen, die hinter unseren erfolgreichen Bauprojekten stehen. Unser erfahrenes Team aus Ingenieuren, Architekten und Baupleitern bringt jahrzehntelange Expertise mit."
+            }
+        },
+        {
+            "page_name": "contact",
+            "content": {
+                "title": "Kontakt",
+                "subtitle": "Lassen Sie uns über Ihr Projekt sprechen",
+                "description": "Haben Sie Fragen zu unseren Leistungen oder möchten Sie ein Projekt mit uns besprechen? Wir freuen uns auf Ihre Nachricht und melden uns schnellstmöglich bei Ihnen."
+            }
+        }
+    ]
+    
+    for page_data in pages_to_create:
+        existing_content = await db.page_contents.find_one({"page_name": page_data["page_name"]})
+        if not existing_content:
+            page_content = {
+                "id": str(uuid.uuid4()),
+                "page_name": page_data["page_name"],
+                "content": page_data["content"],
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.page_contents.insert_one(page_content)
+            logger.info(f"Default content created for page: {page_data['page_name']}")
+    
+    # Create default contact info if none exists
+    contact_info_count = await db.contact_info.count_documents({})
+    if contact_info_count == 0:
+        default_contact = {
+            "id": str(uuid.uuid4()),
+            "address": "Bahnhofstraße 123, 12345 Musterstadt",
+            "phone": "+49 123 456 789",
+            "email": "info@hohmann-bau.de",
+            "opening_hours": "Mo-Fr: 08:00-17:00 Uhr",
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.contact_info.insert_one(default_contact)
+        logger.info("Default contact info created")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
