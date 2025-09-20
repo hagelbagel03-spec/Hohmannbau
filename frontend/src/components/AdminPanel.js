@@ -173,6 +173,419 @@ const Dashboard = () => {
   );
 };
 
+// Career Management Component
+const CareerManagement = () => {
+  const [jobPostings, setJobPostings] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [isCreateJobOpen, setIsCreateJobOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState(null);
+  const [newJob, setNewJob] = useState({
+    title: '',
+    description: '',
+    requirements: '',
+    location: '',
+    employment_type: 'Vollzeit'
+  });
+
+  useEffect(() => {
+    fetchJobPostings();
+    fetchApplications();
+  }, []);
+
+  const fetchJobPostings = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/jobs`);
+      setJobPostings(response.data);
+    } catch (error) {
+      console.error('Error fetching job postings:', error);
+    }
+  };
+
+  const fetchApplications = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/applications`);
+      setApplications(response.data);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+  };
+
+  const handleCreateJob = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API}/jobs`, newJob);
+      setNewJob({ title: '', description: '', requirements: '', location: '', employment_type: 'Vollzeit' });
+      setIsCreateJobOpen(false);
+      fetchJobPostings();
+    } catch (error) {
+      alert('Fehler beim Erstellen der Stellenausschreibung.');
+    }
+  };
+
+  const handleUpdateJob = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`${API}/jobs/${editingJob.id}`, editingJob);
+      setEditingJob(null);
+      fetchJobPostings();
+    } catch (error) {
+      alert('Fehler beim Aktualisieren der Stellenausschreibung.');
+    }
+  };
+
+  const handleDeleteJob = async (jobId) => {
+    try {
+      await axios.delete(`${API}/jobs/${jobId}`);
+      fetchJobPostings();
+    } catch (error) {
+      alert('Fehler beim Löschen der Stellenausschreibung.');
+    }
+  };
+
+  const toggleJobActive = async (jobId) => {
+    try {
+      await axios.put(`${API}/jobs/${jobId}/toggle`);
+      fetchJobPostings();
+    } catch (error) {
+      alert('Fehler beim Ändern des Status.');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Karriere & Bewerbungen</h2>
+        <Dialog open={isCreateJobOpen} onOpenChange={setIsCreateJobOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-green-700 hover:bg-green-800">
+              <Plus className="w-4 h-4 mr-2" />
+              Stellenausschreibung erstellen
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Neue Stellenausschreibung</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleCreateJob} className="space-y-4">
+              <div>
+                <Label htmlFor="title">Stellentitel *</Label>
+                <Input
+                  id="title"
+                  value={newJob.title}
+                  onChange={(e) => setNewJob({...newJob, title: e.target.value})}
+                  placeholder="z.B. Bauleiter (m/w/d)"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="location">Standort *</Label>
+                  <Input
+                    id="location"
+                    value={newJob.location}
+                    onChange={(e) => setNewJob({...newJob, location: e.target.value})}
+                    placeholder="z.B. Musterstadt"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="employment_type">Arbeitszeit *</Label>
+                  <Select onValueChange={(value) => setNewJob({...newJob, employment_type: value})} defaultValue="Vollzeit">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Vollzeit">Vollzeit</SelectItem>
+                      <SelectItem value="Teilzeit">Teilzeit</SelectItem>
+                      <SelectItem value="Minijob">Minijob</SelectItem>
+                      <SelectItem value="Praktikum">Praktikum</SelectItem>
+                      <SelectItem value="Ausbildung">Ausbildung</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="description">Stellenbeschreibung *</Label>
+                <Textarea
+                  id="description"
+                  value={newJob.description}
+                  onChange={(e) => setNewJob({...newJob, description: e.target.value})}
+                  rows={6}
+                  placeholder="Beschreiben Sie die Aufgaben und Verantwortlichkeiten..."
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="requirements">Anforderungen *</Label>
+                <Textarea
+                  id="requirements"
+                  value={newJob.requirements}
+                  onChange={(e) => setNewJob({...newJob, requirements: e.target.value})}
+                  rows={6}
+                  placeholder="• Qualifikation 1&#10;• Qualifikation 2&#10;• ..."
+                  required
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsCreateJobOpen(false)}>
+                  Abbrechen
+                </Button>
+                <Button type="submit" className="bg-green-700 hover:bg-green-800">
+                  Stellenausschreibung erstellen
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Job Postings Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Stellenausschreibungen ({jobPostings.length})</CardTitle>
+            <CardDescription>Aktuelle und inaktive Stellenausschreibungen verwalten</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {jobPostings.map((job) => (
+                <Card key={job.id} className={`border-l-4 ${job.is_active ? 'border-l-green-500' : 'border-l-gray-400'}`}>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-semibold">{job.title}</h4>
+                        <p className="text-sm text-gray-600">{job.location} • {job.employment_type}</p>
+                      </div>
+                      <Badge variant={job.is_active ? 'default' : 'secondary'}>
+                        {job.is_active ? 'Aktiv' : 'Inaktiv'}
+                      </Badge>
+                    </div>
+                    <p className="text-sm line-clamp-2 mb-3">{job.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline" onClick={() => setEditingJob({...job})}>
+                            <Edit2 className="w-4 h-4 mr-1" />
+                            Bearbeiten
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle>Stellenausschreibung bearbeiten</DialogTitle>
+                          </DialogHeader>
+                          {editingJob && (
+                            <form onSubmit={handleUpdateJob} className="space-y-4">
+                              <div>
+                                <Label htmlFor="edit_title">Stellentitel</Label>
+                                <Input
+                                  id="edit_title"
+                                  value={editingJob.title}
+                                  onChange={(e) => setEditingJob({...editingJob, title: e.target.value})}
+                                  required
+                                />
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label htmlFor="edit_location">Standort</Label>
+                                  <Input
+                                    id="edit_location"
+                                    value={editingJob.location}
+                                    onChange={(e) => setEditingJob({...editingJob, location: e.target.value})}
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="edit_employment_type">Arbeitszeit</Label>
+                                  <Select 
+                                    onValueChange={(value) => setEditingJob({...editingJob, employment_type: value})} 
+                                    defaultValue={editingJob.employment_type}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="Vollzeit">Vollzeit</SelectItem>
+                                      <SelectItem value="Teilzeit">Teilzeit</SelectItem>
+                                      <SelectItem value="Minijob">Minijob</SelectItem>
+                                      <SelectItem value="Praktikum">Praktikum</SelectItem>
+                                      <SelectItem value="Ausbildung">Ausbildung</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <div>
+                                <Label htmlFor="edit_description">Stellenbeschreibung</Label>
+                                <Textarea
+                                  id="edit_description"
+                                  value={editingJob.description}
+                                  onChange={(e) => setEditingJob({...editingJob, description: e.target.value})}
+                                  rows={6}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="edit_requirements">Anforderungen</Label>
+                                <Textarea
+                                  id="edit_requirements"
+                                  value={editingJob.requirements}
+                                  onChange={(e) => setEditingJob({...editingJob, requirements: e.target.value})}
+                                  rows={6}
+                                  required
+                                />
+                              </div>
+                              <div className="flex justify-end space-x-2">
+                                <Button type="button" variant="outline" onClick={() => setEditingJob(null)}>
+                                  Abbrechen
+                                </Button>
+                                <Button type="submit" className="bg-green-700 hover:bg-green-800">
+                                  Änderungen speichern
+                                </Button>
+                              </div>
+                            </form>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                      <Button 
+                        size="sm" 
+                        variant={job.is_active ? "secondary" : "default"}
+                        onClick={() => toggleJobActive(job.id)}
+                      >
+                        {job.is_active ? 'Deaktivieren' : 'Aktivieren'}
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Stellenausschreibung löschen?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Diese Aktion kann nicht rückgängig gemacht werden. Alle zugehörigen Bewerbungen bleiben erhalten.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteJob(job.id)}>
+                              Löschen
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {jobPostings.length === 0 && (
+                <p className="text-gray-500 text-center py-4">Keine Stellenausschreibungen vorhanden</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Applications Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Bewerbungen ({applications.length})</CardTitle>
+            <CardDescription>Eingegangene Bewerbungen verwalten</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {applications.map((application) => (
+                <Card key={application.id} className="border-l-4 border-l-blue-500">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-semibold">{application.name}</h4>
+                        <p className="text-sm text-gray-600">{application.email}</p>
+                        {application.phone && (
+                          <p className="text-sm text-gray-600">{application.phone}</p>
+                        )}
+                      </div>
+                      <Badge variant={
+                        application.status === 'pending' ? 'secondary' :
+                        application.status === 'reviewed' ? 'default' :
+                        application.status === 'accepted' ? 'default' : 'destructive'
+                      }>
+                        {application.status === 'pending' ? 'Neu' :
+                         application.status === 'reviewed' ? 'Geprüft' :
+                         application.status === 'accepted' ? 'Angenommen' : 'Abgelehnt'}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Stelle: {jobPostings.find(job => job.id === application.job_id)?.title || 'Unbekannt'}
+                    </p>
+                    <p className="text-sm line-clamp-3 mb-3">{application.cover_letter}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <Eye className="w-4 h-4 mr-1" />
+                            Details
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Bewerbung von {application.name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label>Name:</Label>
+                                <p>{application.name}</p>
+                              </div>
+                              <div>
+                                <Label>E-Mail:</Label>
+                                <p>{application.email}</p>
+                              </div>
+                              <div>
+                                <Label>Telefon:</Label>
+                                <p>{application.phone || 'Nicht angegeben'}</p>
+                              </div>
+                              <div>
+                                <Label>Status:</Label>
+                                <Badge>{application.status}</Badge>
+                              </div>
+                              <div>
+                                <Label>Bewerbungsdatum:</Label>
+                                <p>{new Date(application.created_at).toLocaleDateString('de-DE')}</p>
+                              </div>
+                              <div>
+                                <Label>Lebenslauf:</Label>
+                                <p>{application.cv_filename || 'Nicht hochgeladen'}</p>
+                              </div>
+                            </div>
+                            <div>
+                              <Label>Anschreiben:</Label>
+                              <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                                <p className="whitespace-pre-wrap">{application.cover_letter}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      {application.cv_filename && (
+                        <Button size="sm" variant="outline">
+                          <FileText className="w-4 h-4 mr-1" />
+                          CV herunterladen
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {applications.length === 0 && (
+                <p className="text-gray-500 text-center py-4">Keine Bewerbungen vorhanden</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 // Support Management Component
 const SupportManagement = () => {
   const [supportTickets, setSupportTickets] = useState([]);
