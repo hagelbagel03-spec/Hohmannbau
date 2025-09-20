@@ -412,6 +412,116 @@ async def update_contact_info(contact_update: ContactInfoUpdate):
         await db.contact_info.insert_one(contact_dict)
         return contact_data
 
+# Support & Help Routes
+@api_router.get("/support-tickets", response_model=List[SupportTicket])
+async def get_support_tickets():
+    tickets = await db.support_tickets.find().sort("created_at", -1).to_list(1000)
+    return [SupportTicket(**ticket) for ticket in tickets]
+
+@api_router.post("/support-tickets", response_model=SupportTicket)
+async def create_support_ticket(ticket: SupportTicketCreate):
+    ticket_dict = ticket.dict()
+    ticket_obj = SupportTicket(**ticket_dict)
+    ticket_data = prepare_for_mongo(ticket_obj.dict())
+    await db.support_tickets.insert_one(ticket_data)
+    return ticket_obj
+
+@api_router.get("/help-articles", response_model=List[HelpArticle])
+async def get_help_articles():
+    articles = await db.help_articles.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [HelpArticle(**article) for article in articles]
+
+@api_router.post("/help-articles", response_model=HelpArticle)
+async def create_help_article(article: HelpArticleCreate):
+    article_dict = article.dict()
+    article_obj = HelpArticle(**article_dict)
+    article_data = prepare_for_mongo(article_obj.dict())
+    await db.help_articles.insert_one(article_data)
+    return article_obj
+
+@api_router.put("/help-articles/{article_id}", response_model=HelpArticle)
+async def update_help_article(article_id: str, article_update: HelpArticleCreate):
+    update_data = article_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.help_articles.update_one(
+        {"id": article_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Help article not found")
+    
+    updated_article = await db.help_articles.find_one({"id": article_id})
+    return HelpArticle(**updated_article)
+
+@api_router.delete("/help-articles/{article_id}")
+async def delete_help_article(article_id: str):
+    result = await db.help_articles.delete_one({"id": article_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Help article not found")
+    return {"message": "Help article deleted successfully"}
+
+# News/Blog Routes - Enhanced
+@api_router.get("/news", response_model=List[NewsPost])
+async def get_news(page: str = None, limit: int = 10):
+    query = {"is_published": True}
+    if page:
+        # Filter by page context if provided
+        pass
+    
+    news = await db.news_posts.find(query).sort("created_at", -1).limit(limit).to_list(limit)
+    return [NewsPost(**post) for post in news]
+
+# Admin Routes - Extended
+@api_router.get("/admin/support-tickets", response_model=List[SupportTicket])
+async def get_admin_support_tickets():
+    tickets = await db.support_tickets.find().sort("created_at", -1).to_list(1000)
+    return [SupportTicket(**ticket) for ticket in tickets]
+
+@api_router.put("/admin/support-tickets/{ticket_id}")
+async def update_support_ticket_status(ticket_id: str, status: str, assigned_to: str = None):
+    update_data = {
+        "status": status,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    if assigned_to:
+        update_data["assigned_to"] = assigned_to
+    
+    result = await db.support_tickets.update_one(
+        {"id": ticket_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Support ticket not found")
+    
+    return {"message": "Support ticket updated successfully"}
+
+@api_router.get("/admin/help-articles", response_model=List[HelpArticle])
+async def get_admin_help_articles():
+    articles = await db.help_articles.find().sort("order", 1).to_list(1000)
+    return [HelpArticle(**article) for article in articles]
+
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard(admin = None):  # admin: dict = Depends(get_current_admin)
+    # Get counts for dashboard
+    contact_count = await db.contact_messages.count_documents({})
+    project_count = await db.projects.count_documents({})
+    application_count = await db.applications.count_documents({})
+    quote_count = await db.quote_requests.count_documents({})
+    support_count = await db.support_tickets.count_documents({})
+    news_count = await db.news_posts.count_documents({})
+    
+    return {
+        "contact_messages": contact_count,
+        "projects": project_count,
+        "applications": application_count,
+        "quote_requests": quote_count,
+        "support_tickets": support_count,
+        "news_articles": news_count
+    }
+
 # Contact Routes
 @api_router.post("/contact", response_model=ContactMessage)
 async def create_contact_message(message: ContactMessageCreate):
