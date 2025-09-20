@@ -58,6 +58,24 @@ class ApiHandler {
             return json_encode($result ?: ['message' => 'Content not found']);
         }
         
+        if ($method === 'POST' && $data) {
+            // Check if content exists, update or create
+            $existing = $pageContent->getContent($data['page_name']);
+            if ($existing) {
+                $result = $pageContent->updateContent($data['page_name'], $data['content']);
+            } else {
+                $result = $pageContent->createContent($data['page_name'], $data['content']);
+            }
+            
+            if ($result) {
+                $updated = $pageContent->getContent($data['page_name']);
+                return json_encode($updated);
+            } else {
+                http_response_code(500);
+                return json_encode(['error' => 'Failed to save content']);
+            }
+        }
+        
         return json_encode(['error' => 'Invalid request']);
     }
     
