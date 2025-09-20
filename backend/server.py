@@ -272,6 +272,112 @@ async def root():
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
 
+# Content Management Routes
+@api_router.get("/content/{page_name}")
+async def get_page_content(page_name: str):
+    content = await db.page_contents.find_one({"page_name": page_name})
+    if content:
+        return PageContent(**content)
+    return {"message": "Content not found"}
+
+@api_router.post("/content", response_model=PageContent)
+async def create_page_content(content: PageContentCreate):
+    # Check if content already exists for this page
+    existing = await db.page_contents.find_one({"page_name": content.page_name})
+    if existing:
+        # Update existing content
+        update_data = content.dict()
+        update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+        await db.page_contents.update_one(
+            {"page_name": content.page_name},
+            {"$set": update_data}
+        )
+        updated_content = await db.page_contents.find_one({"page_name": content.page_name})
+        return PageContent(**updated_content)
+    else:
+        # Create new content
+        content_dict = content.dict()
+        content_obj = PageContent(**content_dict)
+        content_data = prepare_for_mongo(content_obj.dict())
+        await db.page_contents.insert_one(content_data)
+        return content_obj
+
+@api_router.put("/content/{page_name}", response_model=PageContent)
+async def update_page_content(page_name: str, content_update: PageContentUpdate):
+    update_data = content_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.page_contents.update_one(
+        {"page_name": page_name},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Page content not found")
+    
+    updated_content = await db.page_contents.find_one({"page_name": page_name})
+    return PageContent(**updated_content)
+
+# Services Routes
+@api_router.get("/services", response_model=List[Service])
+async def get_services():
+    services = await db.services.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [Service(**service) for service in services]
+
+@api_router.post("/services", response_model=Service)
+async def create_service(service: ServiceCreate):
+    service_dict = service.dict()
+    service_obj = Service(**service_dict)
+    service_data = prepare_for_mongo(service_obj.dict())
+    await db.services.insert_one(service_data)
+    return service_obj
+
+# Features Routes
+@api_router.get("/features", response_model=List[Feature])
+async def get_features():
+    features = await db.features.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [Feature(**feature) for feature in features]
+
+@api_router.post("/features", response_model=Feature)
+async def create_feature(feature: FeatureCreate):
+    feature_dict = feature.dict()
+    feature_obj = Feature(**feature_dict)
+    feature_data = prepare_for_mongo(feature_obj.dict())
+    await db.features.insert_one(feature_data)
+    return feature_obj
+
+# Contact Info Routes
+@api_router.get("/contact-info")
+async def get_contact_info():
+    contact_info = await db.contact_info.find_one()
+    if contact_info:
+        return ContactInfo(**contact_info)
+    # Return default contact info
+    return {
+        "address": "Bahnhofstraße 123, 12345 Musterstadt",
+        "phone": "+49 123 456 789", 
+        "email": "info@hohmann-bau.de",
+        "opening_hours": "Mo-Fr: 08:00-17:00 Uhr"
+    }
+
+@api_router.put("/contact-info", response_model=ContactInfo)
+async def update_contact_info(contact_update: ContactInfoUpdate):
+    update_data = {k: v for k, v in contact_update.dict().items() if v is not None}
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    # Check if contact info exists
+    existing = await db.contact_info.find_one()
+    if existing:
+        await db.contact_info.update_one({}, {"$set": update_data})
+        updated_info = await db.contact_info.find_one()
+        return ContactInfo(**updated_info)
+    else:
+        # Create new contact info
+        contact_data = ContactInfo(**update_data)
+        contact_dict = prepare_for_mongo(contact_data.dict())
+        await db.contact_info.insert_one(contact_dict)
+        return contact_data
+
 # Contact Routes
 @api_router.post("/contact", response_model=ContactMessage)
 async def create_contact_message(message: ContactMessageCreate):
