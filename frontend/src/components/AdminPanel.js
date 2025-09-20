@@ -414,9 +414,53 @@ const ContentManagement = () => {
   const fetchPageContent = async (pageName) => {
     try {
       const response = await axios.get(`${API}/content/${pageName}`);
-      setPageContent(response.data.content || {});
+      if (response.data && response.data.content) {
+        setPageContent(response.data.content);
+      } else {
+        // Set default content based on page
+        const defaultContent = getDefaultContent(pageName);
+        setPageContent(defaultContent);
+      }
     } catch (error) {
-      setPageContent({});
+      const defaultContent = getDefaultContent(pageName);
+      setPageContent(defaultContent);
+    }
+  };
+
+  const getDefaultContent = (pageName) => {
+    switch (pageName) {
+      case 'home':
+        return {
+          hero_title: "Bauen mit Vertrauen",
+          hero_subtitle: "Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen",
+          hero_image: "https://images.unsplash.com/photo-1599995903128-531fc7fb694b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc1ODM3ODEyMHww&ixlib=rb-4.1.0&q=85"
+        };
+      case 'services':
+        return {
+          title: "Unsere Leistungen",
+          subtitle: "Umfassende Baulösungen aus einer Hand",
+          description: "Von der ersten Idee bis zur schlüsselfertigen Übergabe begleiten wir Sie durch Ihr gesamtes Bauvorhaben."
+        };
+      case 'projects':
+        return {
+          title: "Unsere Projekte",
+          subtitle: "Referenzen aus verschiedenen Bereichen",
+          description: "Entdecken Sie unsere erfolgreich abgeschlossenen Bauprojekte."
+        };
+      case 'team':
+        return {
+          title: "Unser Team",
+          subtitle: "Erfahrene Fachkräfte für Ihr Projekt",
+          description: "Lernen Sie die Menschen kennen, die hinter unseren erfolgreichen Bauprojekten stehen."
+        };
+      case 'contact':
+        return {
+          title: "Kontakt",
+          subtitle: "Lassen Sie uns über Ihr Projekt sprechen",
+          description: "Haben Sie Fragen zu unseren Leistungen oder möchten Sie ein Projekt mit uns besprechen?"
+        };
+      default:
+        return {};
     }
   };
 
