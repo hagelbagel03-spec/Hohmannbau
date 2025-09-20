@@ -748,6 +748,91 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                 document.body.style.overflow = 'auto';
             }
         }
+
+        // Message Management Functions
+        function replyToMessage(messageId) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-900">Nachricht beantworten</h3>
+                            <button onclick="closeModal(this)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <form>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">An</label>
+                                    <input type="email" value="max@example.com" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Betreff</label>
+                                    <input type="text" value="Re: Anfrage Badsanierung" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nachricht</label>
+                                    <textarea rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Ihre Antwort..."></textarea>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <button type="button" onclick="sendReply('${messageId}')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                                    <i data-lucide="send" class="w-4 h-4 mr-2 inline"></i>Senden
+                                </button>
+                                <button type="button" onclick="closeModal(this)" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50">Abbrechen</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function sendReply(messageId) {
+            fetch('<?= BASE_URL ?>/api/index.php/message-action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'reply',
+                    message_id: messageId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Antwort gesendet! (Funktion in Entwicklung)');
+                closeModal(document.querySelector('.fixed.inset-0'));
+            })
+            .catch(error => {
+                alert('Fehler beim Senden der Antwort');
+            });
+        }
+
+        function markMessageComplete(messageId) {
+            if (confirm('Nachricht als erledigt markieren?')) {
+                fetch('<?= BASE_URL ?>/api/index.php/message-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'mark_complete',
+                        message_id: messageId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Nachricht als erledigt markiert!');
+                    loadMessages(); // Reload messages
+                })
+                .catch(error => {
+                    alert('Fehler beim Markieren der Nachricht');
+                });
+            }
+        }
     </script>
 </body>
 </html>
