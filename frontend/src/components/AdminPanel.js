@@ -803,17 +803,22 @@ const AdminPanel = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="content">Inhalte</TabsTrigger>
             <TabsTrigger value="projects">Projekte</TabsTrigger>
             <TabsTrigger value="messages">Nachrichten</TabsTrigger>
+            <TabsTrigger value="contact">Kontakt</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
-            <TabsTrigger value="settings">Einstellungen</TabsTrigger>
           </TabsList>
 
           <div className="mt-8">
             <TabsContent value="dashboard">
               <Dashboard />
+            </TabsContent>
+
+            <TabsContent value="content">
+              <ContentManagement />
             </TabsContent>
 
             <TabsContent value="projects">
@@ -824,17 +829,14 @@ const AdminPanel = () => {
               <ContactMessagesManagement />
             </TabsContent>
 
+            <TabsContent value="contact">
+              <ContactManagement />
+            </TabsContent>
+
             <TabsContent value="team">
               <div className="text-center py-12">
                 <h3 className="text-lg font-medium text-gray-900">Team-Verwaltung</h3>
-                <p className="text-gray-600 mt-2">Coming soon...</p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="settings">
-              <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900">Einstellungen</h3>
-                <p className="text-gray-600 mt-2">Coming soon...</p>
+                <p className="text-gray-600 mt-2">Team-Management wird in der nächsten Version verfügbar sein.</p>
               </div>
             </TabsContent>
           </div>
