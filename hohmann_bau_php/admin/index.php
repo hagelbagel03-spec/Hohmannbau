@@ -391,8 +391,8 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                         <p class="text-gray-700 mb-2">Projekttyp: Neubau | Budget: 250.000€ - 500.000€</p>
                         <p class="text-gray-600 text-sm">Wir möchten ein Einfamilienhaus mit ca. 150m² Wohnfläche bauen...</p>
                         <div class="mt-4">
-                            <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Details ansehen</button>
-                            <button class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 ml-2">Angebot erstellen</button>
+                            <button onclick="showQuoteDetails('${quote.id}')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Details ansehen</button>
+                            <button onclick="createOffer('${quote.id}')" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 ml-2">Angebot erstellen</button>
                         </div>
                     </div>
                 `;
