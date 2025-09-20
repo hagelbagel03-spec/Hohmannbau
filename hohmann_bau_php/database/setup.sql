@@ -1,6 +1,6 @@
 -- Hohmann Bau MySQL Database Setup
 -- Datenbank erstellen
-CREATE DATABASE IF NOT EXISTS hohmann_bau;
+CREATE DATABASE IF NOT EXISTS hohmann_bau CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE hohmann_bau;
 
 -- Tabelle für Seiteninhalte
