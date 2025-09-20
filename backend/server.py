@@ -512,6 +512,7 @@ async def get_admin_dashboard(admin = None):  # admin: dict = Depends(get_curren
     quote_count = await db.quote_requests.count_documents({})
     support_count = await db.support_tickets.count_documents({})
     news_count = await db.news_posts.count_documents({})
+    jobs_count = await db.job_postings.count_documents({})
     
     return {
         "contact_messages": contact_count,
@@ -519,7 +520,8 @@ async def get_admin_dashboard(admin = None):  # admin: dict = Depends(get_curren
         "applications": application_count,
         "quote_requests": quote_count,
         "support_tickets": support_count,
-        "news_articles": news_count
+        "news_articles": news_count,
+        "job_postings": jobs_count
     }
 
 # Contact Routes
