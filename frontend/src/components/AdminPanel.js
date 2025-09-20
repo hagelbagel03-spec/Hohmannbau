@@ -173,6 +173,231 @@ const Dashboard = () => {
   );
 };
 
+// Support Management Component
+const SupportManagement = () => {
+  const [supportTickets, setSupportTickets] = useState([]);
+  const [helpArticles, setHelpArticles] = useState([]);
+  const [isCreateArticleOpen, setIsCreateArticleOpen] = useState(false);
+  const [newArticle, setNewArticle] = useState({
+    title: '',
+    content: '',
+    category: '',
+    order: 0
+  });
+
+  useEffect(() => {
+    fetchSupportTickets();
+    fetchHelpArticles();
+  }, []);
+
+  const fetchSupportTickets = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/support-tickets`);
+      setSupportTickets(response.data);
+    } catch (error) {
+      console.error('Error fetching support tickets:', error);
+    }
+  };
+
+  const fetchHelpArticles = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/help-articles`);
+      setHelpArticles(response.data);
+    } catch (error) {
+      console.error('Error fetching help articles:', error);
+    }
+  };
+
+  const updateTicketStatus = async (ticketId, status) => {
+    try {
+      await axios.put(`${API}/admin/support-tickets/${ticketId}?status=${status}`);
+      fetchSupportTickets();
+    } catch (error) {
+      console.error('Error updating ticket:', error);
+    }
+  };
+
+  const createHelpArticle = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API}/help-articles`, newArticle);
+      setNewArticle({ title: '', content: '', category: '', order: 0 });
+      setIsCreateArticleOpen(false);
+      fetchHelpArticles();
+    } catch (error) {
+      console.error('Error creating help article:', error);
+    }
+  };
+
+  const deleteHelpArticle = async (articleId) => {
+    try {
+      await axios.delete(`${API}/help-articles/${articleId}`);
+      fetchHelpArticles();
+    } catch (error) {
+      console.error('Error deleting help article:', error);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Support & Hilfe</h2>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Support Tickets */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Support-Tickets ({supportTickets.length})</CardTitle>
+            <CardDescription>Kundenanfragen und Support-Tickets verwalten</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {supportTickets.map((ticket) => (
+                <Card key={ticket.id} className="border-l-4 border-l-blue-500">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">{ticket.subject}</h4>
+                      <Badge variant={ticket.status === 'open' ? 'destructive' : ticket.status === 'closed' ? 'secondary' : 'default'}>
+                        {ticket.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">Von: {ticket.name} ({ticket.email})</p>
+                    <p className="text-sm line-clamp-2">{ticket.message}</p>
+                    <div className="flex space-x-2 mt-3">
+                      <Button size="sm" onClick={() => updateTicketStatus(ticket.id, 'in_progress')}>
+                        In Bearbeitung
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => updateTicketStatus(ticket.id, 'closed')}>
+                        Schließen
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {supportTickets.length === 0 && (
+                <p className="text-gray-500 text-center py-4">Keine Support-Tickets vorhanden</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Help Articles */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              Hilfe-Artikel ({helpArticles.length})
+              <Dialog open={isCreateArticleOpen} onOpenChange={setIsCreateArticleOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-green-700 hover:bg-green-800">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Artikel erstellen
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Neuen Hilfe-Artikel erstellen</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={createHelpArticle} className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Titel</Label>
+                      <Input
+                        id="title"
+                        value={newArticle.title}
+                        onChange={(e) => setNewArticle({...newArticle, title: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="category">Kategorie</Label>
+                      <Input
+                        id="category"
+                        value={newArticle.category}
+                        onChange={(e) => setNewArticle({...newArticle, category: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="content">Inhalt</Label>
+                      <Textarea
+                        id="content"
+                        value={newArticle.content}
+                        onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
+                        rows={6}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="order">Reihenfolge</Label>
+                      <Input
+                        id="order"
+                        type="number"
+                        value={newArticle.order}
+                        onChange={(e) => setNewArticle({...newArticle, order: parseInt(e.target.value)})}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button type="button" variant="outline" onClick={() => setIsCreateArticleOpen(false)}>
+                        Abbrechen
+                      </Button>
+                      <Button type="submit" className="bg-green-700 hover:bg-green-800">
+                        Artikel erstellen
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </CardTitle>
+            <CardDescription>FAQ und Hilfe-Artikel verwalten</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {helpArticles.map((article) => (
+                <Card key={article.id}>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">{article.title}</h4>
+                      <Badge variant="secondary">{article.category}</Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 line-clamp-2">{article.content}</p>
+                    <div className="flex space-x-2 mt-3">
+                      <Button size="sm" variant="outline">
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Artikel löschen?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Diese Aktion kann nicht rückgängig gemacht werden.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteHelpArticle(article.id)}>
+                              Löschen
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {helpArticles.length === 0 && (
+                <p className="text-gray-500 text-center py-4">Keine Hilfe-Artikel vorhanden</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 // Content Management Component
 const ContentManagement = () => {
   const [pages, setPages] = useState([
