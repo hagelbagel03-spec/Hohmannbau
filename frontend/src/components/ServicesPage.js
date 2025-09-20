@@ -173,6 +173,9 @@ const ServicesPage = () => {
           </div>
         </div>
       </section>
+
+      {/* News Section */}
+      <NewsSection pageContext="services" maxItems={3} />
     </div>
   );
 };
