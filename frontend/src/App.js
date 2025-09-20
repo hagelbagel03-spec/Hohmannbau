@@ -490,6 +490,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/karriere" element={<CareerPage />} />
+          <Route path="/angebot" element={<QuotePage />} />
         </Routes>
       </BrowserRouter>
     </div>
