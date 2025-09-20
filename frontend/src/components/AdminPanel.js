@@ -1497,6 +1497,7 @@ const AdminPanel = () => {
                     { value: 'dashboard', label: 'Dashboard', icon: '📊' },
                     { value: 'content', label: 'Inhalte', icon: '📝' },
                     { value: 'projects', label: 'Projekte', icon: '🏗️' },
+                    { value: 'career', label: 'Karriere', icon: '💼' },
                     { value: 'messages', label: 'Nachrichten', icon: '💬' },
                     { value: 'contact', label: 'Kontakt', icon: '📞' },
                     { value: 'support', label: 'Support', icon: '🆘' },
