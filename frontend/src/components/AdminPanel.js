@@ -1526,6 +1526,7 @@ const AdminPanel = () => {
             {activeTab === 'dashboard' && <Dashboard />}
             {activeTab === 'content' && <ContentManagement />}
             {activeTab === 'projects' && <ProjectsManagement />}
+            {activeTab === 'career' && <CareerManagement />}
             {activeTab === 'messages' && <ContactMessagesManagement />}
             {activeTab === 'contact' && <ContactManagement />}
             {activeTab === 'support' && <SupportManagement />}
