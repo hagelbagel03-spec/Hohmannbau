@@ -31,6 +31,7 @@ function App() {
               <Navigation />
               <ServicesPage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/projekte" element={
@@ -38,6 +39,7 @@ function App() {
               <Navigation />
               <ProjectsPage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/team" element={
@@ -45,6 +47,7 @@ function App() {
               <Navigation />
               <TeamPage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/kontakt" element={
@@ -52,6 +55,7 @@ function App() {
               <Navigation />
               <ContactPage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/karriere" element={
@@ -59,6 +63,7 @@ function App() {
               <Navigation />
               <CareerPage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           <Route path="/angebot" element={
@@ -66,6 +71,7 @@ function App() {
               <Navigation />
               <QuotePage />
               <Footer />
+              <HelpSupport />
             </>
           } />
           
