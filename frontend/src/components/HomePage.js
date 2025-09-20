@@ -25,11 +25,16 @@ const HomePage = () => {
   const fetchHomeContent = async () => {
     try {
       const response = await axios.get(`${API}/content/home`);
-      if (response.data) {
-        setHomeContent(response.data);
+      if (response.data && response.data.content) {
+        setHomeContent(response.data.content);
       }
     } catch (error) {
       console.log('Using default home content');
+      // Ensure we always have the default image
+      setHomeContent(prev => ({
+        ...prev,
+        hero_image: "https://images.unsplash.com/photo-1599995903128-531fc7fb694b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc1ODM3ODEyMHww&ixlib=rb-4.1.0&q=85"
+      }));
     }
   };
 
