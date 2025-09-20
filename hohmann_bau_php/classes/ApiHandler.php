@@ -236,5 +236,31 @@ class ApiHandler {
         }
         return json_encode(['error' => 'Method not allowed']);
     }
+    
+    private function handleMessages($method, $data) {
+        if ($method === 'GET') {
+            $stmt = $this->pdo->prepare("SELECT * FROM contact_messages ORDER BY created_at DESC");
+            $stmt->execute();
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return json_encode($messages);
+        }
+        return json_encode(['error' => 'Method not allowed']);
+    }
+    
+    private function handleMessageAction($method, $data) {
+        if ($method === 'POST') {
+            $action = $data['action'] ?? '';
+            $messageId = $data['message_id'] ?? '';
+            
+            if ($action === 'reply') {
+                // Here you would implement email reply functionality
+                return json_encode(['message' => 'Reply functionality coming soon']);
+            } elseif ($action === 'mark_complete') {
+                // Add a status column to contact_messages table or update existing record
+                return json_encode(['message' => 'Message marked as complete']);
+            }
+        }
+        return json_encode(['error' => 'Invalid request']);
+    }
 }
 ?>
