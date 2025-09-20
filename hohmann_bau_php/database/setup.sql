@@ -175,8 +175,8 @@ INSERT INTO page_contents (id, page_name, content) VALUES
 (UUID(), 'contact', '{"title": "Kontakt", "subtitle": "Lassen Sie uns über Ihr Projekt sprechen", "description": "Haben Sie Fragen zu unseren Leistungen oder möchten Sie ein Projekt mit uns besprechen?"}');
 
 INSERT INTO features (id, title, description, icon, order_num) VALUES
-(UUID(), '25+ Jahre Erfahrung', 'Über zwei Jahrzehnte Expertise im Baugewerbe mit hunderten erfolgreich abgeschlossenen Projekten.', '🏗️', 1),
-(UUID(), 'Qualität & Zuverlässigkeit', 'Höchste Qualitätsstandards und termingerechte Ausführung aller Bauvorhaben.', '✅', 2),
+(UUID(), '25+ Jahre Erfahrung', 'Über zwei Jahrzehnte Expertise im Baugewerbe mit hunderten erfolgreich abgeschlossenen Projekten.', '⚒️', 1),
+(UUID(), 'Qualität & Zuverlässigkeit', 'Höchste Qualitätsstandards und termingerechte Ausführung aller Bauvorhaben.', '✓', 2),
 (UUID(), 'Rundum-Service', 'Von der Planung bis zur Übergabe - alles aus einer Hand für Ihr Bauprojekt.', '🔧', 3);
 
 INSERT INTO contact_info (id, address, phone, email, opening_hours) VALUES
