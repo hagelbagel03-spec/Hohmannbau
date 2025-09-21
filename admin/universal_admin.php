@@ -20,32 +20,71 @@ $pageContent = new PageContent($db);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
     
-    switch ($_POST['action']) {
-        case 'save_page_content':
-            $page_name = $_POST['page_name'];
-            $content = json_decode($_POST['content'], true);
-            $result = $pageContent->saveContent($page_name, $content);
-            echo json_encode(['success' => $result]);
-            exit();
-            
-        case 'get_page_content':
-            $page_name = $_POST['page_name'];
-            $content = $pageContent->getContent($page_name);
-            echo json_encode($content ?: []);
-            exit();
-            
-        case 'save_design_settings':
-            $setting_type = $_POST['setting_type'];
-            $settings = json_decode($_POST['settings'], true);
-            $result = $pageContent->saveDesignSettings($setting_type, $settings);
-            echo json_encode(['success' => $result]);
-            exit();
-            
-        case 'get_design_settings':
-            $setting_type = $_POST['setting_type'];
-            $settings = $pageContent->getDesignSettings($setting_type);
-            echo json_encode($settings ?: []);
-            exit();
+    // Initialize database connection if not already done
+    if (!$pageContent && $database) {
+        $pageContent = new PageContent($database);
+    }
+    
+    try {
+        switch ($_POST['action']) {
+            case 'save_page_content':
+                $page_name = $_POST['page_name'] ?? '';
+                $content_json = $_POST['content'] ?? '{}';
+                $content = json_decode($content_json, true);
+                
+                if (!$content) {
+                    echo json_encode(['success' => false, 'error' => 'Ungültige Inhalte']);
+                    exit();
+                }
+                
+                if ($pageContent) {
+                    $result = $pageContent->saveContent($page_name, $content);
+                    echo json_encode(['success' => $result, 'message' => 'Inhalte gespeichert']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Datenbankfehler']);
+                }
+                exit();
+                
+            case 'get_page_content':
+                $page_name = $_POST['page_name'] ?? '';
+                if ($pageContent) {
+                    $content = $pageContent->getContent($page_name);
+                    echo json_encode($content ?: []);
+                } else {
+                    echo json_encode([]);
+                }
+                exit();
+                
+            case 'save_design_settings':
+                $setting_type = $_POST['setting_type'] ?? '';
+                $settings_json = $_POST['settings'] ?? '{}';
+                $settings = json_decode($settings_json, true);
+                
+                if ($pageContent && $settings) {
+                    $result = $pageContent->saveDesignSettings($setting_type, $settings);
+                    echo json_encode(['success' => $result, 'message' => 'Einstellungen gespeichert']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Ungültige Einstellungen']);
+                }
+                exit();
+                
+            case 'get_design_settings':
+                $setting_type = $_POST['setting_type'] ?? '';
+                if ($pageContent) {
+                    $settings = $pageContent->getDesignSettings($setting_type);
+                    echo json_encode($settings ?: []);
+                } else {
+                    echo json_encode([]);
+                }
+                exit();
+                
+            default:
+                echo json_encode(['success' => false, 'error' => 'Unbekannte Aktion']);
+                exit();
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => 'Server Fehler: ' . $e->getMessage()]);
+        exit();
     }
 }
 
