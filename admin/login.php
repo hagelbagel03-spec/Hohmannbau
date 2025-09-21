@@ -1,5 +1,7 @@
 <?php
 session_start();
+// Set session cookie parameters for better compatibility
+ini_set('session.cookie_lifetime', 86400); // 24 hours
 require_once __DIR__ . '/../config/config.php';
 
 // Check if already logged in
