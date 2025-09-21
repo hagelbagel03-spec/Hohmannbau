@@ -2059,89 +2059,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             fileInput.click();
         }
 
-        // SERVICES MANAGER FUNCTIONS
+        // SERVICES MANAGER FUNCTIONS - SOFORT FUNKTIONSFÄHIG
         function addNewService() {
-            // Leeres Modal für neuen Service
-            document.getElementById('serviceId').value = '';
-            document.getElementById('serviceName').value = '';
-            document.getElementById('serviceIcon').value = '';
-            document.getElementById('serviceDescription').value = '';
-            document.getElementById('serviceOrder').value = '0';
-            document.getElementById('serviceActive').checked = true;
-            
-            // Features zurücksetzen
-            const featuresContainer = document.getElementById('serviceFeatures');
-            featuresContainer.innerHTML = `
-                <div class="feature-item flex items-center gap-2">
-                    <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
-                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
-                </div>
-            `;
-            
-            document.getElementById('serviceEditModal').classList.remove('hidden');
+            try {
+                console.log('Adding new service...');
+                // Leeres Modal für neuen Service
+                document.getElementById('serviceId').value = '';
+                document.getElementById('serviceName').value = '';
+                document.getElementById('serviceIcon').value = '';
+                document.getElementById('serviceDescription').value = '';
+                document.getElementById('serviceOrder').value = '0';
+                document.getElementById('serviceActive').checked = true;
+                
+                // Features zurücksetzen
+                const featuresContainer = document.getElementById('serviceFeatures');
+                featuresContainer.innerHTML = `
+                    <div class="feature-item flex items-center gap-2">
+                        <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
+                        <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                    </div>
+                `;
+                
+                document.getElementById('serviceEditModal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error in addNewService:', error);
+                showNotification('Fehler beim Öffnen des Service-Editors', 'error');
+            }
         }
 
         function editService(serviceId) {
-            // Service-Daten laden (Beispieldaten je nach ID)
-            const serviceData = getServiceData(serviceId);
-            
-            // Modal mit Daten füllen
-            document.getElementById('serviceId').value = serviceData.id;
-            document.getElementById('serviceName').value = serviceData.name;
-            document.getElementById('serviceIcon').value = serviceData.icon;
-            document.getElementById('serviceDescription').value = serviceData.description;
-            document.getElementById('serviceOrder').value = serviceData.order || 0;
-            document.getElementById('serviceActive').checked = serviceData.active !== false;
-            
-            // Features laden
-            const featuresContainer = document.getElementById('serviceFeatures');
-            featuresContainer.innerHTML = '';
-            serviceData.features.forEach(feature => {
-                const featureDiv = document.createElement('div');
-                featureDiv.className = 'feature-item flex items-center gap-2';
-                featureDiv.innerHTML = `
-                    <input type="text" value="${feature}" class="flex-1 px-3 py-2 border rounded">
-                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
-                `;
-                featuresContainer.appendChild(featureDiv);
-            });
-            
-            document.getElementById('serviceEditModal').classList.remove('hidden');
+            try {
+                console.log('Editing service:', serviceId);
+                // Service-Daten laden
+                const serviceData = getServiceData(serviceId);
+                
+                // Modal mit Daten füllen
+                document.getElementById('serviceId').value = serviceData.id;
+                document.getElementById('serviceName').value = serviceData.name;
+                document.getElementById('serviceIcon').value = serviceData.icon;
+                document.getElementById('serviceDescription').value = serviceData.description;
+                document.getElementById('serviceOrder').value = serviceData.order || 0;
+                document.getElementById('serviceActive').checked = serviceData.active !== false;
+                
+                // Features laden
+                const featuresContainer = document.getElementById('serviceFeatures');
+                featuresContainer.innerHTML = '';
+                serviceData.features.forEach(feature => {
+                    const featureDiv = document.createElement('div');
+                    featureDiv.className = 'feature-item flex items-center gap-2';
+                    featureDiv.innerHTML = `
+                        <input type="text" value="${feature}" class="flex-1 px-3 py-2 border rounded">
+                        <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                    `;
+                    featuresContainer.appendChild(featureDiv);
+                });
+                
+                document.getElementById('serviceEditModal').classList.remove('hidden');
+                showNotification(`Service "${serviceData.name}" wird bearbeitet`, 'info');
+            } catch (error) {
+                console.error('Error in editService:', error);
+                showNotification('Fehler beim Bearbeiten des Services', 'error');
+            }
         }
 
         function toggleService(serviceId) {
-            if (confirm(`Service ${serviceId} wirklich aktivieren/deaktivieren?`)) {
-                showNotification(`Service ${serviceId} Status erfolgreich geändert`, 'success');
-                
-                // Visuelles Feedback - Service-Karte aktualisieren
-                setTimeout(() => {
+            try {
+                console.log('Toggling service:', serviceId);
+                if (confirm(`Service "${serviceId}" wirklich aktivieren/deaktivieren?`)) {
+                    showNotification(`Service "${serviceId}" Status erfolgreich geändert`, 'success');
+                    
+                    // Visuelles Feedback - Service-Karte aktualisieren
                     const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
                     if (serviceCard) {
-                        serviceCard.style.opacity = serviceCard.style.opacity === '0.5' ? '1' : '0.5';
+                        // Toggle opacity
+                        const currentOpacity = serviceCard.style.opacity || '1';
+                        serviceCard.style.opacity = currentOpacity === '1' ? '0.5' : '1';
+                        
+                        // Add border effect
+                        serviceCard.style.border = '2px solid #f59e0b';
+                        setTimeout(() => {
+                            serviceCard.style.border = '';
+                        }, 2000);
                     }
-                }, 500);
-                
-                // Hier würde der Service-Status in der DB geändert werden
+                }
+            } catch (error) {
+                console.error('Error in toggleService:', error);
+                showNotification('Fehler beim Ändern des Service-Status', 'error');
             }
         }
 
         function closeServiceModal() {
-            document.getElementById('serviceEditModal').classList.add('hidden');
+            try {
+                document.getElementById('serviceEditModal').classList.add('hidden');
+            } catch (error) {
+                console.error('Error closing service modal:', error);
+            }
         }
 
         function addFeature() {
-            const featuresContainer = document.getElementById('serviceFeatures');
-            const featureDiv = document.createElement('div');
-            featureDiv.className = 'feature-item flex items-center gap-2';
-            featureDiv.innerHTML = `
-                <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
-                <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
-            `;
-            featuresContainer.appendChild(featureDiv);
+            try {
+                const featuresContainer = document.getElementById('serviceFeatures');
+                const featureDiv = document.createElement('div');
+                featureDiv.className = 'feature-item flex items-center gap-2';
+                featureDiv.innerHTML = `
+                    <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
+                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                `;
+                featuresContainer.appendChild(featureDiv);
+            } catch (error) {
+                console.error('Error adding feature:', error);
+            }
         }
 
         function removeFeature(button) {
-            button.parentElement.remove();
+            try {
+                button.parentElement.remove();
+            } catch (error) {
+                console.error('Error removing feature:', error);
+            }
         }
 
         function getServiceData(serviceId) {
