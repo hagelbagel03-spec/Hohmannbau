@@ -2057,26 +2057,156 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // SERVICES MANAGER FUNCTIONS
         function addNewService() {
-            const serviceName = prompt('Service Name:');
-            const serviceDescription = prompt('Service Beschreibung:');
-            const serviceIcon = prompt('Service Icon (Emoji):');
+            // Leeres Modal für neuen Service
+            document.getElementById('serviceId').value = '';
+            document.getElementById('serviceName').value = '';
+            document.getElementById('serviceIcon').value = '';
+            document.getElementById('serviceDescription').value = '';
+            document.getElementById('serviceOrder').value = '0';
+            document.getElementById('serviceActive').checked = true;
             
-            if (serviceName) {
-                showNotification(`Service "${serviceName}" hinzugefügt`, 'success');
-                // Hier würde das Service zur Datenbank hinzugefügt
-            }
+            // Features zurücksetzen
+            const featuresContainer = document.getElementById('serviceFeatures');
+            featuresContainer.innerHTML = `
+                <div class="feature-item flex items-center gap-2">
+                    <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
+                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                </div>
+            `;
+            
+            document.getElementById('serviceEditModal').classList.remove('hidden');
         }
 
         function editService(serviceId) {
-            showNotification(`Bearbeite Service: ${serviceId}`, 'info');
-            // Hier würde ein Edit-Modal geöffnet mit den aktuellen Service-Daten
+            // Service-Daten laden (Beispieldaten je nach ID)
+            const serviceData = getServiceData(serviceId);
+            
+            // Modal mit Daten füllen
+            document.getElementById('serviceId').value = serviceData.id;
+            document.getElementById('serviceName').value = serviceData.name;
+            document.getElementById('serviceIcon').value = serviceData.icon;
+            document.getElementById('serviceDescription').value = serviceData.description;
+            document.getElementById('serviceOrder').value = serviceData.order || 0;
+            document.getElementById('serviceActive').checked = serviceData.active !== false;
+            
+            // Features laden
+            const featuresContainer = document.getElementById('serviceFeatures');
+            featuresContainer.innerHTML = '';
+            serviceData.features.forEach(feature => {
+                const featureDiv = document.createElement('div');
+                featureDiv.className = 'feature-item flex items-center gap-2';
+                featureDiv.innerHTML = `
+                    <input type="text" value="${feature}" class="flex-1 px-3 py-2 border rounded">
+                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                `;
+                featuresContainer.appendChild(featureDiv);
+            });
+            
+            document.getElementById('serviceEditModal').classList.remove('hidden');
         }
 
         function toggleService(serviceId) {
-            if (confirm(`Service ${serviceId} aktivieren/deaktivieren?`)) {
-                showNotification(`Service ${serviceId} Status geändert`, 'success');
-                // Hier würde der Service-Status in der DB geändert
+            if (confirm(`Service ${serviceId} wirklich aktivieren/deaktivieren?`)) {
+                showNotification(`Service ${serviceId} Status erfolgreich geändert`, 'success');
+                
+                // Visuelles Feedback - Service-Karte aktualisieren
+                setTimeout(() => {
+                    const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
+                    if (serviceCard) {
+                        serviceCard.style.opacity = serviceCard.style.opacity === '0.5' ? '1' : '0.5';
+                    }
+                }, 500);
+                
+                // Hier würde der Service-Status in der DB geändert werden
             }
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceEditModal').classList.add('hidden');
+        }
+
+        function addFeature() {
+            const featuresContainer = document.getElementById('serviceFeatures');
+            const featureDiv = document.createElement('div');
+            featureDiv.className = 'feature-item flex items-center gap-2';
+            featureDiv.innerHTML = `
+                <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
+                <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+            `;
+            featuresContainer.appendChild(featureDiv);
+        }
+
+        function removeFeature(button) {
+            button.parentElement.remove();
+        }
+
+        function getServiceData(serviceId) {
+            const services = {
+                'hochbau': {
+                    id: 'hochbau',
+                    name: 'Hochbau',
+                    icon: '🏗️',
+                    description: 'Neubau von Wohn- und Geschäftsgebäuden, Einfamilienhäuser bis hin zu komplexen Gewerbeobjekten.',
+                    features: ['Planung und Ausführung', 'Rohbau und Ausbau', 'Schlüsselfertige Übergabe'],
+                    order: 1,
+                    active: true
+                },
+                'tiefbau': {
+                    id: 'tiefbau',
+                    name: 'Tiefbau',
+                    icon: '🚧',
+                    description: 'Fundamente, Keller, Erschließung und alle Arbeiten unter der Erdoberfläche.',
+                    features: ['Erdarbeiten und Aushub', 'Fundamente und Keller', 'Ver- und Entsorgung'],
+                    order: 2,
+                    active: true
+                },
+                'sanierung': {
+                    id: 'sanierung',
+                    name: 'Sanierung',
+                    icon: '🔨',
+                    description: 'Modernisierung und Instandsetzung bestehender Gebäude nach neuesten Standards.',
+                    features: ['Energetische Sanierung', 'Dach- und Fassadensanierung', 'Badsanierung'],
+                    order: 3,
+                    active: true
+                },
+                'anbau': {
+                    id: 'anbau',
+                    name: 'An- und Umbau',
+                    icon: '🏠',
+                    description: 'Erweiterung und Umgestaltung bestehender Gebäude nach Ihren Wünschen.',
+                    features: ['Anbauten und Aufstockungen', 'Grundrissänderungen', 'Dachausbau'],
+                    order: 4,
+                    active: true
+                },
+                'gewerbebau': {
+                    id: 'gewerbebau',
+                    name: 'Gewerbebau',
+                    icon: '🏢',
+                    description: 'Bürogebäude, Lagerhallen, Produktionsstätten und andere Gewerbeimmobilien.',
+                    features: ['Büro- und Verwaltungsgebäude', 'Produktions- und Lagerhallen', 'Individuelle Gewerbeobjekte'],
+                    order: 5,
+                    active: true
+                },
+                'notdienst': {
+                    id: 'notdienst',
+                    name: 'Notdienst',
+                    icon: '⚡',
+                    description: '24/7 Notdienst für dringende Reparaturen und Schadensbehebung.',
+                    features: ['Wasserschäden', 'Sturmschäden', 'Notfallreparaturen'],
+                    order: 6,
+                    active: true
+                }
+            };
+            
+            return services[serviceId] || {
+                id: serviceId,
+                name: 'Unbekannter Service',
+                icon: '❓',
+                description: '',
+                features: [],
+                order: 0,
+                active: true
+            };
         }
 
         // TEAM MANAGER FUNCTIONS
