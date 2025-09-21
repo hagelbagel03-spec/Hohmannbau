@@ -177,7 +177,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         </div>
                     </div>
 
-                    <!-- Content Management -->
+                    <!-- Services Manager -->
+                    <div class="sidebar-nav-item p-4 rounded-lg cursor-pointer" onclick="showSection('services-manager')">
+                        <div class="flex items-center">
+                            <i data-lucide="wrench" class="w-5 h-5 mr-3"></i>
+                            <div>
+                                <div class="font-medium">🔧 Unsere Leistungen</div>
+                                <div class="text-xs opacity-75">Hochbau, Tiefbau, Sanierung...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Manager -->
+                    <div class="sidebar-nav-item p-4 rounded-lg cursor-pointer" onclick="showSection('team-manager')">
+                        <div class="flex items-center">
+                            <i data-lucide="users" class="w-5 h-5 mr-3"></i>
+                            <div>
+                                <div class="font-medium">👥 Unser Team</div>
+                                <div class="text-xs opacity-75">Team-Mitglieder verwalten</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Career Manager -->
+                    <div class="sidebar-nav-item p-4 rounded-lg cursor-pointer" onclick="showSection('career-manager')">
+                        <div class="flex items-center">
+                            <i data-lucide="briefcase" class="w-5 h-5 mr-3"></i>
+                            <div>
+                                <div class="font-medium">💼 Karriere</div>
+                                <div class="text-xs opacity-75">Jobs & Bewerbungen</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offers Manager -->
+                    <div class="sidebar-nav-item p-4 rounded-lg cursor-pointer" onclick="showSection('offers-manager')">
+                        <div class="flex items-center">
+                            <i data-lucide="calculator" class="w-5 h-5 mr-3"></i>
+                            <div>
+                                <div class="font-medium">📋 Angebote</div>
+                                <div class="text-xs opacity-75">Angebotsanfragen verwalten</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Manager -->
                     <div class="sidebar-nav-item p-4 rounded-lg cursor-pointer" onclick="showSection('content-manager')">
                         <div class="flex items-center">
                             <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
