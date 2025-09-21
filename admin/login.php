@@ -61,6 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 <?php endif; ?>
                 
+                <?php if ($success): ?>
+                    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-3 flex-shrink-0"></i>
+                        <span><?= htmlspecialchars($success) ?></span>
+                    </div>
+                <?php endif; ?>
+                
                 <form method="POST" class="space-y-6">
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
