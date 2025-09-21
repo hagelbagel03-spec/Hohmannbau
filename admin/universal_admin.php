@@ -1615,6 +1615,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         function savePageContent(pageName) {
             const form = document.getElementById(`page-form-${pageName}`);
+            if (!form) {
+                showNotification('Formular nicht gefunden!', 'error');
+                return;
+            }
+            
             const formData = new FormData(form);
             
             // Convert form data to object
@@ -1622,6 +1627,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             for (let [key, value] of formData.entries()) {
                 content[key] = value;
             }
+            
+            console.log('Saving content for:', pageName, content);
             
             // Show loading state
             const button = event.target;
@@ -1635,20 +1642,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=save_page_content&page_name=${pageName}&content=${encodeURIComponent(JSON.stringify(content))}`
+                body: `action=save_page_content&page_name=${encodeURIComponent(pageName)}&content=${encodeURIComponent(JSON.stringify(content))}`
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.text();
+            })
             .then(data => {
-                if (data.success) {
-                    // Show success message
-                    showNotification('Inhalte erfolgreich gespeichert!', 'success');
-                } else {
-                    showNotification('Fehler beim Speichern!', 'error');
+                console.log('Response data:', data);
+                try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.success) {
+                        showNotification('Inhalte erfolgreich gespeichert!', 'success');
+                    } else {
+                        showNotification('Fehler beim Speichern: ' + (jsonData.error || 'Unbekannter Fehler'), 'error');
+                    }
+                } catch (e) {
+                    console.error('Parse error:', e, 'Data:', data);
+                    showNotification('Server-Antwort Fehler', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error saving content:', error);
-                showNotification('Fehler beim Speichern!', 'error');
+                showNotification('Netzwerk-Fehler beim Speichern!', 'error');
             })
             .finally(() => {
                 // Reset button
