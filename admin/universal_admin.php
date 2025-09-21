@@ -2294,6 +2294,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
     </div>
 
+    <!-- Service Edit Modal -->
+    <div id="serviceEditModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Service bearbeiten</h3>
+                        <button onclick="closeServiceModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <form id="serviceEditForm" class="space-y-4">
+                        <input type="hidden" id="serviceId" value="">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Service Name *</label>
+                                <input type="text" id="serviceName" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Icon (Emoji)</label>
+                                <input type="text" id="serviceIcon" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="🏗️">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Beschreibung *</label>
+                            <textarea id="serviceDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Features/Leistungen</label>
+                            <div id="serviceFeatures" class="space-y-2">
+                                <div class="feature-item flex items-center gap-2">
+                                    <input type="text" placeholder="Feature eingeben..." class="flex-1 px-3 py-2 border rounded">
+                                    <button type="button" onclick="removeFeature(this)" class="bg-red-500 text-white px-3 py-2 rounded">Entfernen</button>
+                                </div>
+                            </div>
+                            <button type="button" onclick="addFeature()" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded text-sm">+ Feature hinzufügen</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Reihenfolge</label>
+                                <input type="number" id="serviceOrder" class="w-full px-3 py-2 border border-gray-300 rounded-lg" min="0">
+                            </div>
+                            <div class="flex items-center pt-6">
+                                <input type="checkbox" id="serviceActive" class="mr-2">
+                                <label for="serviceActive" class="text-sm">Service aktiv anzeigen</label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeServiceModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                Abbrechen
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Service speichern
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Team Member Edit Modal -->
     <div id="teamEditModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
