@@ -36,7 +36,7 @@ import {
   Globe,
   Menu,
   Save,
-  Refresh,
+  RefreshCw,
   Download,
   Copy,
   Monitor,
