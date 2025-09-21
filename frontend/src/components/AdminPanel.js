@@ -182,7 +182,7 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-4xl font-bold text-gray-900">Universal Admin Dashboard</h2>
         <Button onClick={fetchDashboardStats} className="bg-blue-600 hover:bg-blue-700">
-          <Refresh className="w-4 h-4 mr-2" />
+          <RefreshCw className="w-4 h-4 mr-2" />
           Aktualisieren
         </Button>
       </div>
