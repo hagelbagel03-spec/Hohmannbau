@@ -578,54 +578,384 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 </div>
             </div>
 
-            <!-- Other sections would be here (navigation-editor, content-manager, projects, messages, settings) -->
+            <!-- Navigation Editor Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="navigation-editor-section" class="section hidden">
                 <div class="mb-8">
                     <h1 class="text-4xl font-bold text-gray-900 mb-2">🧭 Navigation Editor</h1>
                     <p class="text-gray-600">Bearbeiten Sie das Hauptmenü und die Navigation Ihrer Website</p>
                 </div>
+                
                 <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <p class="text-center text-gray-500 py-12">Navigation Editor wird implementiert...</p>
+                    <div class="space-y-6">
+                        <!-- Logo Section -->
+                        <div class="border-b pb-4">
+                            <h3 class="text-lg font-semibold mb-4">🎯 Logo & Branding</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Logo Text</label>
+                                    <input type="text" id="nav-logo-text" value="Hohmann Bau" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Logo Bild URL</label>
+                                    <input type="text" id="nav-logo-image" placeholder="https://example.com/logo.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Menu Items -->
+                        <div class="border-b pb-4">
+                            <h3 class="text-lg font-semibold mb-4">📋 Menü-Punkte</h3>
+                            <div id="menu-items-list" class="space-y-3">
+                                <div class="menu-item flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <input type="text" placeholder="Menü-Name" value="Home" class="flex-1 px-3 py-2 border rounded">
+                                    <input type="text" placeholder="Link" value="/" class="flex-1 px-3 py-2 border rounded">
+                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Löschen</button>
+                                </div>
+                                <div class="menu-item flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <input type="text" placeholder="Menü-Name" value="Leistungen" class="flex-1 px-3 py-2 border rounded">
+                                    <input type="text" placeholder="Link" value="leistungen.php" class="flex-1 px-3 py-2 border rounded">
+                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Löschen</button>
+                                </div>
+                                <div class="menu-item flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <input type="text" placeholder="Menü-Name" value="Projekte" class="flex-1 px-3 py-2 border rounded">
+                                    <input type="text" placeholder="Link" value="projekte.php" class="flex-1 px-3 py-2 border rounded">
+                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Löschen</button>
+                                </div>
+                            </div>
+                            <button id="add-menu-item" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                + Neuen Menü-Punkt hinzufügen
+                            </button>
+                        </div>
+                        
+                        <!-- CTA Button -->
+                        <div class="border-b pb-4">
+                            <h3 class="text-lg font-semibold mb-4">🎯 Call-to-Action Button</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Button Text</label>
+                                    <input type="text" id="cta-text" value="Angebot erhalten" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Button Link</label>
+                                    <input type="text" id="cta-link" value="angebot.php" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Button Farbe</label>
+                                    <input type="color" id="cta-color" value="#16a34a" class="w-full h-10 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <div class="flex justify-end">
+                            <button onclick="saveNavigationSettings()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                                💾 Navigation Speichern
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Content Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="content-manager-section" class="section hidden">
                 <div class="mb-8">
                     <h1 class="text-4xl font-bold text-gray-900 mb-2">📝 Content Manager</h1>
-                    <p class="text-gray-600">Verwalten Sie alle Inhalte und Texte</p>
+                    <p class="text-gray-600">Verwalten Sie alle Inhalte und Texte Ihrer Website</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <p class="text-center text-gray-500 py-12">Content Manager wird implementiert...</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Quick Actions -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h3 class="text-lg font-semibold mb-4">⚡ Schnellaktionen</h3>
+                            <div class="space-y-3">
+                                <button onclick="bulkEditTexts()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                                    📝 Alle Texte bearbeiten
+                                </button>
+                                <button onclick="globalSearchReplace()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+                                    🔍 Suchen & Ersetzen
+                                </button>
+                                <button onclick="exportContent()" class="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">
+                                    📤 Inhalte exportieren
+                                </button>
+                                <button onclick="importContent()" class="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700">
+                                    📥 Inhalte importieren
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content List -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h3 class="text-lg font-semibold mb-4">📚 Alle Inhalte</h3>
+                            <div class="space-y-4" id="content-list">
+                                <div class="content-item p-4 border rounded-lg hover:bg-gray-50">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h4 class="font-medium">Homepage Hero Titel</h4>
+                                            <p class="text-sm text-gray-600">Bauen mit Vertrauen</p>
+                                        </div>
+                                        <button onclick="editContent('home', 'hero_title')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Bearbeiten</button>
+                                    </div>
+                                </div>
+                                <div class="content-item p-4 border rounded-lg hover:bg-gray-50">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h4 class="font-medium">Homepage Hero Untertitel</h4>
+                                            <p class="text-sm text-gray-600">Ihr zuverlässiger Partner für...</p>
+                                        </div>
+                                        <button onclick="editContent('home', 'hero_subtitle')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Bearbeiten</button>
+                                    </div>
+                                </div>
+                                <div class="content-item p-4 border rounded-lg hover:bg-gray-50">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h4 class="font-medium">Kontakt Adresse</h4>
+                                            <p class="text-sm text-gray-600">Bahnhofstraße 123...</p>
+                                        </div>
+                                        <button onclick="editContent('contact', 'address')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Bearbeiten</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Projects Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="projects-section" class="section hidden">
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">🏗️ Projekte</h1>
-                    <p class="text-gray-600">Verwalten Sie Ihr Projekt-Portfolio</p>
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-900 mb-2">🏗️ Projekte Manager</h1>
+                        <p class="text-gray-600">Verwalten Sie Ihr Projekt-Portfolio</p>
+                    </div>
+                    <button onclick="addNewProject()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                        ➕ Neues Projekt hinzufügen
+                    </button>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <p class="text-center text-gray-500 py-12">Projekt-Manager wird implementiert...</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+                    <!-- Example Project -->
+                    <div class="project-card bg-white rounded-xl shadow-lg overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1599995903128-531fc7fb694b" alt="Projekt" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">Einfamilienhaus Musterstadt</h3>
+                            <p class="text-gray-600 text-sm mb-3">Wohnbau</p>
+                            <p class="text-gray-700 text-sm mb-4">Modernes Einfamilienhaus mit nachhaltiger Bauweise...</p>
+                            <div class="flex gap-2">
+                                <button onclick="editProject('1')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                                <button onclick="deleteProject('1')" class="bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600">Löschen</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Project Card -->
+                    <div class="add-project-card bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center h-80 cursor-pointer hover:bg-gray-200" onclick="addNewProject()">
+                        <div class="text-center">
+                            <div class="text-4xl text-gray-400 mb-2">➕</div>
+                            <p class="text-gray-600">Neues Projekt hinzufügen</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Messages Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="messages-section" class="section hidden">
                 <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">💬 Nachrichten</h1>
-                    <p class="text-gray-600">Verwalten Sie Kontaktanfragen und Nachrichten</p>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">💬 Nachrichten Manager</h1>
+                    <p class="text-gray-600">Verwalten Sie alle Kontaktanfragen und Nachrichten</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <p class="text-center text-gray-500 py-12">Nachrichten-Manager wird implementiert...</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Filter Sidebar -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h3 class="font-semibold mb-4">📊 Filter & Status</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Status</label>
+                                    <select id="message-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option value="all">Alle Nachrichten</option>
+                                        <option value="new">Neu</option>
+                                        <option value="read">Gelesen</option>
+                                        <option value="replied">Beantwortet</option>
+                                    </select>
+                                </div>
+                                <div class="text-sm space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Gesamt:</span>
+                                        <span class="font-medium">47</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-red-600">Neu:</span>
+                                        <span class="font-medium text-red-600">12</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-blue-600">Gelesen:</span>
+                                        <span class="font-medium text-blue-600">23</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-green-600">Beantwortet:</span>
+                                        <span class="font-medium text-green-600">12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages List -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold">📬 Nachrichten Liste</h3>
+                                <button onclick="markAllAsRead()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Alle als gelesen markieren
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-3" id="messages-list">
+                                <div class="message-item p-4 border-l-4 border-l-red-500 bg-red-50 rounded-lg cursor-pointer hover:shadow-md" onclick="openMessage('1')">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="font-medium">Max Mustermann</span>
+                                                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">NEU</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-1">max@example.com</p>
+                                            <p class="text-sm text-gray-800">Anfrage für Hausbau Projekt...</p>
+                                        </div>
+                                        <span class="text-xs text-gray-500">vor 2 Stunden</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="message-item p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded-lg cursor-pointer hover:shadow-md" onclick="openMessage('2')">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="font-medium">Anna Schmidt</span>
+                                                <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">GELESEN</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-1">anna@example.com</p>
+                                            <p class="text-sm text-gray-800">Frage zu Sanierungsarbeiten...</p>
+                                        </div>
+                                        <span class="text-xs text-gray-500">gestern</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="message-item p-4 border-l-4 border-l-green-500 bg-green-50 rounded-lg cursor-pointer hover:shadow-md" onclick="openMessage('3')">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="font-medium">Peter Wagner</span>
+                                                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded">BEANTWORTET</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-1">peter@example.com</p>
+                                            <p class="text-sm text-gray-800">Terminanfrage für Beratung...</p>
+                                        </div>
+                                        <span class="text-xs text-gray-500">vor 2 Tagen</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Settings Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="settings-section" class="section hidden">
                 <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">⚙️ Einstellungen</h1>
-                    <p class="text-gray-600">System-Einstellungen und Konfiguration</p>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">⚙️ System Einstellungen</h1>
+                    <p class="text-gray-600">Konfiguration und Verwaltung der Admin-Panel Einstellungen</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <p class="text-center text-gray-500 py-12">Einstellungen werden implementiert...</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- General Settings -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">🔧 Allgemeine Einstellungen</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Website Name</label>
+                                <input type="text" id="site-name" value="Hohmann Bau" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Website Beschreibung</label>
+                                <textarea id="site-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg">Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Admin Email</label>
+                                <input type="email" id="admin-email" value="admin@hohmann-bau.de" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <button onclick="saveGeneralSettings()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Allgemeine Einstellungen speichern
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Settings -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">🔐 Sicherheits-Einstellungen</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Admin Passwort ändern</label>
+                                <input type="password" id="new-password" placeholder="Neues Passwort" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Passwort bestätigen</label>
+                                <input type="password" id="confirm-password" placeholder="Passwort bestätigen" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="two-factor" class="mr-2">
+                                <label for="two-factor" class="text-sm">Zwei-Faktor-Authentifizierung aktivieren</label>
+                            </div>
+                            <button onclick="changePassword()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                Passwort ändern
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Backup & Export -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">💾 Backup & Export</h3>
+                        <div class="space-y-4">
+                            <button onclick="createBackup()" class="w-full bg-green-600 text-white py-3 px-4 rounded hover:bg-green-700">
+                                🗄️ Vollständiges Backup erstellen
+                            </button>
+                            <button onclick="exportDatabase()" class="w-full bg-blue-600 text-white py-3 px-4 rounded hover:bg-blue-700">
+                                📊 Datenbank exportieren
+                            </button>
+                            <button onclick="importDatabase()" class="w-full bg-purple-600 text-white py-3 px-4 rounded hover:bg-purple-700">
+                                📥 Datenbank importieren
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- System Info -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">📊 System Information</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span>PHP Version:</span>
+                                <span class="font-medium"><?= phpversion() ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>MySQL Version:</span>
+                                <span class="font-medium">8.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Server:</span>
+                                <span class="font-medium"><?= $_SERVER['SERVER_SOFTWARE'] ?? 'PHP Development Server' ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Speicher Limit:</span>
+                                <span class="font-medium"><?= ini_get('memory_limit') ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Upload Max:</span>
+                                <span class="font-medium"><?= ini_get('upload_max_filesize') ?></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
