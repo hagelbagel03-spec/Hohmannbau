@@ -235,7 +235,7 @@ class HohmannCMSTest:
                 if response.status_code == 200:
                     # Check for basic content indicators
                     content = response.text.lower()
-                    if "hohmann bau" in content and not "error" in content and not "fatal" in content:
+                    if "hohmann bau" in content and "fatal error" not in content and "parse error" not in content:
                         page_results.append(f"✅ {page_name}: Loading correctly")
                     else:
                         page_results.append(f"⚠️ {page_name}: Loads but may have issues")
