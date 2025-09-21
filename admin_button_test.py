@@ -281,7 +281,7 @@ class AdminButtonTester:
                     return False
                 
                 # Take screenshot of admin panel
-                await page.screenshot(path="admin_panel_loaded.png", quality=40, full_page=False)
+                await page.screenshot(path="admin_panel_loaded.png", full_page=False)
                 print("📸 Admin panel screenshot taken")
                 
                 # Run tests
