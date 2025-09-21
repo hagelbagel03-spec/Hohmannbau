@@ -1989,6 +1989,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             };
             fileInput.click();
         }
+
+        // SERVICES MANAGER FUNCTIONS
+        function addNewService() {
+            const serviceName = prompt('Service Name:');
+            const serviceDescription = prompt('Service Beschreibung:');
+            const serviceIcon = prompt('Service Icon (Emoji):');
+            
+            if (serviceName) {
+                showNotification(`Service "${serviceName}" hinzugefügt`, 'success');
+                // Hier würde das Service zur Datenbank hinzugefügt
+            }
+        }
+
+        function editService(serviceId) {
+            showNotification(`Bearbeite Service: ${serviceId}`, 'info');
+            // Hier würde ein Edit-Modal geöffnet mit den aktuellen Service-Daten
+        }
+
+        function toggleService(serviceId) {
+            if (confirm(`Service ${serviceId} aktivieren/deaktivieren?`)) {
+                showNotification(`Service ${serviceId} Status geändert`, 'success');
+                // Hier würde der Service-Status in der DB geändert
+            }
+        }
+
+        // TEAM MANAGER FUNCTIONS
+        function addNewTeamMember() {
+            const name = prompt('Name des Team-Mitglieds:');
+            const position = prompt('Position:');
+            const bio = prompt('Kurze Biografie:');
+            const imageUrl = prompt('Bild URL (optional):');
+            
+            if (name && position) {
+                showNotification(`Team-Mitglied "${name}" hinzugefügt`, 'success');
+                // Hier würde das Team-Mitglied zur Datenbank hinzugefügt
+            }
+        }
+
+        function editTeamMember(memberId) {
+            showNotification(`Bearbeite Team-Mitglied ${memberId}`, 'info');
+            // Hier würde ein Edit-Modal geöffnet
+        }
+
+        function deleteTeamMember(memberId) {
+            if (confirm('Team-Mitglied wirklich löschen?')) {
+                showNotification(`Team-Mitglied ${memberId} gelöscht`, 'success');
+                // Hier würde das Team-Mitglied gelöscht
+            }
+        }
+
+        // CAREER MANAGER FUNCTIONS
+        function addNewJob() {
+            const jobTitle = prompt('Stellentitel:');
+            const jobLocation = prompt('Arbeitsort:');
+            const jobType = prompt('Arbeitszeit (Vollzeit/Teilzeit):');
+            const jobDescription = prompt('Kurze Beschreibung:');
+            
+            if (jobTitle) {
+                showNotification(`Stellenausschreibung "${jobTitle}" erstellt`, 'success');
+                // Hier würde der Job zur Datenbank hinzugefügt
+            }
+        }
+
+        function editJob(jobId) {
+            showNotification(`Bearbeite Stellenausschreibung ${jobId}`, 'info');
+            // Hier würde ein Edit-Modal geöffnet
+        }
+
+        function toggleJobStatus(jobId) {
+            if (confirm('Job-Status ändern (Aktiv/Inaktiv)?')) {
+                showNotification(`Job ${jobId} Status geändert`, 'success');
+                // Hier würde der Job-Status geändert
+            }
+        }
+
+        function viewApplications(jobId) {
+            showNotification(`Zeige Bewerbungen für Job ${jobId}`, 'info');
+            // Hier würden die Bewerbungen angezeigt
+        }
+
+        function viewApplication(applicationId) {
+            showNotification(`Öffne Bewerbung ${applicationId}`, 'info');
+            // Hier würde die Bewerbung im Detail angezeigt
+        }
+
+        function downloadCV(applicationId) {
+            showNotification(`Lade CV für Bewerbung ${applicationId} herunter`, 'info');
+            // Hier würde der CV-Download gestartet
+        }
+
+        // OFFERS MANAGER FUNCTIONS
+        function viewOffer(offerId) {
+            showNotification(`Öffne Angebot ${offerId}`, 'info');
+            // Hier würde das Angebot im Detail angezeigt
+        }
+
+        function createQuote(offerId) {
+            showNotification(`Erstelle Kostenvoranschlag für Angebot ${offerId}`, 'info');
+            // Hier würde ein Kostenvoranschlag erstellt
+        }
+
+        function updateOfferStatus(offerId) {
+            const newStatus = prompt('Neuer Status (new/processing/completed):');
+            if (newStatus) {
+                showNotification(`Status für Angebot ${offerId} geändert zu: ${newStatus}`, 'success');
+                // Hier würde der Status in der DB geändert
+            }
+        }
+
+        function exportOffers() {
+            showNotification('Exportiere Angebote nach Excel...', 'info');
+            // Hier würde ein Excel-Export gestartet
+        }
+
+        function downloadQuote(offerId) {
+            showNotification(`Lade Kostenvoranschlag für Angebot ${offerId} herunter`, 'info');
+            // Hier würde der Kostenvoranschlag heruntergeladen
+        }
     </script>
 </body>
 </html>
