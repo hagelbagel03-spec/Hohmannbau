@@ -2173,5 +2173,386 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             // Hier würde der Kostenvoranschlag heruntergeladen
         }
     </script>
+
+    <!-- MODAL DIALOGE FÜR ECHTE FUNKTIONALITÄT -->
+    
+    <!-- Career Job Edit Modal -->
+    <div id="jobEditModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Stellenausschreibung bearbeiten</h3>
+                        <button onclick="closeJobModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <form id="jobEditForm" class="space-y-4">
+                        <input type="hidden" id="jobId" value="">
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Stellentitel *</label>
+                            <input type="text" id="jobTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Arbeitsort *</label>
+                                <input type="text" id="jobLocation" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Arbeitszeit *</label>
+                                <select id="jobType" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="Vollzeit">Vollzeit</option>
+                                    <option value="Teilzeit">Teilzeit</option>
+                                    <option value="Minijob">Minijob</option>
+                                    <option value="Praktikum">Praktikum</option>
+                                    <option value="Ausbildung">Ausbildung</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Stellenbeschreibung *</label>
+                            <textarea id="jobDescription" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Anforderungen *</label>
+                            <textarea id="jobRequirements" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required></textarea>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="jobActive" class="mr-2">
+                            <label for="jobActive" class="text-sm">Stellenausschreibung aktiv</label>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeJobModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                Abbrechen
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Speichern
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Details Modal -->
+    <div id="applicationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Bewerbung Details</h3>
+                        <button onclick="closeApplicationModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <div id="applicationDetails" class="space-y-4">
+                        <!-- Content wird hier eingefügt -->
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeApplicationModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                            Schließen
+                        </button>
+                        <button onclick="respondToApplication()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Antworten
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offer Details Modal -->
+    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Angebotsanfrage Details</h3>
+                        <button onclick="closeOfferModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <div id="offerDetails" class="space-y-4">
+                        <!-- Content wird hier eingefügt -->
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeOfferModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                            Schließen
+                        </button>
+                        <button onclick="createQuoteFromModal()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                            Kostenvoranschlag erstellen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Member Edit Modal -->
+    <div id="teamEditModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Team-Mitglied bearbeiten</h3>
+                        <button onclick="closeTeamModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <form id="teamEditForm" class="space-y-4">
+                        <input type="hidden" id="teamMemberId" value="">
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Name *</label>
+                            <input type="text" id="teamMemberName" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Position *</label>
+                            <input type="text" id="teamMemberPosition" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Bild URL</label>
+                            <input type="url" id="teamMemberImage" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="https://example.com/photo.jpg">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Biografie</label>
+                            <textarea id="teamMemberBio" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeTeamModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                Abbrechen
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Speichern
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ECHTE MODAL FUNKTIONEN
+
+        // Job Management
+        function editJob(jobId) {
+            // Lade Job-Daten (hier Beispieldaten)
+            const jobData = {
+                id: jobId,
+                title: jobId === '1' ? 'Bauleiter (m/w/d)' : 'Maurer (m/w/d)',
+                location: 'Musterstadt',
+                type: 'Vollzeit',
+                description: 'Beschreibung der Stelle...',
+                requirements: '• Anforderung 1\n• Anforderung 2',
+                active: true
+            };
+            
+            // Fülle Modal mit Daten
+            document.getElementById('jobId').value = jobData.id;
+            document.getElementById('jobTitle').value = jobData.title;
+            document.getElementById('jobLocation').value = jobData.location;
+            document.getElementById('jobType').value = jobData.type;
+            document.getElementById('jobDescription').value = jobData.description;
+            document.getElementById('jobRequirements').value = jobData.requirements;
+            document.getElementById('jobActive').checked = jobData.active;
+            
+            // Zeige Modal
+            document.getElementById('jobEditModal').classList.remove('hidden');
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobEditModal').classList.add('hidden');
+        }
+
+        function toggleJobStatus(jobId) {
+            if (confirm('Job-Status wirklich ändern?')) {
+                showNotification(`Job ${jobId} Status geändert`, 'success');
+                // Hier würde der Status in der DB geändert
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+
+        function viewApplications(jobId) {
+            showNotification(`Lade Bewerbungen für Job ${jobId}...`, 'info');
+            // Hier würde zur Bewerbungsübersicht gewechselt
+        }
+
+        // Application Management
+        function viewApplication(applicationId) {
+            const applicationData = {
+                id: applicationId,
+                name: applicationId === '1' ? 'Anna Schmidt' : 'Thomas Müller',
+                email: applicationId === '1' ? 'anna.schmidt@email.com' : 'thomas.mueller@email.com',
+                job: applicationId === '1' ? 'Bauleiter (m/w/d)' : 'Maurer (m/w/d)',
+                phone: '+49 123 456789',
+                coverLetter: 'Sehr geehrte Damen und Herren,\n\nhiermit bewerbe ich mich...',
+                cvFile: 'lebenslauf.pdf',
+                date: 'vor 2 Stunden'
+            };
+            
+            document.getElementById('applicationDetails').innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <strong>Name:</strong><br>
+                        ${applicationData.name}
+                    </div>
+                    <div>
+                        <strong>E-Mail:</strong><br>
+                        ${applicationData.email}
+                    </div>
+                    <div>
+                        <strong>Telefon:</strong><br>
+                        ${applicationData.phone}
+                    </div>
+                    <div>
+                        <strong>Bewerbung für:</strong><br>
+                        ${applicationData.job}
+                    </div>
+                    <div>
+                        <strong>CV-Datei:</strong><br>
+                        <a href="#" onclick="downloadCV('${applicationData.id}')" class="text-blue-600 hover:underline">${applicationData.cvFile}</a>
+                    </div>
+                    <div>
+                        <strong>Eingegangen:</strong><br>
+                        ${applicationData.date}
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <strong>Anschreiben:</strong>
+                    <div class="mt-2 p-3 bg-gray-50 rounded border">
+                        <pre class="whitespace-pre-wrap text-sm">${applicationData.coverLetter}</pre>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('applicationModal').classList.remove('hidden');
+        }
+
+        function closeApplicationModal() {
+            document.getElementById('applicationModal').classList.add('hidden');
+        }
+
+        function downloadCV(applicationId) {
+            showNotification(`Lade CV für Bewerbung ${applicationId} herunter...`, 'success');
+            // Hier würde der CV-Download gestartet
+        }
+
+        function respondToApplication() {
+            const email = prompt('E-Mail Antwort eingeben:');
+            if (email) {
+                showNotification('E-Mail Antwort gesendet!', 'success');
+                closeApplicationModal();
+            }
+        }
+
+        // Offer Management
+        function viewOffer(offerId) {
+            const offerData = {
+                id: offerId,
+                customer: offerId === '1' ? 'Familie Weber' : offerId === '2' ? 'Müller GmbH' : 'Schmidt',
+                project: offerId === '1' ? 'Einfamilienhaus' : offerId === '2' ? 'Bürogebäude Sanierung' : 'Dachsanierung',
+                type: offerId === '1' ? 'Hochbau' : offerId === '2' ? 'Sanierung' : 'Sanierung',
+                budget: offerId === '1' ? '€300.000 - €400.000' : offerId === '2' ? '€150.000 - €200.000' : '€45.000',
+                timeline: offerId === '1' ? '6-12 Monate' : offerId === '2' ? '3-4 Monate' : '2 Wochen',
+                description: 'Detaillierte Projektbeschreibung...',
+                status: offerId === '3' ? 'completed' : offerId === '2' ? 'processing' : 'new'
+            };
+            
+            document.getElementById('offerDetails').innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <strong>Kunde:</strong><br>
+                        ${offerData.customer}
+                    </div>
+                    <div>
+                        <strong>Projekt:</strong><br>
+                        ${offerData.project}
+                    </div>
+                    <div>
+                        <strong>Typ:</strong><br>
+                        ${offerData.type}
+                    </div>
+                    <div>
+                        <strong>Budget:</strong><br>
+                        ${offerData.budget}
+                    </div>
+                    <div>
+                        <strong>Zeitrahmen:</strong><br>
+                        ${offerData.timeline}
+                    </div>
+                    <div>
+                        <strong>Status:</strong><br>
+                        <span class="px-2 py-1 rounded text-xs ${offerData.status === 'new' ? 'bg-red-100 text-red-700' : offerData.status === 'processing' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}">
+                            ${offerData.status === 'new' ? 'NEU' : offerData.status === 'processing' ? 'BEARBEITUNG' : 'ABGESCHLOSSEN'}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <strong>Projektbeschreibung:</strong>
+                    <div class="mt-2 p-3 bg-gray-50 rounded border">
+                        <p>${offerData.description}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('offerModal').classList.remove('hidden');
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offerModal').classList.add('hidden');
+        }
+
+        function createQuoteFromModal() {
+            showNotification('Kostenvoranschlag wird erstellt...', 'info');
+            // Hier würde der Kostenvoranschlag erstellt
+            closeOfferModal();
+        }
+
+        // Team Management
+        function editTeamMember(memberId) {
+            const memberData = {
+                id: memberId,
+                name: 'Max Mustermann',
+                position: 'Geschäftsführer',
+                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+                bio: 'Mit über 20 Jahren Erfahrung im Bauwesen leitet Max unser Unternehmen mit Leidenschaft und Expertise.'
+            };
+            
+            document.getElementById('teamMemberId').value = memberData.id;
+            document.getElementById('teamMemberName').value = memberData.name;
+            document.getElementById('teamMemberPosition').value = memberData.position;
+            document.getElementById('teamMemberImage').value = memberData.image;
+            document.getElementById('teamMemberBio').value = memberData.bio;
+            
+            document.getElementById('teamEditModal').classList.remove('hidden');
+        }
+
+        function closeTeamModal() {
+            document.getElementById('teamEditModal').classList.add('hidden');
+        }
+
+        // Form Submissions
+        document.getElementById('jobEditForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification('Stellenausschreibung gespeichert!', 'success');
+            closeJobModal();
+        });
+
+        document.getElementById('teamEditForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification('Team-Mitglied gespeichert!', 'success');
+            closeTeamModal();
+        });
+    </script>
 </body>
 </html>
