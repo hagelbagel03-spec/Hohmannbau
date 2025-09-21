@@ -1,0 +1,1152 @@
+from fastapi import FastAPI, APIRouter, HTTPException, File, UploadFile, Form
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from dotenv import load_dotenv
+from starlette.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+import logging
+from pathlib import Path
+from pydantic import BaseModel, Field, EmailStr
+from typing import List, Optional, Dict, Any
+import uuid
+from datetime import datetime, timezone
+import jwt
+import hashlib
+import aiofiles
+from passlib.context import CryptContext
+
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
+# MongoDB connection
+mongo_url = os.environ['MONGO_URL']
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ['DB_NAME']]
+
+# Security
+security = HTTPBearer()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+
+# Create the main app without a prefix
+app = FastAPI(title="Hohmann Bau API", version="1.0.0")
+
+# Create a router with the /api prefix
+api_router = APIRouter(prefix="/api")
+
+# Helper functions
+def prepare_for_mongo(data):
+    """Convert datetime objects to ISO strings for MongoDB storage"""
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if isinstance(value, datetime):
+                data[key] = value.isoformat()
+    return data
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def create_jwt_token(data: dict) -> str:
+    return jwt.encode(data, SECRET_KEY, algorithm="HS256")
+
+def verify_jwt_token(token: str) -> dict:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return payload
+    except jwt.PyJWTError:
+        return None
+
+# Enhanced Pydantic Models
+class PageContent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page_name: str  # home, services, projects, team, contact, career, footer, navigation
+    content: dict  # JSON object with page-specific content
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PageContentCreate(BaseModel):
+    page_name: str
+    content: dict
+
+class PageContentUpdate(BaseModel):
+    content: dict
+
+class SiteSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    setting_name: str  # theme, colors, typography, layout, seo
+    settings: dict  # JSON object with settings
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SiteSettingsCreate(BaseModel):
+    setting_name: str
+    settings: dict
+
+class SiteSettingsUpdate(BaseModel):
+    settings: dict
+
+class MediaFile(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    filename: str
+    original_name: str
+    file_path: str
+    file_type: str  # image, document, video, etc.
+    file_size: int
+    mime_type: str
+    uploaded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Service(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    features: List[str]
+    icon: str
+    image: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ServiceCreate(BaseModel):
+    title: str
+    description: str
+    features: List[str]
+    icon: str
+    image: str
+    order: int = 0
+
+class Feature(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    icon: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FeatureCreate(BaseModel):
+    title: str
+    description: str
+    icon: str
+    order: int = 0
+
+class ContactInfo(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    address: str
+    phone: str
+    email: str
+    opening_hours: str
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactInfoUpdate(BaseModel):
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    opening_hours: Optional[str] = None
+
+class SupportTicket(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+    status: str = "open"  # open, in_progress, closed
+    priority: str = "normal"  # low, normal, high, urgent
+    assigned_to: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SupportTicketCreate(BaseModel):
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+
+class HelpArticle(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    content: str
+    category: str
+    order: int = 0
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class HelpArticleCreate(BaseModel):
+    title: str
+    content: str
+    category: str
+    order: int = 0
+
+class ContactMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    message: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactMessageCreate(BaseModel):
+    name: str
+    email: EmailStr
+    message: str
+
+class Project(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    category: str
+    description: str
+    image_url: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProjectCreate(BaseModel):
+    title: str
+    category: str
+    description: str
+    image_url: str
+
+class ProjectUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+
+class TeamMember(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    role: str
+    image_url: str
+    bio: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TeamMemberCreate(BaseModel):
+    name: str
+    role: str
+    image_url: str
+    bio: Optional[str] = None
+
+class JobPosting(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    requirements: str
+    location: str
+    employment_type: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class JobPostingCreate(BaseModel):
+    title: str
+    description: str
+    requirements: str
+    location: str
+    employment_type: str
+
+class Application(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    job_id: str
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    cover_letter: str
+    cv_filename: Optional[str] = None
+    status: str = "pending"  # pending, reviewed, accepted, rejected
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ApplicationCreate(BaseModel):
+    job_id: str
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    cover_letter: str
+
+class Admin(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: EmailStr
+    hashed_password: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class AdminCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+
+class AdminLogin(BaseModel):
+    username: str
+    password: str
+
+class QuoteRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    project_type: str
+    description: str
+    budget_range: Optional[str] = None
+    timeline: Optional[str] = None
+    file_path: Optional[str] = None
+    status: str = "new"  # new, reviewed, quoted, closed
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class QuoteRequestCreate(BaseModel):
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    project_type: str
+    description: str
+    budget_range: Optional[str] = None
+    timeline: Optional[str] = None
+
+class NewsPost(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    content: str
+    excerpt: Optional[str] = None
+    image_url: Optional[str] = None
+    author: str
+    is_published: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class NewsPostCreate(BaseModel):
+    title: str
+    content: str
+    excerpt: Optional[str] = None
+    image_url: Optional[str] = None
+    author: str
+
+# Routes
+
+# Public Routes
+@api_router.get("/")
+async def root():
+    return {"message": "Hohmann Bau API"}
+
+@api_router.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+# Enhanced Content Management Routes
+@api_router.get("/content/{page_name}")
+async def get_page_content(page_name: str):
+    content = await db.page_contents.find_one({"page_name": page_name})
+    if content:
+        return PageContent(**content)
+    return {"message": "Content not found"}
+
+@api_router.post("/content", response_model=PageContent)
+async def create_page_content(content: PageContentCreate):
+    # Check if content already exists for this page
+    existing = await db.page_contents.find_one({"page_name": content.page_name})
+    if existing:
+        # Update existing content
+        update_data = content.dict()
+        update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+        await db.page_contents.update_one(
+            {"page_name": content.page_name},
+            {"$set": update_data}
+        )
+        updated_content = await db.page_contents.find_one({"page_name": content.page_name})
+        return PageContent(**updated_content)
+    else:
+        # Create new content
+        content_dict = content.dict()
+        content_obj = PageContent(**content_dict)
+        content_data = prepare_for_mongo(content_obj.dict())
+        await db.page_contents.insert_one(content_data)
+        return content_obj
+
+@api_router.put("/content/{page_name}", response_model=PageContent)
+async def update_page_content(page_name: str, content_update: PageContentUpdate):
+    update_data = content_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.page_contents.update_one(
+        {"page_name": page_name},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Page content not found")
+    
+    updated_content = await db.page_contents.find_one({"page_name": page_name})
+    return PageContent(**updated_content)
+
+# Site Settings Routes
+@api_router.get("/settings/{setting_name}")
+async def get_site_settings(setting_name: str):
+    settings = await db.site_settings.find_one({"setting_name": setting_name})
+    if settings:
+        return SiteSettings(**settings)
+    return {"message": "Settings not found"}
+
+@api_router.post("/settings", response_model=SiteSettings)
+async def create_site_settings(settings: SiteSettingsCreate):
+    # Check if settings already exist
+    existing = await db.site_settings.find_one({"setting_name": settings.setting_name})
+    if existing:
+        # Update existing settings
+        update_data = settings.dict()
+        update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+        await db.site_settings.update_one(
+            {"setting_name": settings.setting_name},
+            {"$set": update_data}
+        )
+        updated_settings = await db.site_settings.find_one({"setting_name": settings.setting_name})
+        return SiteSettings(**updated_settings)
+    else:
+        # Create new settings
+        settings_dict = settings.dict()
+        settings_obj = SiteSettings(**settings_dict)
+        settings_data = prepare_for_mongo(settings_obj.dict())
+        await db.site_settings.insert_one(settings_data)
+        return settings_obj
+
+@api_router.put("/settings/{setting_name}", response_model=SiteSettings)
+async def update_site_settings(setting_name: str, settings_update: SiteSettingsUpdate):
+    update_data = settings_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.site_settings.update_one(
+        {"setting_name": setting_name},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Settings not found")
+    
+    updated_settings = await db.site_settings.find_one({"setting_name": setting_name})
+    return SiteSettings(**updated_settings)
+
+# Media Management Routes
+@api_router.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    # Create upload directory if it doesn't exist
+    upload_dir = Path("uploads")
+    upload_dir.mkdir(exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = Path(file.filename).suffix
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    file_path = upload_dir / unique_filename
+    
+    # Save file
+    async with aiofiles.open(file_path, 'wb') as out_file:
+        content = await file.read()
+        await out_file.write(content)
+    
+    # Save file info to database
+    media_file = MediaFile(
+        filename=unique_filename,
+        original_name=file.filename,
+        file_path=str(file_path),
+        file_type="image" if file.content_type.startswith("image/") else "document",
+        file_size=len(content),
+        mime_type=file.content_type
+    )
+    
+    media_data = prepare_for_mongo(media_file.dict())
+    await db.media_files.insert_one(media_data)
+    
+    return {
+        "filename": unique_filename,
+        "original_name": file.filename,
+        "file_path": f"/uploads/{unique_filename}",
+        "file_type": media_file.file_type,
+        "file_size": media_file.file_size
+    }
+
+@api_router.get("/media")
+async def get_media_files():
+    media_files = await db.media_files.find().sort("uploaded_at", -1).to_list(1000)
+    return [MediaFile(**media) for media in media_files]
+
+# Services Routes
+@api_router.get("/services", response_model=List[Service])
+async def get_services():
+    services = await db.services.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [Service(**service) for service in services]
+
+@api_router.post("/services", response_model=Service)
+async def create_service(service: ServiceCreate):
+    service_dict = service.dict()
+    service_obj = Service(**service_dict)
+    service_data = prepare_for_mongo(service_obj.dict())
+    await db.services.insert_one(service_data)
+    return service_obj
+
+@api_router.put("/services/{service_id}", response_model=Service)
+async def update_service(service_id: str, service_update: ServiceCreate):
+    update_data = service_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.services.update_one(
+        {"id": service_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    updated_service = await db.services.find_one({"id": service_id})
+    return Service(**updated_service)
+
+@api_router.delete("/services/{service_id}")
+async def delete_service(service_id: str):
+    result = await db.services.delete_one({"id": service_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"message": "Service deleted successfully"}
+
+# Features Routes
+@api_router.get("/features", response_model=List[Feature])
+async def get_features():
+    features = await db.features.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [Feature(**feature) for feature in features]
+
+@api_router.post("/features", response_model=Feature)
+async def create_feature(feature: FeatureCreate):
+    feature_dict = feature.dict()
+    feature_obj = Feature(**feature_dict)
+    feature_data = prepare_for_mongo(feature_obj.dict())
+    await db.features.insert_one(feature_data)
+    return feature_obj
+
+# Contact Info Routes
+@api_router.get("/contact-info")
+async def get_contact_info():
+    contact_info = await db.contact_info.find_one()
+    if contact_info:
+        return ContactInfo(**contact_info)
+    # Return default contact info
+    return {
+        "address": "Bahnhofstraße 123, 12345 Musterstadt",
+        "phone": "+49 123 456 789", 
+        "email": "info@hohmann-bau.de",
+        "opening_hours": "Mo-Fr: 08:00-17:00 Uhr"
+    }
+
+@api_router.put("/contact-info", response_model=ContactInfo)
+async def update_contact_info(contact_update: ContactInfoUpdate):
+    update_data = {k: v for k, v in contact_update.dict().items() if v is not None}
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    # Check if contact info exists
+    existing = await db.contact_info.find_one()
+    if existing:
+        await db.contact_info.update_one({}, {"$set": update_data})
+        updated_info = await db.contact_info.find_one()
+        return ContactInfo(**updated_info)
+    else:
+        # Create new contact info
+        contact_data = ContactInfo(**update_data)
+        contact_dict = prepare_for_mongo(contact_data.dict())
+        await db.contact_info.insert_one(contact_dict)
+        return contact_data
+
+# Support & Help Routes
+@api_router.get("/support-tickets", response_model=List[SupportTicket])
+async def get_support_tickets():
+    tickets = await db.support_tickets.find().sort("created_at", -1).to_list(1000)
+    return [SupportTicket(**ticket) for ticket in tickets]
+
+@api_router.post("/support-tickets", response_model=SupportTicket)
+async def create_support_ticket(ticket: SupportTicketCreate):
+    ticket_dict = ticket.dict()
+    ticket_obj = SupportTicket(**ticket_dict)
+    ticket_data = prepare_for_mongo(ticket_obj.dict())
+    await db.support_tickets.insert_one(ticket_data)
+    return ticket_obj
+
+@api_router.get("/help-articles", response_model=List[HelpArticle])
+async def get_help_articles():
+    articles = await db.help_articles.find({"is_active": True}).sort("order", 1).to_list(1000)
+    return [HelpArticle(**article) for article in articles]
+
+@api_router.post("/help-articles", response_model=HelpArticle)
+async def create_help_article(article: HelpArticleCreate):
+    article_dict = article.dict()
+    article_obj = HelpArticle(**article_dict)
+    article_data = prepare_for_mongo(article_obj.dict())
+    await db.help_articles.insert_one(article_data)
+    return article_obj
+
+@api_router.put("/help-articles/{article_id}", response_model=HelpArticle)
+async def update_help_article(article_id: str, article_update: HelpArticleCreate):
+    update_data = article_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.help_articles.update_one(
+        {"id": article_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Help article not found")
+    
+    updated_article = await db.help_articles.find_one({"id": article_id})
+    return HelpArticle(**updated_article)
+
+@api_router.delete("/help-articles/{article_id}")
+async def delete_help_article(article_id: str):
+    result = await db.help_articles.delete_one({"id": article_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Help article not found")
+    return {"message": "Help article deleted successfully"}
+
+# News/Blog Routes - Enhanced
+@api_router.get("/news", response_model=List[NewsPost])
+async def get_news(page: str = None, limit: int = 10):
+    query = {"is_published": True}
+    if page:
+        # Filter by page context if provided
+        pass
+    
+    news = await db.news_posts.find(query).sort("created_at", -1).limit(limit).to_list(limit)
+    return [NewsPost(**post) for post in news]
+
+# Admin Routes - Extended
+@api_router.get("/admin/support-tickets", response_model=List[SupportTicket])
+async def get_admin_support_tickets():
+    tickets = await db.support_tickets.find().sort("created_at", -1).to_list(1000)
+    return [SupportTicket(**ticket) for ticket in tickets]
+
+@api_router.put("/admin/support-tickets/{ticket_id}")
+async def update_support_ticket_status(ticket_id: str, status: str, assigned_to: str = None):
+    update_data = {
+        "status": status,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    if assigned_to:
+        update_data["assigned_to"] = assigned_to
+    
+    result = await db.support_tickets.update_one(
+        {"id": ticket_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Support ticket not found")
+    
+    return {"message": "Support ticket updated successfully"}
+
+@api_router.get("/admin/help-articles", response_model=List[HelpArticle])
+async def get_admin_help_articles():
+    articles = await db.help_articles.find().sort("order", 1).to_list(1000)
+    return [HelpArticle(**article) for article in articles]
+
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard(admin = None):  # admin: dict = Depends(get_current_admin)
+    # Get counts for dashboard
+    contact_count = await db.contact_messages.count_documents({})
+    project_count = await db.projects.count_documents({})
+    application_count = await db.applications.count_documents({})
+    quote_count = await db.quote_requests.count_documents({})
+    support_count = await db.support_tickets.count_documents({})
+    news_count = await db.news_posts.count_documents({})
+    jobs_count = await db.job_postings.count_documents({})
+    services_count = await db.services.count_documents({})
+    team_count = await db.team_members.count_documents({})
+    
+    return {
+        "contact_messages": contact_count,
+        "projects": project_count,
+        "applications": application_count,
+        "quote_requests": quote_count,
+        "support_tickets": support_count,
+        "news_articles": news_count,
+        "job_postings": jobs_count,
+        "services": services_count,
+        "team_members": team_count
+    }
+
+# Contact Routes
+@api_router.post("/contact", response_model=ContactMessage)
+async def create_contact_message(message: ContactMessageCreate):
+    message_dict = message.dict()
+    message_obj = ContactMessage(**message_dict)
+    message_data = prepare_for_mongo(message_obj.dict())
+    await db.contact_messages.insert_one(message_data)
+    return message_obj
+
+@api_router.get("/contact", response_model=List[ContactMessage])
+async def get_contact_messages():
+    messages = await db.contact_messages.find().sort("created_at", -1).to_list(1000)
+    return [ContactMessage(**msg) for msg in messages]
+
+# Projects Routes
+@api_router.get("/projects", response_model=List[Project])
+async def get_projects():
+    projects = await db.projects.find().sort("created_at", -1).to_list(1000)
+    return [Project(**project) for project in projects]
+
+@api_router.post("/projects", response_model=Project)
+async def create_project(project: ProjectCreate):
+    project_dict = project.dict()
+    project_obj = Project(**project_dict)
+    project_data = prepare_for_mongo(project_obj.dict())
+    await db.projects.insert_one(project_data)
+    return project_obj
+
+@api_router.put("/projects/{project_id}", response_model=Project)
+async def update_project(project_id: str, project_update: ProjectUpdate):
+    update_data = {k: v for k, v in project_update.dict().items() if v is not None}
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.projects.update_one(
+        {"id": project_id}, 
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    updated_project = await db.projects.find_one({"id": project_id})
+    return Project(**updated_project)
+
+@api_router.delete("/projects/{project_id}")
+async def delete_project(project_id: str):
+    result = await db.projects.delete_one({"id": project_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {"message": "Project deleted successfully"}
+
+# Team Routes
+@api_router.get("/team", response_model=List[TeamMember])
+async def get_team_members():
+    members = await db.team_members.find().sort("created_at", -1).to_list(1000)
+    return [TeamMember(**member) for member in members]
+
+@api_router.post("/team", response_model=TeamMember)
+async def create_team_member(member: TeamMemberCreate):
+    member_dict = member.dict()
+    member_obj = TeamMember(**member_dict)
+    member_data = prepare_for_mongo(member_obj.dict())
+    await db.team_members.insert_one(member_data)
+    return member_obj
+
+@api_router.put("/team/{member_id}", response_model=TeamMember)
+async def update_team_member(member_id: str, member_update: TeamMemberCreate):
+    update_data = member_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.team_members.update_one(
+        {"id": member_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Team member not found")
+    
+    updated_member = await db.team_members.find_one({"id": member_id})
+    return TeamMember(**updated_member)
+
+@api_router.delete("/team/{member_id}")
+async def delete_team_member(member_id: str):
+    result = await db.team_members.delete_one({"id": member_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Team member not found")
+    return {"message": "Team member deleted successfully"}
+
+# Career/Jobs Routes
+@api_router.get("/jobs", response_model=List[JobPosting])
+async def get_job_postings():
+    jobs = await db.job_postings.find({"is_active": True}).sort("created_at", -1).to_list(1000)
+    return [JobPosting(**job) for job in jobs]
+
+@api_router.get("/admin/jobs", response_model=List[JobPosting])
+async def get_all_job_postings():
+    jobs = await db.job_postings.find().sort("created_at", -1).to_list(1000)
+    return [JobPosting(**job) for job in jobs]
+
+@api_router.post("/jobs", response_model=JobPosting)
+async def create_job_posting(job: JobPostingCreate):
+    job_dict = job.dict()
+    job_obj = JobPosting(**job_dict)
+    job_data = prepare_for_mongo(job_obj.dict())
+    await db.job_postings.insert_one(job_data)
+    return job_obj
+
+@api_router.put("/jobs/{job_id}", response_model=JobPosting)
+async def update_job_posting(job_id: str, job_update: JobPostingCreate):
+    update_data = job_update.dict()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.job_postings.update_one(
+        {"id": job_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    
+    updated_job = await db.job_postings.find_one({"id": job_id})
+    return JobPosting(**updated_job)
+
+@api_router.delete("/jobs/{job_id}")
+async def delete_job_posting(job_id: str):
+    result = await db.job_postings.delete_one({"id": job_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    return {"message": "Job posting deleted successfully"}
+
+@api_router.put("/jobs/{job_id}/toggle")
+async def toggle_job_active(job_id: str):
+    job = await db.job_postings.find_one({"id": job_id})
+    if not job:
+        raise HTTPException(status_code=404, detail="Job posting not found")
+    
+    new_status = not job.get('is_active', True)
+    await db.job_postings.update_one(
+        {"id": job_id},
+        {"$set": {"is_active": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": f"Job posting {'activated' if new_status else 'deactivated'} successfully"}
+
+@api_router.post("/applications", response_model=Application)
+async def create_application(
+    job_id: str = Form(...),
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(None),
+    cover_letter: str = Form(...),
+    cv_file: UploadFile = File(None)
+):
+    # Handle file upload
+    cv_filename = None
+    if cv_file:
+        cv_filename = f"{uuid.uuid4()}_{cv_file.filename}"
+        file_path = f"uploads/cv/{cv_filename}"
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            content = await cv_file.read()
+            await out_file.write(content)
+    
+    application_data = {
+        "job_id": job_id,
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "cover_letter": cover_letter,
+        "cv_filename": cv_filename
+    }
+    
+    application_obj = Application(**application_data)
+    application_data = prepare_for_mongo(application_obj.dict())
+    await db.applications.insert_one(application_data)
+    return application_obj
+
+# Quote Request Routes
+@api_router.post("/quote-request", response_model=QuoteRequest)
+async def create_quote_request(
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(None),
+    project_type: str = Form(...),
+    description: str = Form(...),
+    budget_range: str = Form(None),
+    timeline: str = Form(None),
+    blueprint_file: UploadFile = File(None)
+):
+    # Handle file upload
+    file_path = None
+    if blueprint_file:
+        filename = f"{uuid.uuid4()}_{blueprint_file.filename}"
+        file_path = f"uploads/blueprints/{filename}"
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            content = await blueprint_file.read()
+            await out_file.write(content)
+    
+    quote_data = {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "project_type": project_type,
+        "description": description,
+        "budget_range": budget_range,
+        "timeline": timeline,
+        "file_path": file_path
+    }
+    
+    quote_obj = QuoteRequest(**quote_data)
+    quote_data = prepare_for_mongo(quote_obj.dict())
+    await db.quote_requests.insert_one(quote_data)
+    return quote_obj
+
+# News/Blog Routes
+@api_router.post("/news", response_model=NewsPost)
+async def create_news_post(post: NewsPostCreate):
+    post_dict = post.dict()
+    post_obj = NewsPost(**post_dict)
+    post_data = prepare_for_mongo(post_obj.dict())
+    await db.news_posts.insert_one(post_data)
+    return post_obj
+
+# Admin Authentication Routes
+@api_router.post("/admin/register")
+async def register_admin(admin: AdminCreate):
+    # Check if admin already exists
+    existing_admin = await db.admins.find_one({"username": admin.username})
+    if existing_admin:
+        raise HTTPException(status_code=400, detail="Admin already exists")
+    
+    admin_dict = admin.dict()
+    admin_dict['hashed_password'] = hash_password(admin_dict.pop('password'))
+    admin_obj = Admin(**admin_dict)
+    admin_data = prepare_for_mongo(admin_obj.dict())
+    await db.admins.insert_one(admin_data)
+    
+    return {"message": "Admin registered successfully"}
+
+@api_router.post("/admin/login")
+async def login_admin(credentials: AdminLogin):
+    admin = await db.admins.find_one({"username": credentials.username})
+    if not admin or not verify_password(credentials.password, admin['hashed_password']):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    token_data = {"username": admin['username'], "admin_id": admin['id']}
+    token = create_jwt_token(token_data)
+    
+    return {"access_token": token, "token_type": "bearer"}
+
+# Admin-only routes (protected)
+async def get_current_admin(credentials: HTTPAuthorizationCredentials = security):
+    token_data = verify_jwt_token(credentials.credentials)
+    if not token_data:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    admin = await db.admins.find_one({"username": token_data["username"]})
+    if not admin:
+        raise HTTPException(status_code=401, detail="Admin not found")
+    
+    return admin
+
+@api_router.get("/admin/applications", response_model=List[Application])
+async def get_applications(admin = None):  # admin: dict = Depends(get_current_admin)
+    applications = await db.applications.find().sort("created_at", -1).to_list(1000)
+    return [Application(**app) for app in applications]
+
+@api_router.get("/admin/quote-requests", response_model=List[QuoteRequest])
+async def get_quote_requests(admin = None):  # admin: dict = Depends(get_current_admin)
+    quotes = await db.quote_requests.find().sort("created_at", -1).to_list(1000)
+    return [QuoteRequest(**quote) for quote in quotes]
+
+# Include the router in the main app
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Hohmann Bau API starting up...")
+    
+    # Create default admin if none exists
+    admin_count = await db.admins.count_documents({})
+    if admin_count == 0:
+        default_admin = {
+            "id": str(uuid.uuid4()),
+            "username": "admin",
+            "email": "admin@hohmann-bau.de",
+            "hashed_password": hash_password("admin123"),
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.admins.insert_one(default_admin)
+        logger.info("Default admin created: username=admin, password=admin123")
+    
+    # Create default page contents if none exist
+    pages_to_create = [
+        {
+            "page_name": "home",
+            "content": {
+                "hero_title": "Bauen mit Vertrauen",
+                "hero_subtitle": "Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen",
+                "hero_image": "https://images.unsplash.com/photo-1599995903128-531fc7fb694b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc1ODM3ODEyMHww&ixlib=rb-4.1.0&q=85",
+                "hero_cta_text": "Jetzt Angebot anfordern",
+                "hero_cta_link": "/angebot",
+                "about_title": "Über uns",
+                "about_text": "Mit über 25 Jahren Erfahrung sind wir Ihr vertrauensvoller Partner für alle Bauprojekte."
+            }
+        },
+        {
+            "page_name": "services",
+            "content": {
+                "title": "Unsere Leistungen",
+                "subtitle": "Umfassende Baulösungen aus einer Hand",
+                "description": "Von der ersten Idee bis zur schlüsselfertigen Übergabe begleiten wir Sie durch Ihr gesamtes Bauvorhaben. Unsere erfahrenen Fachkräfte garantieren höchste Qualität und termingerechte Ausführung."
+            }
+        },
+        {
+            "page_name": "projects",
+            "content": {
+                "title": "Unsere Projekte",
+                "subtitle": "Referenzen aus verschiedenen Bereichen",
+                "description": "Entdecken Sie unsere erfolgreich abgeschlossenen Bauprojekte und lassen Sie sich von der Vielfalt und Qualität unserer Arbeit überzeugen."
+            }
+        },
+        {
+            "page_name": "team",
+            "content": {
+                "title": "Unser Team",
+                "subtitle": "Erfahrene Fachkräfte für Ihr Projekt",
+                "description": "Lernen Sie die Menschen kennen, die hinter unseren erfolgreichen Bauprojekten stehen. Unser erfahrenes Team aus Ingenieuren, Architekten und Baupleitern bringt jahrzehntelange Expertise mit."
+            }
+        },
+        {
+            "page_name": "contact",
+            "content": {
+                "title": "Kontakt",
+                "subtitle": "Lassen Sie uns über Ihr Projekt sprechen",
+                "description": "Haben Sie Fragen zu unseren Leistungen oder möchten Sie ein Projekt mit uns besprechen? Wir freuen uns auf Ihre Nachricht und melden uns schnellstmöglich bei Ihnen."
+            }
+        },
+        {
+            "page_name": "career",
+            "content": {
+                "title": "Karriere",
+                "subtitle": "Werden Sie Teil unseres Teams",
+                "description": "Wir suchen motivierte Fachkräfte, die mit uns gemeinsam die Zukunft des Bauens gestalten möchten."
+            }
+        },
+        {
+            "page_name": "footer",
+            "content": {
+                "company_name": "Hohmann Bau GmbH",
+                "company_description": "Ihr Partner für professionelle Bauprojekte",
+                "links": {
+                    "company": ["Über uns", "Team", "Karriere"],
+                    "services": ["Hochbau", "Tiefbau", "Sanierung"],
+                    "support": ["Kontakt", "Hilfe", "Impressum"]
+                },
+                "copyright": "© 2024 Hohmann Bau GmbH. Alle Rechte vorbehalten."
+            }
+        },
+        {
+            "page_name": "navigation",
+            "content": {
+                "logo_text": "Hohmann Bau",
+                "menu_items": [
+                    {"label": "Home", "link": "/", "active": True},
+                    {"label": "Leistungen", "link": "/leistungen", "active": True},
+                    {"label": "Projekte", "link": "/projekte", "active": True},
+                    {"label": "Team", "link": "/team", "active": True},
+                    {"label": "Karriere", "link": "/karriere", "active": True},
+                    {"label": "Kontakt", "link": "/kontakt", "active": True}
+                ],
+                "cta_button": {
+                    "text": "Angebot erhalten",
+                    "link": "/angebot",
+                    "style": "primary"
+                }
+            }
+        }
+    ]
+    
+    for page_data in pages_to_create:
+        existing_content = await db.page_contents.find_one({"page_name": page_data["page_name"]})
+        if not existing_content:
+            page_content = {
+                "id": str(uuid.uuid4()),
+                "page_name": page_data["page_name"],
+                "content": page_data["content"],
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.page_contents.insert_one(page_content)
+            logger.info(f"Default content created for page: {page_data['page_name']}")
+    
+    # Create default site settings
+    default_settings = [
+        {
+            "setting_name": "theme",
+            "settings": {
+                "primary_color": "#16a34a",
+                "secondary_color": "#059669",
+                "accent_color": "#10b981",
+                "background_color": "#ffffff",
+                "text_color": "#1f2937",
+                "border_color": "#e5e7eb"
+            }
+        },
+        {
+            "setting_name": "typography",
+            "settings": {
+                "font_family": "Inter, system-ui, sans-serif",
+                "heading_font": "Inter, system-ui, sans-serif",
+                "font_size_base": "16px",
+                "font_size_lg": "18px",
+                "font_size_xl": "20px",
+                "line_height": "1.6"
+            }
+        },
+        {
+            "setting_name": "layout",
+            "settings": {
+                "container_width": "1200px",
+                "section_padding": "80px",
+                "card_border_radius": "8px",
+                "button_border_radius": "6px"
+            }
+        },
+        {
+            "setting_name": "seo",
+            "settings": {
+                "site_title": "Hohmann Bau - Ihr Partner für professionelle Bauprojekte",
+                "site_description": "Erfahrene Baufirma für Hochbau, Tiefbau und Sanierungen. Qualität und Zuverlässigkeit seit über 25 Jahren.",
+                "keywords": "Bau, Hochbau, Tiefbau, Sanierung, Baufirma, Bauunternehmen",
+                "og_image": "/og-image.jpg"
+            }
+        }
+    ]
+    
+    for setting_data in default_settings:
+        existing_settings = await db.site_settings.find_one({"setting_name": setting_data["setting_name"]})
+        if not existing_settings:
+            settings_obj = {
+                "id": str(uuid.uuid4()),
+                "setting_name": setting_data["setting_name"],
+                "settings": setting_data["settings"],
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.site_settings.insert_one(settings_obj)
+            logger.info(f"Default settings created: {setting_data['setting_name']}")
+    
+    # Create default contact info if none exists
+    contact_info_count = await db.contact_info.count_documents({})
+    if contact_info_count == 0:
+        default_contact = {
+            "id": str(uuid.uuid4()),
+            "address": "Bahnhofstraße 123, 12345 Musterstadt",
+            "phone": "+49 123 456 789",
+            "email": "info@hohmann-bau.de",
+            "opening_hours": "Mo-Fr: 08:00-17:00 Uhr",
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.contact_info.insert_one(default_contact)
+        logger.info("Default contact info created")
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    client.close()
