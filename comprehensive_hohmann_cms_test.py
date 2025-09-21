@@ -22,12 +22,11 @@ import time
 from datetime import datetime
 
 class HohmannCMSTest:
-    def __init__(self, base_url="http://localhost"):
+    def __init__(self, base_url="http://localhost/Hohmannbau"):
         self.base_url = base_url
-        self.hohmann_path = "/Hohmannbau"
-        self.admin_url = f"{base_url}{self.hohmann_path}/admin"
-        self.frontend_url = f"{base_url}{self.hohmann_path}"
-        self.api_url = f"{base_url}{self.hohmann_path}/api/index.php"
+        self.admin_url = f"{base_url}/admin"
+        self.frontend_url = base_url
+        self.api_url = f"{base_url}/api/index.php"
         
         self.session = requests.Session()
         self.tests_run = 0
