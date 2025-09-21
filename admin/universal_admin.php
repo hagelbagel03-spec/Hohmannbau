@@ -960,7 +960,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
                     <!-- Hochbau -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="hochbau">
                         <div class="text-4xl mb-4">🏗️</div>
                         <h3 class="text-xl font-bold mb-2">Hochbau</h3>
                         <p class="text-gray-600 mb-4">Neubau von Wohn- und Geschäftsgebäuden, Einfamilienhäuser bis hin zu komplexen Gewerbeobjekten.</p>
@@ -973,8 +973,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('hochbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('hochbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('hochbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-edit mr-1"></i>Bearbeiten
+                            </button>
+                            <button onclick="toggleService('hochbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">
+                                <i class="fas fa-power-off mr-1"></i>An/Aus
+                            </button>
                         </div>
                     </div>
 
