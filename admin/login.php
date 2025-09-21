@@ -9,18 +9,19 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 }
 
 $error = '';
+$success = '';
 
 // Handle login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
     
-    // Simple authentication (in production, use proper password hashing)
     if ($username === 'admin' && $password === 'admin123') {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_username'] = $username;
-        header('Location: universal_admin.php');
-        exit();
+        $success = 'Login erfolgreich! Weiterleitung...';
+        // JavaScript redirect instead of PHP header
+        echo "<script>setTimeout(function(){ window.location.href = 'universal_admin.php'; }, 1000);</script>";
     } else {
         $error = 'Ungültige Anmeldedaten';
     }
