@@ -5,156 +5,6 @@ class PageContent {
     public function __construct($database) {
         if ($database) {
             $this->db = $database->getConnection();
-            $this->createTables();
-        }
-    }
-    
-    private function createTables() {
-        if (!$this->db) return;
-        
-        try {
-            // Create page_contents table
-            $sql = "CREATE TABLE IF NOT EXISTS page_contents (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                page_name VARCHAR(50) NOT NULL UNIQUE,
-                content TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )";
-            $this->db->exec($sql);
-            
-            // Create design_settings table
-            $sql = "CREATE TABLE IF NOT EXISTS design_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                setting_type VARCHAR(50) NOT NULL UNIQUE,
-                settings TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )";
-            $this->db->exec($sql);
-            
-            // Create media_files table
-            $sql = "CREATE TABLE IF NOT EXISTS media_files (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                filename VARCHAR(255) NOT NULL,
-                original_name VARCHAR(255) NOT NULL,
-                file_path VARCHAR(500) NOT NULL,
-                file_type VARCHAR(50) NOT NULL,
-                file_size INTEGER NOT NULL,
-                mime_type VARCHAR(100) NOT NULL,
-                uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )";
-            $this->db->exec($sql);
-            
-            // Insert default content if not exists
-            $this->insertDefaultContent();
-        } catch (Exception $e) {
-            error_log("Error creating tables: " . $e->getMessage());
-        }
-    }
-    
-    private function insertDefaultContent() {
-        if (!$this->db) return;
-        
-        $defaultPages = [
-            'home' => [
-                'hero_title' => 'Bauen mit Vertrauen',
-                'hero_subtitle' => 'Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen',
-                'hero_image' => 'https://images.unsplash.com/photo-1599995903128-531fc7fb694b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc1ODM3ODEyMHww&ixlib=rb-4.1.0&q=85',
-                'hero_cta_text' => 'Jetzt Angebot anfordern',
-                'about_title' => 'Über uns',
-                'about_text' => 'Mit über 25 Jahren Erfahrung sind wir Ihr vertrauensvoller Partner für alle Bauprojekte. Wir stehen für Qualität, Zuverlässigkeit und termingerechte Ausführung.'
-            ],
-            'services' => [
-                'title' => 'Unsere Leistungen',
-                'subtitle' => 'Umfassende Baulösungen aus einer Hand',
-                'description' => 'Von der ersten Idee bis zur schlüsselfertigen Übergabe begleiten wir Sie durch Ihr gesamtes Bauvorhaben. Unsere erfahrenen Fachkräfte garantieren höchste Qualität und termingerechte Ausführung.'
-            ],
-            'projects' => [
-                'title' => 'Unsere Projekte',
-                'subtitle' => 'Referenzen aus verschiedenen Bereichen',
-                'description' => 'Entdecken Sie unsere erfolgreich abgeschlossenen Bauprojekte und lassen Sie sich von der Vielfalt und Qualität unserer Arbeit überzeugen.'
-            ],
-            'team' => [
-                'title' => 'Unser Team',
-                'subtitle' => 'Erfahrene Fachkräfte für Ihr Projekt',
-                'description' => 'Lernen Sie die Menschen kennen, die hinter unseren erfolgreichen Bauprojekten stehen. Unser erfahrenes Team aus Ingenieuren, Architekten und Baupleitern bringt jahrzehntelange Expertise mit.'
-            ],
-            'contact' => [
-                'title' => 'Kontakt',
-                'subtitle' => 'Lassen Sie uns über Ihr Projekt sprechen',
-                'description' => 'Haben Sie Fragen zu unseren Leistungen oder möchten Sie ein Projekt mit uns besprechen? Wir freuen uns auf Ihre Nachricht und melden uns schnellstmöglich bei Ihnen.',
-                'address' => 'Bahnhofstraße 123, 12345 Musterstadt',
-                'phone' => '+49 123 456 789',
-                'email' => 'info@hohmann-bau.de',
-                'opening_hours' => 'Mo-Fr: 08:00-17:00 Uhr'
-            ],
-            'career' => [
-                'title' => 'Karriere',
-                'subtitle' => 'Werden Sie Teil unseres Teams',
-                'description' => 'Wir suchen motivierte Fachkräfte, die mit uns gemeinsam die Zukunft des Bauens gestalten möchten. Entdecken Sie vielfältige Karrieremöglichkeiten in einem innovativen Unternehmen.'
-            ],
-            'footer' => [
-                'company_name' => 'Hohmann Bau GmbH',
-                'company_description' => 'Ihr Partner für professionelle Bauprojekte',
-                'copyright' => '© 2024 Hohmann Bau GmbH. Alle Rechte vorbehalten.'
-            ],
-            'navigation' => [
-                'logo_text' => 'Hohmann Bau',
-                'cta_button_text' => 'Angebot erhalten'
-            ]
-        ];
-        
-        foreach ($defaultPages as $pageName => $content) {
-            try {
-                $stmt = $this->db->prepare("SELECT id FROM page_contents WHERE page_name = ?");
-                $stmt->execute([$pageName]);
-                
-                if (!$stmt->fetch()) {
-                    $this->saveContent($pageName, $content);
-                }
-            } catch (Exception $e) {
-                error_log("Error inserting default content for $pageName: " . $e->getMessage());
-            }
-        }
-        
-        // Insert default design settings
-        $defaultDesignSettings = [
-            'theme' => [
-                'primary_color' => '#16a34a',
-                'secondary_color' => '#059669',
-                'accent_color' => '#10b981',
-                'background_color' => '#ffffff',
-                'text_color' => '#1f2937',
-                'border_color' => '#e5e7eb'
-            ],
-            'typography' => [
-                'font_family' => 'Inter, system-ui, sans-serif',
-                'heading_font' => 'Inter, system-ui, sans-serif',
-                'font_size_base' => '16px',
-                'font_size_lg' => '18px',
-                'font_size_xl' => '20px',
-                'line_height' => '1.6'
-            ],
-            'layout' => [
-                'container_width' => '1200px',
-                'section_padding' => '80px',
-                'card_border_radius' => '8px',
-                'button_border_radius' => '6px'
-            ]
-        ];
-        
-        foreach ($defaultDesignSettings as $settingType => $settings) {
-            try {
-                $stmt = $this->db->prepare("SELECT id FROM design_settings WHERE setting_type = ?");
-                $stmt->execute([$settingType]);
-                
-                if (!$stmt->fetch()) {
-                    $this->saveDesignSettings($settingType, $settings);
-                }
-            } catch (Exception $e) {
-                error_log("Error inserting default design settings for $settingType: " . $e->getMessage());
-            }
         }
     }
     
@@ -164,7 +14,7 @@ class PageContent {
         try {
             $stmt = $this->db->prepare("SELECT content FROM page_contents WHERE page_name = ?");
             $stmt->execute([$pageName]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch();
             
             if ($result) {
                 return json_decode($result['content'], true) ?: [];
@@ -182,14 +32,18 @@ class PageContent {
         try {
             $contentJson = json_encode($content, JSON_UNESCAPED_UNICODE);
             
-            // Try to update first
-            $stmt = $this->db->prepare("UPDATE page_contents SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE page_name = ?");
-            $stmt->execute([$contentJson, $pageName]);
+            // Check if exists
+            $stmt = $this->db->prepare("SELECT id FROM page_contents WHERE page_name = ?");
+            $stmt->execute([$pageName]);
             
-            // If no rows affected, insert new
-            if ($stmt->rowCount() == 0) {
-                $stmt = $this->db->prepare("INSERT INTO page_contents (page_name, content) VALUES (?, ?)");
-                $stmt->execute([$pageName, $contentJson]);
+            if ($stmt->fetch()) {
+                // Update existing
+                $stmt = $this->db->prepare("UPDATE page_contents SET content = ?, updated_at = NOW() WHERE page_name = ?");
+                $stmt->execute([$contentJson, $pageName]);
+            } else {
+                // Insert new
+                $stmt = $this->db->prepare("INSERT INTO page_contents (id, page_name, content) VALUES (?, ?, ?)");
+                $stmt->execute([uniqid(), $pageName, $contentJson]);
             }
             
             return true;
@@ -203,9 +57,18 @@ class PageContent {
         if (!$this->db) return [];
         
         try {
+            // Create design_settings table if not exists
+            $this->db->exec("CREATE TABLE IF NOT EXISTS design_settings (
+                id VARCHAR(255) PRIMARY KEY,
+                setting_type VARCHAR(50) NOT NULL UNIQUE,
+                settings JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )");
+            
             $stmt = $this->db->prepare("SELECT settings FROM design_settings WHERE setting_type = ?");
             $stmt->execute([$settingType]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch();
             
             if ($result) {
                 return json_decode($result['settings'], true) ?: [];
@@ -221,16 +84,29 @@ class PageContent {
         if (!$this->db) return false;
         
         try {
+            // Create design_settings table if not exists
+            $this->db->exec("CREATE TABLE IF NOT EXISTS design_settings (
+                id VARCHAR(255) PRIMARY KEY,
+                setting_type VARCHAR(50) NOT NULL UNIQUE,
+                settings JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )");
+            
             $settingsJson = json_encode($settings, JSON_UNESCAPED_UNICODE);
             
-            // Try to update first
-            $stmt = $this->db->prepare("UPDATE design_settings SET settings = ?, updated_at = CURRENT_TIMESTAMP WHERE setting_type = ?");
-            $stmt->execute([$settingsJson, $settingType]);
+            // Check if exists
+            $stmt = $this->db->prepare("SELECT id FROM design_settings WHERE setting_type = ?");
+            $stmt->execute([$settingType]);
             
-            // If no rows affected, insert new
-            if ($stmt->rowCount() == 0) {
-                $stmt = $this->db->prepare("INSERT INTO design_settings (setting_type, settings) VALUES (?, ?)");
-                $stmt->execute([$settingType, $settingsJson]);
+            if ($stmt->fetch()) {
+                // Update existing
+                $stmt = $this->db->prepare("UPDATE design_settings SET settings = ?, updated_at = NOW() WHERE setting_type = ?");
+                $stmt->execute([$settingsJson, $settingType]);
+            } else {
+                // Insert new
+                $stmt = $this->db->prepare("INSERT INTO design_settings (id, setting_type, settings) VALUES (?, ?, ?)");
+                $stmt->execute([uniqid(), $settingType, $settingsJson]);
             }
             
             return true;
@@ -247,7 +123,7 @@ class PageContent {
             $stmt = $this->db->query("SELECT page_name, content, updated_at FROM page_contents ORDER BY page_name");
             $pages = [];
             
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch()) {
                 $pages[] = [
                     'page_name' => $row['page_name'],
                     'content' => json_decode($row['content'], true) ?: [],
@@ -259,6 +135,152 @@ class PageContent {
         } catch (Exception $e) {
             error_log("Error getting all pages: " . $e->getMessage());
             return [];
+        }
+    }
+    
+    public function getProjects() {
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT * FROM projects ORDER BY created_at DESC");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting projects: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function saveProject($data) {
+        if (!$this->db) return false;
+        
+        try {
+            if (isset($data['id']) && $data['id']) {
+                // Update existing
+                $stmt = $this->db->prepare("UPDATE projects SET title = ?, category = ?, description = ?, image_url = ?, updated_at = NOW() WHERE id = ?");
+                $stmt->execute([$data['title'], $data['category'], $data['description'], $data['image_url'], $data['id']]);
+            } else {
+                // Insert new
+                $stmt = $this->db->prepare("INSERT INTO projects (id, title, category, description, image_url) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([uniqid(), $data['title'], $data['category'], $data['description'], $data['image_url']]);
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Error saving project: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function deleteProject($id) {
+        if (!$this->db) return false;
+        
+        try {
+            $stmt = $this->db->prepare("DELETE FROM projects WHERE id = ?");
+            $stmt->execute([$id]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error deleting project: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function getContactMessages() {
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting contact messages: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function saveContactMessage($data) {
+        if (!$this->db) return false;
+        
+        try {
+            $stmt = $this->db->prepare("INSERT INTO contact_messages (id, name, email, message) VALUES (?, ?, ?, ?)");
+            $stmt->execute([uniqid(), $data['name'], $data['email'], $data['message']]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error saving contact message: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function getJobPostings() {
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT * FROM job_postings ORDER BY created_at DESC");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting job postings: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function saveJobPosting($data) {
+        if (!$this->db) return false;
+        
+        try {
+            if (isset($data['id']) && $data['id']) {
+                // Update existing
+                $stmt = $this->db->prepare("UPDATE job_postings SET title = ?, description = ?, requirements = ?, location = ?, employment_type = ?, is_active = ? WHERE id = ?");
+                $stmt->execute([$data['title'], $data['description'], $data['requirements'], $data['location'], $data['employment_type'], $data['is_active'] ?? 1, $data['id']]);
+            } else {
+                // Insert new
+                $stmt = $this->db->prepare("INSERT INTO job_postings (id, title, description, requirements, location, employment_type, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([uniqid(), $data['title'], $data['description'], $data['requirements'], $data['location'], $data['employment_type'], $data['is_active'] ?? 1]);
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Error saving job posting: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function getApplications() {
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT a.*, j.title as job_title FROM applications a LEFT JOIN job_postings j ON a.job_id = j.id ORDER BY a.created_at DESC");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting applications: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function getTeamMembers() {
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT * FROM team_members ORDER BY created_at ASC");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting team members: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function saveTeamMember($data) {
+        if (!$this->db) return false;
+        
+        try {
+            if (isset($data['id']) && $data['id']) {
+                // Update existing
+                $stmt = $this->db->prepare("UPDATE team_members SET name = ?, role = ?, image_url = ?, bio = ? WHERE id = ?");
+                $stmt->execute([$data['name'], $data['role'], $data['image_url'], $data['bio'], $data['id']]);
+            } else {
+                // Insert new
+                $stmt = $this->db->prepare("INSERT INTO team_members (id, name, role, image_url, bio) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([uniqid(), $data['name'], $data['role'], $data['image_url'], $data['bio']]);
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Error saving team member: " . $e->getMessage());
+            return false;
         }
     }
     
@@ -282,14 +304,27 @@ class PageContent {
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
                 // Save to database
                 if ($this->db) {
+                    // Create media_files table if not exists
+                    $this->db->exec("CREATE TABLE IF NOT EXISTS media_files (
+                        id VARCHAR(255) PRIMARY KEY,
+                        filename VARCHAR(255) NOT NULL,
+                        original_name VARCHAR(255) NOT NULL,
+                        file_path VARCHAR(500) NOT NULL,
+                        file_type VARCHAR(50) NOT NULL,
+                        file_size INT NOT NULL,
+                        mime_type VARCHAR(100) NOT NULL,
+                        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )");
+                    
                     $stmt = $this->db->prepare("
-                        INSERT INTO media_files (filename, original_name, file_path, file_type, file_size, mime_type) 
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        INSERT INTO media_files (id, filename, original_name, file_path, file_type, file_size, mime_type) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
                     ");
                     
                     $fileType = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']) ? 'image' : 'document';
                     
                     $stmt->execute([
+                        uniqid(),
                         $fileName,
                         $file['name'],
                         $filePath,
@@ -319,8 +354,20 @@ class PageContent {
         if (!$this->db) return [];
         
         try {
+            // Create media_files table if not exists
+            $this->db->exec("CREATE TABLE IF NOT EXISTS media_files (
+                id VARCHAR(255) PRIMARY KEY,
+                filename VARCHAR(255) NOT NULL,
+                original_name VARCHAR(255) NOT NULL,
+                file_path VARCHAR(500) NOT NULL,
+                file_type VARCHAR(50) NOT NULL,
+                file_size INT NOT NULL,
+                mime_type VARCHAR(100) NOT NULL,
+                uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+            
             $stmt = $this->db->query("SELECT * FROM media_files ORDER BY uploaded_at DESC");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll();
         } catch (Exception $e) {
             error_log("Error getting media files: " . $e->getMessage());
             return [];
@@ -334,7 +381,7 @@ class PageContent {
             // Get file info first
             $stmt = $this->db->prepare("SELECT file_path FROM media_files WHERE id = ?");
             $stmt->execute([$id]);
-            $file = $stmt->fetch(PDO::FETCH_ASSOC);
+            $file = $stmt->fetch();
             
             if ($file && file_exists($file['file_path'])) {
                 unlink($file['file_path']);
@@ -404,6 +451,39 @@ class PageContent {
         $css .= ".bg-secondary { background-color: var(--secondary-color, #059669); }\n";
         
         return $css;
+    }
+    
+    // Dashboard Statistics
+    public function getDashboardStats() {
+        if (!$this->db) return [];
+        
+        try {
+            $stats = [];
+            
+            // Count various entities
+            $tables = [
+                'projects' => 'Projekte',
+                'contact_messages' => 'Kontaktnachrichten', 
+                'job_postings' => 'Stellenausschreibungen',
+                'applications' => 'Bewerbungen',
+                'team_members' => 'Team Mitglieder'
+            ];
+            
+            foreach ($tables as $table => $label) {
+                try {
+                    $stmt = $this->db->query("SELECT COUNT(*) as count FROM $table");
+                    $result = $stmt->fetch();
+                    $stats[$table] = $result ? $result['count'] : 0;
+                } catch (Exception $e) {
+                    $stats[$table] = 0;
+                }
+            }
+            
+            return $stats;
+        } catch (Exception $e) {
+            error_log("Error getting dashboard stats: " . $e->getMessage());
+            return [];
+        }
     }
 }
 ?>
