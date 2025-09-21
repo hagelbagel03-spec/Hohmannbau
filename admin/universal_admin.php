@@ -1811,24 +1811,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         function saveDesignSettings(settingType, settings) {
+            console.log('Saving design settings:', settingType, settings);
+            
             fetch('universal_admin.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=save_design_settings&setting_type=${settingType}&settings=${encodeURIComponent(JSON.stringify(settings))}`
+                body: `action=save_design_settings&setting_type=${encodeURIComponent(settingType)}&settings=${encodeURIComponent(JSON.stringify(settings))}`
             })
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
-                if (data.success) {
-                    showNotification(`${settingType} Einstellungen gespeichert!`, 'success');
-                } else {
-                    showNotification('Fehler beim Speichern!', 'error');
+                console.log('Design settings response:', data);
+                try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.success) {
+                        showNotification(`${settingType} Einstellungen gespeichert!`, 'success');
+                    } else {
+                        showNotification('Fehler beim Speichern: ' + (jsonData.error || 'Unbekannter Fehler'), 'error');
+                    }
+                } catch (e) {
+                    console.error('Parse error:', e, 'Data:', data);
+                    showNotification('Server-Antwort Fehler', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error saving design settings:', error);
-                showNotification('Fehler beim Speichern!', 'error');
+                showNotification('Netzwerk-Fehler beim Speichern!', 'error');
             });
         }
 
