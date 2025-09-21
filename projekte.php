@@ -164,11 +164,11 @@ include __DIR__ . '/includes/header.php';
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Ihr Projekt könnte das nächste sein</h2>
             <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Lassen Sie uns gemeinsam Ihr Bauvorhaben realisieren. Von der Planung bis zur Fertigstellung.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="<?= BASE_URL ?>/angebot.php" class="btn-primary">
+                <a href="<?= BASE_URL ?>angebot.php" class="btn-primary">
                     <i data-lucide="calculator" class="w-5 h-5 mr-2"></i>
                     Angebot anfordern
                 </a>
-                <a href="<?= BASE_URL ?>/kontakt.php" class="border-2 border-green-700 text-green-700 hover:bg-green-700 hover:text-white px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
+                <a href="<?= BASE_URL ?>kontakt.php" class="border-2 border-green-700 text-green-700 hover:bg-green-700 hover:text-white px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
                     <i data-lucide="phone" class="w-5 h-5 mr-2"></i>
                     Beratung vereinbaren
                 </a>
@@ -237,7 +237,7 @@ function loadMoreProjects() {
 }
 
 // Load projects content
-fetch('<?= BASE_URL ?>/api/index.php/content/projects')
+fetch('<?= BASE_URL ?>api/index.php/content/projects')
     .then(response => response.json())
     .then(data => {
         if (data && data.content) {
@@ -249,7 +249,7 @@ fetch('<?= BASE_URL ?>/api/index.php/content/projects')
     .catch(error => console.log('Using default projects content'));
 
 // Load actual projects from API
-fetch('<?= BASE_URL ?>/api/index.php/projects')
+fetch('<?= BASE_URL ?>api/index.php/projects')
     .then(response => response.json())
     .then(data => {
         if (data && data.length > 0) {

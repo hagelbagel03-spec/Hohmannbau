@@ -103,22 +103,22 @@
     <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="font-bold text-2xl text-green-800 cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>/'">
+                <div class="font-bold text-2xl text-green-800 cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>'">
                     Hohmann Bau
                 </div>
                 
                 <!-- Desktop Navigation -->
                 <div class="desktop-nav items-center space-x-8">
-                    <a href="<?= BASE_URL ?>/" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'home' ? 'nav-active' : 'text-gray-600' ?>">Home</a>
-                    <a href="<?= BASE_URL ?>/leistungen.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'services' ? 'nav-active' : 'text-gray-600' ?>">Leistungen</a>
-                    <a href="<?= BASE_URL ?>/projekte.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'projects' ? 'nav-active' : 'text-gray-600' ?>">Projekte</a>
-                    <a href="<?= BASE_URL ?>/team.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'team' ? 'nav-active' : 'text-gray-600' ?>">Team</a>
-                    <a href="<?= BASE_URL ?>/kontakt.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'contact' ? 'nav-active' : 'text-gray-600' ?>">Kontakt</a>
-                    <a href="<?= BASE_URL ?>/karriere.php" class="text-sm font-medium transition-colors hover:text-green-700 flex items-center <?= ($currentPage ?? '') === 'career' ? 'nav-active' : 'text-gray-600' ?>">
+                    <a href="<?= BASE_URL ?>" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'home' ? 'nav-active' : 'text-gray-600' ?>">Home</a>
+                    <a href="<?= BASE_URL ?>leistungen.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'services' ? 'nav-active' : 'text-gray-600' ?>">Leistungen</a>
+                    <a href="<?= BASE_URL ?>projekte.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'projects' ? 'nav-active' : 'text-gray-600' ?>">Projekte</a>
+                    <a href="<?= BASE_URL ?>team.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'team' ? 'nav-active' : 'text-gray-600' ?>">Team</a>
+                    <a href="<?= BASE_URL ?>kontakt.php" class="text-sm font-medium transition-colors hover:text-green-700 <?= ($currentPage ?? '') === 'contact' ? 'nav-active' : 'text-gray-600' ?>">Kontakt</a>
+                    <a href="<?= BASE_URL ?>karriere.php" class="text-sm font-medium transition-colors hover:text-green-700 flex items-center <?= ($currentPage ?? '') === 'career' ? 'nav-active' : 'text-gray-600' ?>">
                         <i data-lucide="briefcase" class="w-4 h-4 mr-1"></i>
                         Karriere
                     </a>
-                    <a href="<?= BASE_URL ?>/angebot.php" class="btn-primary text-sm">
+                    <a href="<?= BASE_URL ?>angebot.php" class="btn-primary text-sm">
                         <i data-lucide="calculator" class="w-4 h-4 mr-1"></i>
                         Angebot anfordern
                     </a>
@@ -135,13 +135,13 @@
             <!-- Mobile Menu -->
             <div class="mobile-menu md:hidden" id="mobileMenu">
                 <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
-                    <a href="<?= BASE_URL ?>/" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Home</a>
-                    <a href="<?= BASE_URL ?>/leistungen.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Leistungen</a>
-                    <a href="<?= BASE_URL ?>/projekte.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Projekte</a>
-                    <a href="<?= BASE_URL ?>/team.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Team</a>
-                    <a href="<?= BASE_URL ?>/kontakt.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Kontakt</a>
-                    <a href="<?= BASE_URL ?>/karriere.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Karriere</a>
-                    <a href="<?= BASE_URL ?>/angebot.php" class="block px-3 py-2 text-base font-medium bg-green-700 text-white rounded-lg mt-2">Angebot anfordern</a>
+                    <a href="<?= BASE_URL ?>" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Home</a>
+                    <a href="<?= BASE_URL ?>leistungen.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Leistungen</a>
+                    <a href="<?= BASE_URL ?>projekte.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Projekte</a>
+                    <a href="<?= BASE_URL ?>team.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Team</a>
+                    <a href="<?= BASE_URL ?>kontakt.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Kontakt</a>
+                    <a href="<?= BASE_URL ?>karriere.php" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-green-700">Karriere</a>
+                    <a href="<?= BASE_URL ?>angebot.php" class="block px-3 py-2 text-base font-medium bg-green-700 text-white rounded-lg mt-2">Angebot anfordern</a>
                 </div>
             </div>
         </div>

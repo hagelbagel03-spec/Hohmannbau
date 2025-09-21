@@ -129,11 +129,11 @@ include __DIR__ . '/includes/header.php';
             <h2 class="text-3xl font-bold mb-4">Werden Sie Teil unseres Teams</h2>
             <p class="text-xl mb-8 max-w-2xl mx-auto">Wir suchen qualifizierte Fachkräfte, die unsere Leidenschaft für das Bauen teilen.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="<?= BASE_URL ?>/karriere.php" class="bg-white text-green-700 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
+                <a href="<?= BASE_URL ?>karriere.php" class="bg-white text-green-700 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
                     <i data-lucide="briefcase" class="w-5 h-5 mr-2"></i>
                     Aktuelle Stellenangebote
                 </a>
-                <a href="<?= BASE_URL ?>/kontakt.php" class="border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
+                <a href="<?= BASE_URL ?>kontakt.php" class="border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
                     <i data-lucide="mail" class="w-5 h-5 mr-2"></i>
                     Initiativbewerbung
                 </a>
@@ -144,7 +144,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
 // Load team content
-fetch('<?= BASE_URL ?>/api/index.php/content/team')
+fetch('<?= BASE_URL ?>api/index.php/content/team')
     .then(response => response.json())
     .then(data => {
         if (data && data.content) {
@@ -156,7 +156,7 @@ fetch('<?= BASE_URL ?>/api/index.php/content/team')
     .catch(error => console.log('Using default team content'));
 
 // Load actual team members from API
-fetch('<?= BASE_URL ?>/api/index.php/team')
+fetch('<?= BASE_URL ?>api/index.php/team')
     .then(response => response.json())
     .then(data => {
         if (data && data.length > 0) {

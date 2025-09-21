@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <!-- Back to Website -->
         <div class="mt-6 text-center">
-            <a href="<?= BASE_URL ?>/" class="text-gray-600 hover:text-gray-800 transition-colors inline-flex items-center">
+            <a href="<?= BASE_URL ?>" class="text-gray-600 hover:text-gray-800 transition-colors inline-flex items-center">
                 <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
                 Zurück zur Website
             </a>

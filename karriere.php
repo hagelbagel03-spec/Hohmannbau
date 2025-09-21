@@ -445,7 +445,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
     const formData = new FormData(this);
     const messageDiv = document.getElementById('applicationMessage');
     
-    fetch('<?= BASE_URL ?>/api/index.php/applications', {
+    fetch('<?= BASE_URL ?>api/index.php/applications', {
         method: 'POST',
         body: formData
     })
@@ -487,7 +487,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
 });
 
 // Load jobs from API
-fetch('<?= BASE_URL ?>/api/index.php/jobs')
+fetch('<?= BASE_URL ?>api/index.php/jobs')
     .then(response => response.json())
     .then(data => {
         if (data && data.length > 0) {

@@ -168,11 +168,11 @@ include __DIR__ . '/includes/header.php';
             <h2 class="text-3xl font-bold mb-4">Bereit für Ihr Bauprojekt?</h2>
             <p class="text-xl mb-8 max-w-2xl mx-auto">Lassen Sie sich kostenlos und unverbindlich beraten. Wir freuen uns auf Ihr Projekt!</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="<?= BASE_URL ?>/angebot.php" class="bg-white text-green-700 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
+                <a href="<?= BASE_URL ?>angebot.php" class="bg-white text-green-700 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
                     <i data-lucide="calculator" class="w-5 h-5 mr-2"></i>
                     Angebot anfordern
                 </a>
-                <a href="<?= BASE_URL ?>/kontakt.php" class="border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
+                <a href="<?= BASE_URL ?>kontakt.php" class="border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center">
                     <i data-lucide="phone" class="w-5 h-5 mr-2"></i>
                     Jetzt anrufen
                 </a>
@@ -183,7 +183,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
 // Load services content
-fetch('<?= BASE_URL ?>/api/index.php/content/services')
+fetch('<?= BASE_URL ?>api/index.php/content/services')
     .then(response => response.json())
     .then(data => {
         if (data && data.content) {

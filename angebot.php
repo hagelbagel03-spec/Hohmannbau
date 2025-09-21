@@ -205,7 +205,7 @@ document.getElementById('quoteForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const messageDiv = document.getElementById('formMessage');
     
-    fetch('<?= BASE_URL ?>/api/index.php/quote-request', {
+    fetch('<?= BASE_URL ?>api/index.php/quote-request', {
         method: 'POST',
         body: formData
     })

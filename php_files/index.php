@@ -19,10 +19,10 @@ include __DIR__ . '/includes/header.php';
                 Ihr zuverlässiger Partner für Hochbau, Tiefbau und Sanierungen
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="<?= BASE_URL ?>/kontakt.php" class="btn-primary text-lg">
+                <a href="<?= BASE_URL ?>kontakt.php" class="btn-primary text-lg">
                     Kontakt aufnehmen
                 </a>
-                <a href="<?= BASE_URL ?>/angebot.php" class="btn-outline text-lg">
+                <a href="<?= BASE_URL ?>angebot.php" class="btn-outline text-lg">
                     <i data-lucide="calculator" class="w-5 h-5 mr-2"></i>
                     Angebot anfordern
                 </a>
@@ -66,28 +66,28 @@ include __DIR__ . '/includes/header.php';
                 <p class="text-xl text-gray-600">Entdecken Sie unser vollständiges Leistungsspektrum</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>/leistungen.php'">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>leistungen.php'">
                     <div class="text-3xl mb-4">🏗️</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Leistungen</h3>
                     <p class="text-gray-600 mb-4">Hochbau, Tiefbau, Sanierung und mehr</p>
                     <i data-lucide="arrow-right" class="w-5 h-5 mx-auto text-green-700"></i>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>/projekte.php'">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>projekte.php'">
                     <div class="text-3xl mb-4">🏢</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Projekte</h3>
                     <p class="text-gray-600 mb-4">Unsere Referenzen und aktuellen Bauvorhaben</p>
                     <i data-lucide="arrow-right" class="w-5 h-5 mx-auto text-green-700"></i>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>/team.php'">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>team.php'">
                     <div class="text-3xl mb-4">👥</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Team</h3>
                     <p class="text-gray-600 mb-4">Lernen Sie unsere Experten kennen</p>
                     <i data-lucide="arrow-right" class="w-5 h-5 mx-auto text-green-700"></i>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>/karriere.php'">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center card-hover cursor-pointer" onclick="window.location.href='<?= BASE_URL ?>karriere.php'">
                     <div class="text-3xl mb-4">💼</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Karriere</h3>
                     <p class="text-gray-600 mb-4">Werden Sie Teil unseres Teams</p>
@@ -100,7 +100,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
 // Load home content
-fetch('<?= BASE_URL ?>/api/index.php/content/home')
+fetch('<?= BASE_URL ?>api/index.php/content/home')
     .then(response => response.json())
     .then(data => {
         if (data && data.content) {
@@ -117,7 +117,7 @@ fetch('<?= BASE_URL ?>/api/index.php/content/home')
     .catch(error => console.log('Using default home content'));
 
 // Load features
-fetch('<?= BASE_URL ?>/api/index.php/features')
+fetch('<?= BASE_URL ?>api/index.php/features')
     .then(response => response.json())
     .then(data => {
         if (data && data.length > 0) {

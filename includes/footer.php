@@ -13,20 +13,20 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Navigation</h4>
                     <div class="space-y-2 text-gray-400">
-                        <a href="<?= BASE_URL ?>/" class="block hover:text-white transition-colors">Home</a>
-                        <a href="<?= BASE_URL ?>/leistungen.php" class="block hover:text-white transition-colors">Leistungen</a>
-                        <a href="<?= BASE_URL ?>/projekte.php" class="block hover:text-white transition-colors">Projekte</a>
-                        <a href="<?= BASE_URL ?>/team.php" class="block hover:text-white transition-colors">Team</a>
-                        <a href="<?= BASE_URL ?>/kontakt.php" class="block hover:text-white transition-colors">Kontakt</a>
+                        <a href="<?= BASE_URL ?>" class="block hover:text-white transition-colors">Home</a>
+                        <a href="<?= BASE_URL ?>leistungen.php" class="block hover:text-white transition-colors">Leistungen</a>
+                        <a href="<?= BASE_URL ?>projekte.php" class="block hover:text-white transition-colors">Projekte</a>
+                        <a href="<?= BASE_URL ?>team.php" class="block hover:text-white transition-colors">Team</a>
+                        <a href="<?= BASE_URL ?>kontakt.php" class="block hover:text-white transition-colors">Kontakt</a>
                     </div>
                 </div>
                 
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Services</h4>
                     <div class="space-y-2 text-gray-400">
-                        <a href="<?= BASE_URL ?>/karriere.php" class="block hover:text-white transition-colors">Karriere</a>
-                        <a href="<?= BASE_URL ?>/angebot.php" class="block hover:text-white transition-colors">Angebot anfordern</a>
-                        <a href="<?= BASE_URL ?>/admin/" class="block hover:text-white transition-colors">Admin-Panel</a>
+                        <a href="<?= BASE_URL ?>karriere.php" class="block hover:text-white transition-colors">Karriere</a>
+                        <a href="<?= BASE_URL ?>angebot.php" class="block hover:text-white transition-colors">Angebot anfordern</a>
+                        <a href="<?= BASE_URL ?>admin/" class="block hover:text-white transition-colors">Admin-Panel</a>
                         <p>Notdienst 24/7</p>
                         <p>Kostenlose Beratung</p>
                     </div>
@@ -75,7 +75,7 @@
                 </button>
             </div>
             <div class="space-y-3">
-                <a href="<?= BASE_URL ?>/kontakt.php" class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <a href="<?= BASE_URL ?>kontakt.php" class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div class="flex items-center">
                         <i data-lucide="mail" class="w-5 h-5 mr-3 text-green-700"></i>
                         <div>
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                 </a>
-                <a href="<?= BASE_URL ?>/angebot.php" class="block p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                <a href="<?= BASE_URL ?>angebot.php" class="block p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
                     <div class="flex items-center">
                         <i data-lucide="calculator" class="w-5 h-5 mr-3 text-green-700"></i>
                         <div>
@@ -113,7 +113,7 @@
         }
         
         // Load contact info for footer
-        fetch('<?= BASE_URL ?>/api/index.php/contact-info')
+        fetch('<?= BASE_URL ?>api/index.php/contact-info')
             .then(response => response.json())
             .then(data => {
                 if (data && data.address) {

@@ -108,7 +108,7 @@ include __DIR__ . '/includes/header.php';
                                 </div>
                             </a>
                             
-                            <a href="<?= BASE_URL ?>/angebot.php" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                            <a href="<?= BASE_URL ?>angebot.php" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
                                 <i data-lucide="calculator" class="w-6 h-6 text-green-700 mr-3"></i>
                                 <div>
                                     <div class="font-medium text-green-700">Angebot anfordern</div>
@@ -142,7 +142,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
 // Load contact content
-fetch('<?= BASE_URL ?>/api/index.php/content/contact')
+fetch('<?= BASE_URL ?>api/index.php/content/contact')
     .then(response => response.json())
     .then(data => {
         if (data && data.content) {
@@ -154,7 +154,7 @@ fetch('<?= BASE_URL ?>/api/index.php/content/contact')
     .catch(error => console.log('Using default contact content'));
 
 // Load contact info
-fetch('<?= BASE_URL ?>/api/index.php/contact-info')
+fetch('<?= BASE_URL ?>api/index.php/contact-info')
     .then(response => response.json())
     .then(data => {
         if (data && data.address) {
@@ -204,7 +204,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const messageDiv = document.getElementById('formMessage');
     
-    fetch('<?= BASE_URL ?>/api/index.php/contact', {
+    fetch('<?= BASE_URL ?>api/index.php/contact', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

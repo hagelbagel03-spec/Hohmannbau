@@ -21,12 +21,12 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <a href="<?= BASE_URL ?>/" class="font-bold text-2xl text-green-800">Hohmann Bau</a>
+                        <a href="<?= BASE_URL ?>" class="font-bold text-2xl text-green-800">Hohmann Bau</a>
                         <span class="ml-4 text-gray-500">Admin Panel</span>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-600">Willkommen, Admin</span>
-                        <a href="<?= BASE_URL ?>/" class="text-sm text-green-600 hover:text-green-700">Zur Website</a>
+                        <a href="<?= BASE_URL ?>" class="text-sm text-green-600 hover:text-green-700">Zur Website</a>
                     </div>
                 </div>
             </div>
@@ -488,7 +488,7 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
             document.body.style.overflow = 'hidden';
             
             // Load existing content
-            fetch(`<?= BASE_URL ?>/api/index.php/content/${pageType}`)
+            fetch(`<?= BASE_URL ?>api/index.php/content/${pageType}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.content) {
@@ -525,7 +525,7 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
                 }
             }
             
-            fetch(`<?= BASE_URL ?>/api/index.php/content`, {
+            fetch(`<?= BASE_URL ?>api/index.php/content`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -734,7 +734,7 @@ $pageTitle = 'Admin Panel - Hohmann Bau';
 
         function downloadCV(filename) {
             if (filename && filename !== 'null') {
-                window.open(`<?= BASE_URL ?>/uploads/cv/${filename}`, '_blank');
+                window.open(`<?= BASE_URL ?>uploads/cv/${filename}`, '_blank');
             } else {
                 alert('Kein CV verfügbar');
             }

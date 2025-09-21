@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 </div>
                 <div class="flex items-center space-x-4">
                     <span class="text-sm text-gray-600">Willkommen, <?= $_SESSION['admin_username'] ?? 'Admin' ?></span>
-                    <a href="<?= BASE_URL ?>/" class="text-sm text-blue-600 hover:text-blue-700" target="_blank">
+                    <a href="<?= BASE_URL ?>" class="text-sm text-blue-600 hover:text-blue-700" target="_blank">
                         <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>
                         Zur Website
                     </a>
