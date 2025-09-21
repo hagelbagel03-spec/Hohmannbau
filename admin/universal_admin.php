@@ -4,9 +4,10 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../classes/PageContent.php';
 
-// Simple authentication check
-if (!isset($_SESSION['admin_logged_in'])) {
-    header('Location: login.php');
+// Debug session info
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    // Redirect to login with debug info
+    echo "<script>alert('Session nicht gefunden! Weiterleitung zum Login...'); window.location.href = 'login.php';</script>";
     exit();
 }
 
