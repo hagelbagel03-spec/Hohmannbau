@@ -1091,7 +1091,7 @@ const MediaManager = () => {
         <h2 className="text-4xl font-bold text-gray-900">Medien Verwaltung</h2>
         <div className="flex space-x-3">
           <Button onClick={fetchMediaFiles} variant="outline">
-            <Refresh className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-4 h-4 mr-2" />
             Aktualisieren
           </Button>
           <label htmlFor="file-upload">
