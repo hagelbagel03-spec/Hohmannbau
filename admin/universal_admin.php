@@ -983,7 +983,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     </div>
 
                     <!-- Tiefbau -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="tiefbau">
                         <div class="text-4xl mb-4">🚧</div>
                         <h3 class="text-xl font-bold mb-2">Tiefbau</h3>
                         <p class="text-gray-600 mb-4">Fundamente, Keller, Erschließung und alle Arbeiten unter der Erdoberfläche.</p>
@@ -996,13 +996,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('tiefbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('tiefbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('tiefbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">Bearbeiten</button>
+                            <button onclick="toggleService('tiefbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">An/Aus</button>
                         </div>
                     </div>
 
                     <!-- Sanierung -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="sanierung">
                         <div class="text-4xl mb-4">🔨</div>
                         <h3 class="text-xl font-bold mb-2">Sanierung</h3>
                         <p class="text-gray-600 mb-4">Modernisierung und Instandsetzung bestehender Gebäude nach neuesten Standards.</p>
@@ -1015,13 +1015,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('sanierung')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('sanierung')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('sanierung')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">Bearbeiten</button>
+                            <button onclick="toggleService('sanierung')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">An/Aus</button>
                         </div>
                     </div>
 
                     <!-- An- und Umbau -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="anbau">
                         <div class="text-4xl mb-4">🏠</div>
                         <h3 class="text-xl font-bold mb-2">An- und Umbau</h3>
                         <p class="text-gray-600 mb-4">Erweiterung und Umgestaltung bestehender Gebäude nach Ihren Wünschen.</p>
@@ -1034,13 +1034,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('anbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('anbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('anbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">Bearbeiten</button>
+                            <button onclick="toggleService('anbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">An/Aus</button>
                         </div>
                     </div>
 
                     <!-- Gewerbebau -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="gewerbebau">
                         <div class="text-4xl mb-4">🏢</div>
                         <h3 class="text-xl font-bold mb-2">Gewerbebau</h3>
                         <p class="text-gray-600 mb-4">Bürogebäude, Lagerhallen, Produktionsstätten und andere Gewerbeimmobilien.</p>
@@ -1053,13 +1053,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('gewerbebau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('gewerbebau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('gewerbebau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">Bearbeiten</button>
+                            <button onclick="toggleService('gewerbebau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">An/Aus</button>
                         </div>
                     </div>
 
                     <!-- Notdienst -->
-                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6 transition-opacity duration-300" data-service-id="notdienst">
                         <div class="text-4xl mb-4">⚡</div>
                         <h3 class="text-xl font-bold mb-2">Notdienst</h3>
                         <p class="text-gray-600 mb-4">24/7 Notdienst für dringende Reparaturen und Schadensbehebung.</p>
@@ -1072,8 +1072,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </ul>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editService('notdienst')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
-                            <button onclick="toggleService('notdienst')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                            <button onclick="editService('notdienst')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600 transition-colors">Bearbeiten</button>
+                            <button onclick="toggleService('notdienst')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600 transition-colors">An/Aus</button>
                         </div>
                     </div>
                 </div>
