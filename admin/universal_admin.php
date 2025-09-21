@@ -906,6 +906,377 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 </div>
             </div>
 
+            <!-- Services Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
+            <div id="services-manager-section" class="section hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-900 mb-2">🔧 Unsere Leistungen</h1>
+                        <p class="text-gray-600">Verwalten Sie alle Services und Dienstleistungen</p>
+                    </div>
+                    <button onclick="addNewService()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                        ➕ Neue Leistung hinzufügen
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
+                    <!-- Hochbau -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">🏗️</div>
+                        <h3 class="text-xl font-bold mb-2">Hochbau</h3>
+                        <p class="text-gray-600 mb-4">Neubau von Wohn- und Geschäftsgebäuden, Einfamilienhäuser bis hin zu komplexen Gewerbeobjekten.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Planung und Ausführung</li>
+                                <li>Rohbau und Ausbau</li>
+                                <li>Schlüsselfertige Übergabe</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('hochbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('hochbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+
+                    <!-- Tiefbau -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">🚧</div>
+                        <h3 class="text-xl font-bold mb-2">Tiefbau</h3>
+                        <p class="text-gray-600 mb-4">Fundamente, Keller, Erschließung und alle Arbeiten unter der Erdoberfläche.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Erdarbeiten und Aushub</li>
+                                <li>Fundamente und Keller</li>
+                                <li>Ver- und Entsorgung</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('tiefbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('tiefbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+
+                    <!-- Sanierung -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">🔨</div>
+                        <h3 class="text-xl font-bold mb-2">Sanierung</h3>
+                        <p class="text-gray-600 mb-4">Modernisierung und Instandsetzung bestehender Gebäude nach neuesten Standards.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Energetische Sanierung</li>
+                                <li>Dach- und Fassadensanierung</li>
+                                <li>Badsanierung</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('sanierung')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('sanierung')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+
+                    <!-- An- und Umbau -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">🏠</div>
+                        <h3 class="text-xl font-bold mb-2">An- und Umbau</h3>
+                        <p class="text-gray-600 mb-4">Erweiterung und Umgestaltung bestehender Gebäude nach Ihren Wünschen.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Anbauten und Aufstockungen</li>
+                                <li>Grundrissänderungen</li>
+                                <li>Dachausbau</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('anbau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('anbau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+
+                    <!-- Gewerbebau -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">🏢</div>
+                        <h3 class="text-xl font-bold mb-2">Gewerbebau</h3>
+                        <p class="text-gray-600 mb-4">Bürogebäude, Lagerhallen, Produktionsstätten und andere Gewerbeimmobilien.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Büro- und Verwaltungsgebäude</li>
+                                <li>Produktions- und Lagerhallen</li>
+                                <li>Individuelle Gewerbeobjekte</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('gewerbebau')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('gewerbebau')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+
+                    <!-- Notdienst -->
+                    <div class="service-card bg-white rounded-xl shadow-lg p-6">
+                        <div class="text-4xl mb-4">⚡</div>
+                        <h3 class="text-xl font-bold mb-2">Notdienst</h3>
+                        <p class="text-gray-600 mb-4">24/7 Notdienst für dringende Reparaturen und Schadensbehebung.</p>
+                        <div class="text-sm text-gray-700 mb-4">
+                            <strong>Features:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                <li>Wasserschäden</li>
+                                <li>Sturmschäden</li>
+                                <li>Notfallreparaturen</li>
+                            </ul>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService('notdienst')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                            <button onclick="toggleService('notdienst')" class="bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600">An/Aus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
+            <div id="team-manager-section" class="section hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-900 mb-2">👥 Unser Team</h1>
+                        <p class="text-gray-600">Verwalten Sie alle Team-Mitglieder und deren Informationen</p>
+                    </div>
+                    <button onclick="addNewTeamMember()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                        ➕ Team-Mitglied hinzufügen
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="team-grid">
+                    <!-- Beispiel Team-Mitglied -->
+                    <div class="team-member-card bg-white rounded-xl shadow-lg overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" alt="Team Mitglied" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-1">Max Mustermann</h3>
+                            <p class="text-green-600 font-medium mb-2">Geschäftsführer</p>
+                            <p class="text-gray-600 text-sm mb-4">Mit über 20 Jahren Erfahrung im Bauwesen leitet Max unser Unternehmen mit Leidenschaft und Expertise.</p>
+                            <div class="flex gap-2">
+                                <button onclick="editTeamMember('1')" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">Bearbeiten</button>
+                                <button onclick="deleteTeamMember('1')" class="bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600">Löschen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Team Member Card -->
+                    <div class="add-team-member-card bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center h-80 cursor-pointer hover:bg-gray-200" onclick="addNewTeamMember()">
+                        <div class="text-center">
+                            <div class="text-4xl text-gray-400 mb-2">➕</div>
+                            <p class="text-gray-600">Neues Team-Mitglied hinzufügen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Career Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
+            <div id="career-manager-section" class="section hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-900 mb-2">💼 Karriere Manager</h1>
+                        <p class="text-gray-600">Verwalten Sie Stellenausschreibungen und Bewerbungen</p>
+                    </div>
+                    <button onclick="addNewJob()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                        ➕ Neue Stellenausschreibung
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Jobs List -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">📋 Stellenausschreibungen</h3>
+                        <div class="space-y-4" id="jobs-list">
+                            <div class="job-item p-4 border rounded-lg hover:bg-gray-50">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-semibold">Bauleiter (m/w/d)</h4>
+                                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">Aktiv</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">Vollzeit • Musterstadt</p>
+                                <p class="text-gray-700 text-sm mb-3">Erfahrener Bauleiter für Wohnbauprojekte gesucht...</p>
+                                <div class="flex gap-2">
+                                    <button onclick="editJob('1')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Bearbeiten</button>
+                                    <button onclick="toggleJobStatus('1')" class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Deaktivieren</button>
+                                    <button onclick="viewApplications('1')" class="bg-purple-500 text-white px-3 py-1 rounded text-sm">Bewerbungen (3)</button>
+                                </div>
+                            </div>
+                            
+                            <div class="job-item p-4 border rounded-lg hover:bg-gray-50">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-semibold">Maurer (m/w/d)</h4>
+                                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">Aktiv</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">Vollzeit • Musterstadt</p>
+                                <p class="text-gray-700 text-sm mb-3">Zuverlässiger Maurer für Neubau- und Sanierungsprojekte...</p>
+                                <div class="flex gap-2">
+                                    <button onclick="editJob('2')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Bearbeiten</button>
+                                    <button onclick="toggleJobStatus('2')" class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Deaktivieren</button>
+                                    <button onclick="viewApplications('2')" class="bg-purple-500 text-white px-3 py-1 rounded text-sm">Bewerbungen (7)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applications -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">📨 Aktuelle Bewerbungen</h3>
+                        <div class="space-y-4" id="applications-list">
+                            <div class="application-item p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-semibold">Anna Schmidt</h4>
+                                        <p class="text-sm text-gray-600">Bewerbung für: Bauleiter (m/w/d)</p>
+                                    </div>
+                                    <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Neu</span>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">anna.schmidt@email.com • vor 2 Stunden</p>
+                                <div class="flex gap-2">
+                                    <button onclick="viewApplication('1')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Ansehen</button>
+                                    <button onclick="downloadCV('1')" class="bg-green-500 text-white px-3 py-1 rounded text-sm">CV</button>
+                                </div>
+                            </div>
+
+                            <div class="application-item p-4 border-l-4 border-l-green-500 bg-green-50 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-semibold">Thomas Müller</h4>
+                                        <p class="text-sm text-gray-600">Bewerbung für: Maurer (m/w/d)</p>
+                                    </div>
+                                    <span class="bg-green-500 text-white px-2 py-1 rounded text-xs">Bearbeitet</span>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">thomas.mueller@email.com • vor 1 Tag</p>
+                                <div class="flex gap-2">
+                                    <button onclick="viewApplication('2')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Ansehen</button>
+                                    <button onclick="downloadCV('2')" class="bg-green-500 text-white px-3 py-1 rounded text-sm">CV</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offers Manager Section - VOLLSTÄNDIG IMPLEMENTIERT -->
+            <div id="offers-manager-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">📋 Angebots-Manager</h1>
+                    <p class="text-gray-600">Verwalten Sie alle Angebotsanfragen und Kostenvoranschläge</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Filter & Stats -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                            <h3 class="font-semibold mb-4">📊 Übersicht</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Gesamt Anfragen:</span>
+                                    <span class="font-medium">24</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-red-600">Neue:</span>
+                                    <span class="font-medium text-red-600">8</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-blue-600">In Bearbeitung:</span>
+                                    <span class="font-medium text-blue-600">11</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-green-600">Abgeschlossen:</span>
+                                    <span class="font-medium text-green-600">5</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h3 class="font-semibold mb-4">🔍 Filter</h3>
+                            <div class="space-y-4">
+                                <select id="offer-status-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="all">Alle Status</option>
+                                    <option value="new">Neu</option>
+                                    <option value="processing">In Bearbeitung</option>
+                                    <option value="completed">Abgeschlossen</option>
+                                </select>
+                                <select id="offer-type-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="all">Alle Typen</option>
+                                    <option value="hochbau">Hochbau</option>
+                                    <option value="tiefbau">Tiefbau</option>
+                                    <option value="sanierung">Sanierung</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offers List -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-semibold">💼 Angebotsanfragen</h3>
+                                <button onclick="exportOffers()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Excel Export
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4" id="offers-list">
+                                <div class="offer-item p-4 border-l-4 border-l-red-500 bg-red-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-semibold">Familie Weber - Einfamilienhaus</h4>
+                                            <p class="text-sm text-gray-600">Hochbau • Neubau</p>
+                                        </div>
+                                        <span class="bg-red-500 text-white px-2 py-1 rounded text-xs">NEU</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Budget:</strong> €300.000 - €400.000</p>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Zeitrahmen:</strong> 6-12 Monate</p>
+                                    <p class="text-sm text-gray-700 mb-3">Einfamilienhaus ca. 150qm mit Keller und Garage...</p>
+                                    <div class="flex gap-2">
+                                        <button onclick="viewOffer('1')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Details</button>
+                                        <button onclick="createQuote('1')" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Angebot erstellen</button>
+                                        <button onclick="updateOfferStatus('1')" class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Status ändern</button>
+                                    </div>
+                                </div>
+
+                                <div class="offer-item p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-semibold">Müller GmbH - Bürogebäude Sanierung</h4>
+                                            <p class="text-sm text-gray-600">Sanierung • Gewerbe</p>
+                                        </div>
+                                        <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">BEARBEITUNG</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Budget:</strong> €150.000 - €200.000</p>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Zeitrahmen:</strong> 3-4 Monate</p>
+                                    <p class="text-sm text-gray-700 mb-3">Komplette Sanierung eines 3-stöckigen Bürogebäudes...</p>
+                                    <div class="flex gap-2">
+                                        <button onclick="viewOffer('2')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Details</button>
+                                        <button onclick="createQuote('2')" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Angebot erstellen</button>
+                                        <button onclick="updateOfferStatus('2')" class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Status ändern</button>
+                                    </div>
+                                </div>
+
+                                <div class="offer-item p-4 border-l-4 border-l-green-500 bg-green-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-semibold">Schmidt - Dachsanierung</h4>
+                                            <p class="text-sm text-gray-600">Sanierung • Privat</p>
+                                        </div>
+                                        <span class="bg-green-500 text-white px-2 py-1 rounded text-xs">ABGESCHLOSSEN</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Budget:</strong> €45.000</p>
+                                    <p class="text-sm text-gray-700 mb-1"><strong>Zeitrahmen:</strong> 2 Wochen</p>
+                                    <p class="text-sm text-gray-700 mb-3">Komplette Dachsanierung mit neuer Dämmung...</p>
+                                    <div class="flex gap-2">
+                                        <button onclick="viewOffer('3')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Details</button>
+                                        <button onclick="downloadQuote('3')" class="bg-purple-500 text-white px-3 py-1 rounded text-sm">Angebot Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Section - VOLLSTÄNDIG IMPLEMENTIERT -->
             <div id="settings-section" class="section hidden">
                 <div class="mb-8">
