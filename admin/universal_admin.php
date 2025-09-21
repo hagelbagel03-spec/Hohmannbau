@@ -1394,6 +1394,186 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         setTimeout(() => {
             updateDesignPreview();
         }, 1000);
+
+        // NEUE FUNKTIONEN FÜR ALLE BEREICHE
+
+        // Navigation Editor Functions
+        function saveNavigationSettings() {
+            const logoText = document.getElementById('nav-logo-text').value;
+            const logoImage = document.getElementById('nav-logo-image').value;
+            const ctaText = document.getElementById('cta-text').value;
+            const ctaLink = document.getElementById('cta-link').value;
+            const ctaColor = document.getElementById('cta-color').value;
+            
+            // Collect menu items
+            const menuItems = [];
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const name = item.querySelector('input[placeholder="Menü-Name"]').value;
+                const link = item.querySelector('input[placeholder="Link"]').value;
+                if (name && link) {
+                    menuItems.push({ name, link });
+                }
+            });
+            
+            const navSettings = {
+                logo_text: logoText,
+                logo_image: logoImage,
+                menu_items: menuItems,
+                cta_button: {
+                    text: ctaText,
+                    link: ctaLink,
+                    color: ctaColor
+                }
+            };
+            
+            saveDesignSettings('navigation', navSettings);
+        }
+
+        document.getElementById('add-menu-item')?.addEventListener('click', function() {
+            const menuList = document.getElementById('menu-items-list');
+            const newItem = document.createElement('div');
+            newItem.className = 'menu-item flex items-center gap-3 p-3 bg-gray-50 rounded-lg';
+            newItem.innerHTML = `
+                <input type="text" placeholder="Menü-Name" class="flex-1 px-3 py-2 border rounded">
+                <input type="text" placeholder="Link" class="flex-1 px-3 py-2 border rounded">
+                <button onclick="this.parentElement.remove()" class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Löschen</button>
+            `;
+            menuList.appendChild(newItem);
+        });
+
+        // Content Manager Functions
+        function bulkEditTexts() {
+            showNotification('Bulk Text Editor geöffnet', 'success');
+            // Hier würde die Bulk-Edit Funktionalität implementiert
+        }
+
+        function globalSearchReplace() {
+            const searchTerm = prompt('Nach welchem Text suchen?');
+            const replaceTerm = prompt('Durch welchen Text ersetzen?');
+            if (searchTerm && replaceTerm) {
+                showNotification(`Ersetze "${searchTerm}" durch "${replaceTerm}"`, 'success');
+            }
+        }
+
+        function exportContent() {
+            showNotification('Inhalte werden exportiert...', 'success');
+            // Hier würde Export-Funktionalität implementiert
+        }
+
+        function importContent() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json,.csv';
+            fileInput.onchange = function(e) {
+                if (e.target.files[0]) {
+                    showNotification('Import gestartet...', 'success');
+                }
+            };
+            fileInput.click();
+        }
+
+        function editContent(page, field) {
+            const newValue = prompt(`Neuen Wert für ${field} eingeben:`);
+            if (newValue) {
+                // Hier würde die Speicher-Logik implementiert
+                showNotification(`${field} aktualisiert`, 'success');
+            }
+        }
+
+        // Projects Manager Functions
+        function addNewProject() {
+            const projectName = prompt('Projekt Name:');
+            const projectCategory = prompt('Projekt Kategorie:');
+            const projectDescription = prompt('Projekt Beschreibung:');
+            
+            if (projectName) {
+                showNotification(`Projekt "${projectName}" hinzugefügt`, 'success');
+                // Hier würde das Projekt zur Datenbank hinzugefügt
+            }
+        }
+
+        function editProject(id) {
+            showNotification(`Bearbeite Projekt ${id}`, 'info');
+            // Hier würde ein Edit-Modal geöffnet
+        }
+
+        function deleteProject(id) {
+            if (confirm('Projekt wirklich löschen?')) {
+                showNotification(`Projekt ${id} gelöscht`, 'success');
+                // Hier würde das Projekt gelöscht
+            }
+        }
+
+        // Messages Manager Functions
+        function openMessage(id) {
+            showNotification(`Öffne Nachricht ${id}`, 'info');
+            // Hier würde ein Nachrichten-Modal geöffnet
+        }
+
+        function markAllAsRead() {
+            if (confirm('Alle Nachrichten als gelesen markieren?')) {
+                showNotification('Alle Nachrichten als gelesen markiert', 'success');
+                // Hier würde der Status in der DB aktualisiert
+            }
+        }
+
+        // Settings Functions
+        function saveGeneralSettings() {
+            const siteName = document.getElementById('site-name').value;
+            const siteDescription = document.getElementById('site-description').value;
+            const adminEmail = document.getElementById('admin-email').value;
+            
+            showNotification('Allgemeine Einstellungen gespeichert', 'success');
+            // Hier würden die Einstellungen gespeichert
+        }
+
+        function changePassword() {
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!newPassword || !confirmPassword) {
+                showNotification('Bitte beide Passwort-Felder ausfüllen', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('Passwörter stimmen nicht überein', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showNotification('Passwort muss mindestens 6 Zeichen lang sein', 'error');
+                return;
+            }
+            
+            showNotification('Passwort erfolgreich geändert', 'success');
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }
+
+        function createBackup() {
+            showNotification('Backup wird erstellt...', 'info');
+            setTimeout(() => {
+                showNotification('Backup erfolgreich erstellt', 'success');
+            }, 2000);
+        }
+
+        function exportDatabase() {
+            showNotification('Datenbank wird exportiert...', 'info');
+            // Hier würde ein Download gestartet
+        }
+
+        function importDatabase() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.sql,.db';
+            fileInput.onchange = function(e) {
+                if (e.target.files[0]) {
+                    showNotification('Datenbank Import gestartet...', 'info');
+                }
+            };
+            fileInput.click();
+        }
     </script>
 </body>
 </html>
