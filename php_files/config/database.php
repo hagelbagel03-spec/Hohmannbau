@@ -1,19 +1,30 @@
 <?php
 class Database {
-    private $host = 'localhost';
-    private $dbname = 'hohmann_bau';
-    private $username = 'root';
-    private $password = '';
+    private $db_path = __DIR__ . '/../data/hohmann_bau.db';
     private $pdo;
 
     public function __construct() {
         try {
+            // Create data directory if it doesn't exist
+            $data_dir = dirname($this->db_path);
+            if (!is_dir($data_dir)) {
+                mkdir($data_dir, 0755, true);
+            }
+
+            // Create SQLite database connection
             $this->pdo = new PDO(
-                "mysql:host={$this->host};dbname={$this->dbname};charset=utf8", 
-                $this->username, 
-                $this->password,
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+                "sqlite:" . $this->db_path,
+                null,
+                null,
+                array(
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                )
             );
+            
+            // Enable foreign key support
+            $this->pdo->exec('PRAGMA foreign_keys = ON');
+            
         } catch(PDOException $e) {
             die("Datenbankverbindung fehlgeschlagen: " . $e->getMessage());
         }

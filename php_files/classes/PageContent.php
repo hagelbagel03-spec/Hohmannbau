@@ -3,49 +3,59 @@ class PageContent {
     private $db;
     
     public function __construct($database) {
-        $this->db = $database->getConnection();
-        $this->createTables();
+        if ($database) {
+            $this->db = $database->getConnection();
+            $this->createTables();
+        }
     }
     
     private function createTables() {
-        // Create page_contents table
-        $sql = "CREATE TABLE IF NOT EXISTS page_contents (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            page_name VARCHAR(50) NOT NULL UNIQUE,
-            content JSON NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
-        $this->db->exec($sql);
+        if (!$this->db) return;
         
-        // Create design_settings table
-        $sql = "CREATE TABLE IF NOT EXISTS design_settings (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            setting_type VARCHAR(50) NOT NULL UNIQUE,
-            settings JSON NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
-        $this->db->exec($sql);
-        
-        // Create media_files table
-        $sql = "CREATE TABLE IF NOT EXISTS media_files (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            filename VARCHAR(255) NOT NULL,
-            original_name VARCHAR(255) NOT NULL,
-            file_path VARCHAR(500) NOT NULL,
-            file_type VARCHAR(50) NOT NULL,
-            file_size INT NOT NULL,
-            mime_type VARCHAR(100) NOT NULL,
-            uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-        $this->db->exec($sql);
-        
-        // Insert default content if not exists
-        $this->insertDefaultContent();
+        try {
+            // Create page_contents table
+            $sql = "CREATE TABLE IF NOT EXISTS page_contents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                page_name VARCHAR(50) NOT NULL UNIQUE,
+                content TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )";
+            $this->db->exec($sql);
+            
+            // Create design_settings table
+            $sql = "CREATE TABLE IF NOT EXISTS design_settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                setting_type VARCHAR(50) NOT NULL UNIQUE,
+                settings TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )";
+            $this->db->exec($sql);
+            
+            // Create media_files table
+            $sql = "CREATE TABLE IF NOT EXISTS media_files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename VARCHAR(255) NOT NULL,
+                original_name VARCHAR(255) NOT NULL,
+                file_path VARCHAR(500) NOT NULL,
+                file_type VARCHAR(50) NOT NULL,
+                file_size INTEGER NOT NULL,
+                mime_type VARCHAR(100) NOT NULL,
+                uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )";
+            $this->db->exec($sql);
+            
+            // Insert default content if not exists
+            $this->insertDefaultContent();
+        } catch (Exception $e) {
+            error_log("Error creating tables: " . $e->getMessage());
+        }
     }
     
     private function insertDefaultContent() {
+        if (!$this->db) return;
+        
         $defaultPages = [
             'home' => [
                 'hero_title' => 'Bauen mit Vertrauen',
@@ -96,11 +106,15 @@ class PageContent {
         ];
         
         foreach ($defaultPages as $pageName => $content) {
-            $stmt = $this->db->prepare("SELECT id FROM page_contents WHERE page_name = ?");
-            $stmt->execute([$pageName]);
-            
-            if (!$stmt->fetch()) {
-                $this->saveContent($pageName, $content);
+            try {
+                $stmt = $this->db->prepare("SELECT id FROM page_contents WHERE page_name = ?");
+                $stmt->execute([$pageName]);
+                
+                if (!$stmt->fetch()) {
+                    $this->saveContent($pageName, $content);
+                }
+            } catch (Exception $e) {
+                error_log("Error inserting default content for $pageName: " . $e->getMessage());
             }
         }
         
@@ -131,40 +145,54 @@ class PageContent {
         ];
         
         foreach ($defaultDesignSettings as $settingType => $settings) {
-            $stmt = $this->db->prepare("SELECT id FROM design_settings WHERE setting_type = ?");
-            $stmt->execute([$settingType]);
-            
-            if (!$stmt->fetch()) {
-                $this->saveDesignSettings($settingType, $settings);
+            try {
+                $stmt = $this->db->prepare("SELECT id FROM design_settings WHERE setting_type = ?");
+                $stmt->execute([$settingType]);
+                
+                if (!$stmt->fetch()) {
+                    $this->saveDesignSettings($settingType, $settings);
+                }
+            } catch (Exception $e) {
+                error_log("Error inserting default design settings for $settingType: " . $e->getMessage());
             }
         }
     }
     
     public function getContent($pageName) {
-        $stmt = $this->db->prepare("SELECT content FROM page_contents WHERE page_name = ?");
-        $stmt->execute([$pageName]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$this->db) return [];
         
-        if ($result) {
-            return json_decode($result['content'], true);
+        try {
+            $stmt = $this->db->prepare("SELECT content FROM page_contents WHERE page_name = ?");
+            $stmt->execute([$pageName]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($result) {
+                return json_decode($result['content'], true) ?: [];
+            }
+        } catch (Exception $e) {
+            error_log("Error getting content for $pageName: " . $e->getMessage());
         }
         
-        return null;
+        return [];
     }
     
     public function saveContent($pageName, $content) {
+        if (!$this->db) return false;
+        
         try {
             $contentJson = json_encode($content, JSON_UNESCAPED_UNICODE);
             
-            $stmt = $this->db->prepare("
-                INSERT INTO page_contents (page_name, content) 
-                VALUES (?, ?) 
-                ON DUPLICATE KEY UPDATE 
-                content = VALUES(content), 
-                updated_at = CURRENT_TIMESTAMP
-            ");
+            // Try to update first
+            $stmt = $this->db->prepare("UPDATE page_contents SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE page_name = ?");
+            $stmt->execute([$contentJson, $pageName]);
             
-            return $stmt->execute([$pageName, $contentJson]);
+            // If no rows affected, insert new
+            if ($stmt->rowCount() == 0) {
+                $stmt = $this->db->prepare("INSERT INTO page_contents (page_name, content) VALUES (?, ?)");
+                $stmt->execute([$pageName, $contentJson]);
+            }
+            
+            return true;
         } catch (Exception $e) {
             error_log("Error saving page content: " . $e->getMessage());
             return false;
@@ -172,30 +200,40 @@ class PageContent {
     }
     
     public function getDesignSettings($settingType) {
-        $stmt = $this->db->prepare("SELECT settings FROM design_settings WHERE setting_type = ?");
-        $stmt->execute([$settingType]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$this->db) return [];
         
-        if ($result) {
-            return json_decode($result['settings'], true);
+        try {
+            $stmt = $this->db->prepare("SELECT settings FROM design_settings WHERE setting_type = ?");
+            $stmt->execute([$settingType]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($result) {
+                return json_decode($result['settings'], true) ?: [];
+            }
+        } catch (Exception $e) {
+            error_log("Error getting design settings for $settingType: " . $e->getMessage());
         }
         
-        return null;
+        return [];
     }
     
     public function saveDesignSettings($settingType, $settings) {
+        if (!$this->db) return false;
+        
         try {
             $settingsJson = json_encode($settings, JSON_UNESCAPED_UNICODE);
             
-            $stmt = $this->db->prepare("
-                INSERT INTO design_settings (setting_type, settings) 
-                VALUES (?, ?) 
-                ON DUPLICATE KEY UPDATE 
-                settings = VALUES(settings), 
-                updated_at = CURRENT_TIMESTAMP
-            ");
+            // Try to update first
+            $stmt = $this->db->prepare("UPDATE design_settings SET settings = ?, updated_at = CURRENT_TIMESTAMP WHERE setting_type = ?");
+            $stmt->execute([$settingsJson, $settingType]);
             
-            return $stmt->execute([$settingType, $settingsJson]);
+            // If no rows affected, insert new
+            if ($stmt->rowCount() == 0) {
+                $stmt = $this->db->prepare("INSERT INTO design_settings (setting_type, settings) VALUES (?, ?)");
+                $stmt->execute([$settingType, $settingsJson]);
+            }
+            
+            return true;
         } catch (Exception $e) {
             error_log("Error saving design settings: " . $e->getMessage());
             return false;
@@ -203,23 +241,30 @@ class PageContent {
     }
     
     public function getAllPages() {
-        $stmt = $this->db->query("SELECT page_name, content, updated_at FROM page_contents ORDER BY page_name");
-        $pages = [];
+        if (!$this->db) return [];
         
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $pages[] = [
-                'page_name' => $row['page_name'],
-                'content' => json_decode($row['content'], true),
-                'updated_at' => $row['updated_at']
-            ];
+        try {
+            $stmt = $this->db->query("SELECT page_name, content, updated_at FROM page_contents ORDER BY page_name");
+            $pages = [];
+            
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $pages[] = [
+                    'page_name' => $row['page_name'],
+                    'content' => json_decode($row['content'], true) ?: [],
+                    'updated_at' => $row['updated_at']
+                ];
+            }
+            
+            return $pages;
+        } catch (Exception $e) {
+            error_log("Error getting all pages: " . $e->getMessage());
+            return [];
         }
-        
-        return $pages;
     }
     
     public function uploadMedia($file) {
         try {
-            $uploadDir = '../uploads/';
+            $uploadDir = __DIR__ . '/../uploads/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -236,26 +281,28 @@ class PageContent {
             
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
                 // Save to database
-                $stmt = $this->db->prepare("
-                    INSERT INTO media_files (filename, original_name, file_path, file_type, file_size, mime_type) 
-                    VALUES (?, ?, ?, ?, ?, ?)
-                ");
-                
-                $fileType = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']) ? 'image' : 'document';
-                
-                $stmt->execute([
-                    $fileName,
-                    $file['name'],
-                    $filePath,
-                    $fileType,
-                    $file['size'],
-                    $file['type']
-                ]);
+                if ($this->db) {
+                    $stmt = $this->db->prepare("
+                        INSERT INTO media_files (filename, original_name, file_path, file_type, file_size, mime_type) 
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ");
+                    
+                    $fileType = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']) ? 'image' : 'document';
+                    
+                    $stmt->execute([
+                        $fileName,
+                        $file['name'],
+                        $filePath,
+                        $fileType,
+                        $file['size'],
+                        $file['type']
+                    ]);
+                }
                 
                 return [
                     'success' => true,
                     'filename' => $fileName,
-                    'url' => str_replace('../', '', $filePath)
+                    'url' => 'uploads/' . $fileName
                 ];
             } else {
                 throw new Exception('Fehler beim Hochladen der Datei');
@@ -269,11 +316,20 @@ class PageContent {
     }
     
     public function getMediaFiles() {
-        $stmt = $this->db->query("SELECT * FROM media_files ORDER BY uploaded_at DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!$this->db) return [];
+        
+        try {
+            $stmt = $this->db->query("SELECT * FROM media_files ORDER BY uploaded_at DESC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error getting media files: " . $e->getMessage());
+            return [];
+        }
     }
     
     public function deleteMediaFile($id) {
+        if (!$this->db) return false;
+        
         try {
             // Get file info first
             $stmt = $this->db->prepare("SELECT file_path FROM media_files WHERE id = ?");
