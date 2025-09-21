@@ -2752,6 +2752,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             showNotification('Team-Mitglied gespeichert!', 'success');
             closeTeamModal();
         });
+
+        // Service Form Submission
+        document.getElementById('serviceEditForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const serviceData = {
+                id: document.getElementById('serviceId').value,
+                name: document.getElementById('serviceName').value,
+                icon: document.getElementById('serviceIcon').value,
+                description: document.getElementById('serviceDescription').value,
+                order: document.getElementById('serviceOrder').value,
+                active: document.getElementById('serviceActive').checked
+            };
+            
+            // Collect features
+            const features = [];
+            document.querySelectorAll('#serviceFeatures .feature-item input').forEach(input => {
+                if (input.value.trim()) {
+                    features.push(input.value.trim());
+                }
+            });
+            serviceData.features = features;
+            
+            showNotification(`Service "${serviceData.name}" erfolgreich gespeichert!`, 'success');
+            closeServiceModal();
+            
+            // Update service card visual feedback
+            setTimeout(() => {
+                const serviceCard = document.querySelector(`[data-service-id="${serviceData.id}"]`);
+                if (serviceCard) {
+                    serviceCard.style.border = '2px solid #10b981';
+                    setTimeout(() => {
+                        serviceCard.style.border = '';
+                    }, 2000);
+                }
+            }, 300);
+        });
     </script>
 </body>
 </html>
