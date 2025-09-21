@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['admin_username'] = $username;
         $success = 'Login erfolgreich! Weiterleitung...';
         // JavaScript redirect instead of PHP header
-        echo "<script>setTimeout(function(){ window.location.href = 'universal_admin.php'; }, 1000);</script>";
+        header('Location: universal_admin.php');
+        exit();
     } else {
         $error = 'Ungültige Anmeldedaten';
     }
