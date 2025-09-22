@@ -32,7 +32,7 @@ include 'includes/header.php';
 ?>
 
 <div class="admin-container">
-    <?php include '../admin/includes/sidebar.php'; ?>
+    <?php include 'includes/sidebar.php'; ?>
     
     <main class="admin-main">
         <div class="admin-header">
