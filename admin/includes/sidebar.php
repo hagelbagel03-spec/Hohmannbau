@@ -65,7 +65,12 @@
                 
                 <a href="colors.php" class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg transition duration-200">
                     <i class="fas fa-palette w-5"></i>
-                    <span>Design</span>
+                    <span>Design (Einfach)</span>
+                </a>
+                
+                <a href="colors_advanced.php" class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg transition duration-200">
+                    <i class="fas fa-sliders-h w-5"></i>
+                    <span>Erweiterte Farben</span>
                 </a>
                 
                 <hr class="my-6 border-gray-600">
