@@ -116,11 +116,64 @@ header, .header, nav {
     border-color: var(--theme-accent) !important;
 }
 
-/* Text-Styling */
+/* Text-Styling - Alle Überschriften und Texte */
+h1, .h1, .heading-1 {
+    color: var(--heading-color) !important;
+}
+
+h2, .h2, .heading-2 {
+    color: var(--heading-color) !important;
+}
+
+h3, .h3, .heading-3 {
+    color: var(--subheading-color) !important;
+}
+
+h4, h5, h6, .h4, .h5, .h6 {
+    color: var(--subheading-color) !important;
+}
+
+/* Body Text */
 body, p, .text-body {
     color: var(--body-text) !important;
 }
 
+/* Links */
+a, .text-primary, .text-primary-600 {
+    color: var(--link-color) !important;
+}
+
+a:hover {
+    color: var(--highlight-color) !important;
+}
+
+/* Tailwind Text Color Overrides */
+.text-primary-600 {
+    color: var(--link-color) !important;
+}
+
+.text-primary-700 {
+    color: var(--highlight-color) !important;
+}
+
+.text-green-600 {
+    color: var(--highlight-color) !important;
+}
+
+.text-blue-600 {
+    color: var(--accent-color) !important;
+}
+
+/* Font Weight Classes with Colors */
+.font-semibold {
+    color: var(--subheading-color) !important;
+}
+
+.font-bold {
+    color: var(--heading-color) !important;
+}
+
+/* Accent Colors */
 .text-accent, .accent-color {
     color: var(--accent-color) !important;
 }
