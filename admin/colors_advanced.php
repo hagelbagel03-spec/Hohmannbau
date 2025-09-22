@@ -121,29 +121,9 @@ include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
 
-            <div class="admin-header">
-                <h1 class="text-3xl font-bold text-gray-900">🎨 Erweiterte Design-Anpassung</h1>
-                <p class="text-gray-600">Passen Sie alle Farben und Design-Elemente Ihrer Website an</p>
-                <p class="text-sm text-green-600 font-medium mt-1">✅ SPEICHERN FUNKTIONIERT JETZT!</p>
-            </div>
-
-            <?php if ($message): ?>
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    <?php echo htmlspecialchars($message); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if ($error): ?>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
-
             <!-- Live Preview -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <div class="admin-card p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                     <i class="fas fa-eye mr-2 text-blue-600"></i>
                     Live-Vorschau
                 </h2>
