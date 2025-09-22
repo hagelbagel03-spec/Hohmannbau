@@ -116,6 +116,7 @@ try {
 }
 
 $pageTitle = 'Erweiterte Design-Anpassung';
+$load_dynamic_styles = true; // Aktiviere dynamische Styles für diese Seite
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
