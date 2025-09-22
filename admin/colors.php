@@ -27,8 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Get current color theme
-$homepage = $db->query("SELECT color_theme FROM homepage WHERE id = '1'")->fetch();
-$current_theme = $homepage['color_theme'] ?? 'green';
+try {
+    $homepage = $db->query("SELECT color_theme FROM homepage WHERE id = '1'")->fetch();
+    $current_theme = $homepage['color_theme'] ?? 'green';
+} catch (Exception $e) {
+    $current_theme = 'green'; // Fallback
+}
 
 $pageTitle = 'Farben & Design';
 include 'includes/header.php';
