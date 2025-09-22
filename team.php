@@ -1,138 +1,83 @@
 <?php
-/**
- * Team Page
- * Display all team members
- */
-
-// Windows Apache Kompatibilität - Fehlerbehandlung
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-
-try {
-    require_once 'config/database.php';
-} catch (Exception $e) {
-    $db_error = true;
-}
-
-$pageTitle = 'Unser Team - Hohmann Bau';
-$pageDescription = 'Lernen Sie unser engagiertes Team kennen';
-
-// Standardwerte falls Datenbank nicht verfügbar
-$team = [
-    ['name' => 'Kommissar Schmidt', 'position' => 'Leiter der Stadtwache', 'description' => 'Über 20 Jahre Erfahrung im Polizeidienst', 'email' => 'schmidt@stadtwache.de', 'phone' => '+49 123 456-701'],
-    ['name' => 'Hauptmeister Müller', 'position' => 'Stellvertretender Leiter', 'description' => 'Spezialist für Ermittlungsverfahren', 'email' => 'mueller@stadtwache.de', 'phone' => '+49 123 456-702'],
-    ['name' => 'Meisterin Weber', 'position' => 'Leiterin Bürgerdienst', 'description' => 'Expertin für Bürgerberatung und Prävention', 'email' => 'weber@stadtwache.de', 'phone' => '+49 123 456-703'],
-    ['name' => 'Oberkommissar Fischer', 'position' => 'Leiter Verkehrssicherheit', 'description' => 'Experte für Verkehrsunfälle und Prävention', 'email' => 'fischer@stadtwache.de', 'phone' => '+49 123 456-704'],
-    ['name' => 'Kommissarin Schneider', 'position' => 'Ermittlungsabteilung', 'description' => 'Spezialistin für Cyberkriminalität', 'email' => 'schneider@stadtwache.de', 'phone' => '+49 123 456-705'],
-    ['name' => 'Hauptmeister Wagner', 'position' => 'Streifendienst', 'description' => 'Langjährige Erfahrung im Außendienst', 'email' => 'wagner@stadtwache.de', 'phone' => '+49 123 456-706']
-];
-
-// Versuche Datenbank zu laden, falls verfügbar
-if (!isset($db_error)) {
-    try {
-        $db = getDB();
-        $team_db = $db->query("SELECT * FROM team WHERE active = 1 ORDER BY `order`, name")->fetchAll();
-        if (!empty($team_db)) {
-            $team = $team_db;
-        }
-    } catch (Exception $e) {
-        $db_error = true;
-    }
-}
-
+$title = 'Team - Hohmann Bau';
+$description = 'Lernen Sie unser erfahrenes Team kennen - Experten für Garten- und Landschaftsbau.';
 include 'includes/header.php';
 ?>
 
-<section class="py-16 bg-gray-50">
+<!-- Navigation -->
+<nav class="navbar fixed top-0 left-0 right-0 z-50 py-4">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Unser Team</h1>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Lernen Sie die erfahrenen Garten- und Landschaftsbau-Experten kennen, die Ihre grünen Träume verwirklichen
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <?php foreach ($team as $member): ?>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                <div class="p-6 text-center">
-                    <div class="w-32 h-32 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-seedling text-white text-4xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2"><?php echo htmlspecialchars($member['name']); ?></h3>
-                    <p class="text-green-600 font-semibold mb-3"><?php echo htmlspecialchars($member['position']); ?></p>
-                    
-                    <?php if ($member['description']): ?>
-                    <p class="text-gray-600 text-sm mb-4"><?php echo htmlspecialchars($member['description']); ?></p>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($member['email']) || isset($member['phone'])): ?>
-                    <div class="flex justify-center space-x-3 mt-4">
-                        <?php if (isset($member['email']) && $member['email']): ?>
-                        <a href="mailto:<?php echo $member['email']; ?>" 
-                           class="bg-blue-100 p-3 rounded-full text-blue-600 hover:bg-blue-200 transition duration-300">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <?php endif; ?>
-                        <?php if (isset($member['phone']) && $member['phone']): ?>
-                        <a href="tel:<?php echo $member['phone']; ?>" 
-                           class="bg-green-100 p-3 rounded-full text-green-600 hover:bg-green-200 transition duration-300">
-                            <i class="fas fa-phone"></i>
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                    <?php endif; ?>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-leaf text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Hohmann Bau</h1>
+                    <p class="text-xs text-gray-600">Garten & Landschaftsbau</p>
                 </div>
             </div>
-            <?php endforeach; ?>
-        </div>
-
-        <!-- Team Statistics -->
-        <div class="mt-16 bg-white rounded-xl shadow-lg p-8">
-            <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Unser Team in Zahlen</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600 mb-2"><?php echo count($team); ?></div>
-                    <p class="text-gray-600">Gartenbau-Experten</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-600 mb-2">75+</div>
-                    <p class="text-gray-600">Jahre Gesamterfahrung</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-yellow-600 mb-2">365</div>
-                    <p class="text-gray-600">Tage Gartenpflege</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-orange-600 mb-2">98%</div>
-                    <p class="text-gray-600">Kundenzufriedenheit</p>
-                </div>
+            <div class="hidden lg:flex items-center space-x-2">
+                <a href="index.php" class="nav-link">Home</a>
+                <a href="about.php" class="nav-link">Über uns</a>
+                <a href="services.php" class="nav-link">Leistungen</a>
+                <a href="team.php" class="nav-link active">Team</a>
+                <a href="careers.php" class="nav-link">Karriere</a>
+                <a href="news.php" class="nav-link">Aktuelles</a>
+                <a href="contact.php" class="nav-link">Kontakt</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="contact.php" class="btn-primary-pro">
+                    <i class="fas fa-envelope"></i>
+                    <span>Kontakt</span>
+                </a>
             </div>
         </div>
+    </div>
+</nav>
 
-        <!-- Join Our Team -->
-        <div class="mt-16 bg-green-600 rounded-xl shadow-lg p-8 text-center text-white">
-            <h2 class="text-2xl font-bold mb-4">Werden Sie Teil unseres grünen Teams!</h2>
-            <p class="text-green-100 mb-6">
-                Wir suchen leidenschaftliche Gartenbau-Fachkräfte, die mit uns die schönsten Gärten der Region gestalten möchten.
-            </p>
-            <a href="careers.php" class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition duration-300">
-                <i class="fas fa-leaf mr-2"></i>
-                Gartenbau-Jobs ansehen
-            </a>
-        </div>
+<!-- Hero Section -->
+<section class="hero-gradient section-professional pt-32 pb-20 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="heading-1 text-white mb-6">Unser Team</h1>
+        <p class="text-large text-gray-100 max-w-3xl mx-auto">
+            Lernen Sie die Experten kennen, die Ihre Gartenträume verwirklichen
+        </p>
     </div>
 </section>
 
-<style>
-.card-hover {
-    transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-</style>
+<!-- Team Content -->
+<section class="section-professional bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card-professional p-8 text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-user text-white text-2xl"></i>
+                </div>
+                <h3 class="heading-3 text-gray-900 mb-2">Klaus Hohmann</h3>
+                <p class="text-primary-600 font-semibold mb-3">Geschäftsführer & Gartenbaumeister</p>
+                <p class="text-body text-gray-600">Über 25 Jahre Erfahrung im Garten- und Landschaftsbau</p>
+            </div>
+            
+            <div class="card-professional p-8 text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-user text-white text-2xl"></i>
+                </div>
+                <h3 class="heading-3 text-gray-900 mb-2">Sarah Müller</h3>
+                <p class="text-primary-600 font-semibold mb-3">Gartendesignerin</p>
+                <p class="text-body text-gray-600">Spezialistin für moderne Gartenplanung und 3D-Design</p>
+            </div>
+            
+            <div class="card-professional p-8 text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-user text-white text-2xl"></i>
+                </div>
+                <h3 class="heading-3 text-gray-900 mb-2">Thomas Weber</h3>
+                <p class="text-primary-600 font-semibold mb-3">Bauleiter</p>
+                <p class="text-body text-gray-600">Experte für komplexe Landschaftsbauprojekte</p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <?php include 'includes/footer.php'; ?>
