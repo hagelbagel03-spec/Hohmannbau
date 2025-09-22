@@ -176,8 +176,8 @@ if ($error) {
             </div>
 
             <!-- Individuelle Farbanpassung -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h2 class="text-xl font-semibold mb-6 flex items-center">
+            <div class="admin-card p-6">
+                <h2 class="text-xl font-semibold mb-6 flex items-center text-gray-800">
                     <i class="fas fa-sliders-h mr-2 text-orange-600"></i>
                     Individuelle Farbanpassung
                 </h2>
