@@ -91,23 +91,20 @@ $pageSubtitle = 'Übersicht und Verwaltung';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
-            <main class="p-6">
             <!-- Dashboard Content -->
-            <main class="p-6">
-                <!-- Statistics Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-600">Gesamte Berichte</p>
-                                <p class="text-3xl font-bold text-gray-900"><?php echo $stats['reports']['total']; ?></p>
-                                <p class="text-sm text-red-600 mt-1">
-                                    <?php echo $stats['reports']['new']; ?> neue
-                                </p>
-                            </div>
-                            <div class="bg-red-100 rounded-full p-3">
-                                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-                            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="admin-card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Gesamte Berichte</p>
+                            <p class="text-3xl font-bold text-gray-900"><?php echo $stats['reports']['total']; ?></p>
+                            <p class="text-sm text-red-600 mt-1">
+                                <?php echo $stats['reports']['new']; ?> neue
+                            </p>
+                        </div>
+                        <div class="bg-red-100 rounded-full p-3">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                        </div>
                         </div>
                     </div>
                     
