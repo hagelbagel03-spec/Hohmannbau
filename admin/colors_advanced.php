@@ -115,7 +115,8 @@ try {
     $body_text = '#374151';
 }
 
-$pageTitle = 'Erweiterte Design-Anpassung (FUNKTIONIERT)';
+$pageTitle = 'Erweiterte Design-Anpassung';
+$pageSubtitle = 'Passen Sie alle Farben und Design-Elemente Ihrer Website an';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
