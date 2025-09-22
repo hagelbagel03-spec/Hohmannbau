@@ -146,4 +146,4 @@ include 'includes/header.php';
     </main>
 </div>
 
-<?php include '../admin/includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
