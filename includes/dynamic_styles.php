@@ -116,7 +116,7 @@ header, .header, nav {
     border-color: var(--theme-accent) !important;
 }
 
-/* Text-Styling - Alle Überschriften und Texte */
+/* Text-Styling - Alle Überschriften und Texte steuerbar */
 h1, .h1, .heading-1 {
     color: var(--heading-color) !important;
 }
@@ -133,49 +133,46 @@ h4, h5, h6, .h4, .h5, .h6 {
     color: var(--subheading-color) !important;
 }
 
-/* Body Text */
-body, p, .text-body {
+/* Body Text - Alle Beschreibungstexte */
+body, p, .text-body, .text-large, .text-gray-600, .text-gray-100 {
     color: var(--body-text) !important;
 }
 
-/* Links */
-a, .text-primary, .text-primary-600 {
+/* Spezifische Texte die steuerbar sein sollen */
+.hero-subtitle, .section-subtitle, .service-description {
+    color: var(--body-text) !important;
+}
+
+/* Links - alle anklickbaren Elemente */
+a, .text-primary, .text-primary-600, .text-blue-600 {
     color: var(--link-color) !important;
 }
 
-a:hover {
+a:hover, .text-primary:hover {
     color: var(--highlight-color) !important;
 }
 
-/* Tailwind Text Color Overrides */
-.text-primary-600 {
-    color: var(--link-color) !important;
-}
-
-.text-primary-700 {
+/* Highlights und Betonungen */
+.font-semibold, .font-bold, .text-primary-700, .text-green-600 {
     color: var(--highlight-color) !important;
 }
 
-.text-green-600 {
-    color: var(--highlight-color) !important;
-}
-
-.text-blue-600 {
-    color: var(--accent-color) !important;
-}
-
-/* Font Weight Classes with Colors */
-.font-semibold {
+/* Service Cards Text */
+.service-card h3, .card-professional h3 {
     color: var(--subheading-color) !important;
 }
 
-.font-bold {
-    color: var(--heading-color) !important;
+.service-card p, .card-professional p {
+    color: var(--body-text) !important;
 }
 
-/* Accent Colors */
-.text-accent, .accent-color {
-    color: var(--accent-color) !important;
+/* Navigation Text */
+.nav-link {
+    color: var(--header-text) !important;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--highlight-color) !important;
 }
 
 .bg-accent {
