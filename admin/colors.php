@@ -1,6 +1,6 @@
 <?php
 /**
- * Colors & Design Manager
+ * Colors & Design Manager - Mit verbesserter visueller Anzeige
  */
 
 require_once '../config/auth.php';
@@ -37,15 +37,33 @@ try {
 $pageTitle = 'Farben & Design';
 include 'includes/header.php';
 include 'includes/sidebar.php';
+
+// Farbthemen definieren
+$themes = [
+    'green' => ['name' => '🌿 Grün', 'desc' => 'Natürlich & frisch', 'from' => 'green-500', 'to' => 'green-600', 'border' => 'green-500', 'bg' => 'green-50', 'text' => 'green-700'],
+    'blue' => ['name' => '💙 Blau', 'desc' => 'Professional & vertrauensvoll', 'from' => 'blue-500', 'to' => 'blue-600', 'border' => 'blue-500', 'bg' => 'blue-50', 'text' => 'blue-700'],
+    'purple' => ['name' => '💜 Lila', 'desc' => 'Elegant & modern', 'from' => 'purple-500', 'to' => 'purple-600', 'border' => 'purple-500', 'bg' => 'purple-50', 'text' => 'purple-700'],
+    'red' => ['name' => '❤️ Rot', 'desc' => 'Kraftvoll & aufmerksamkeitsstark', 'from' => 'red-500', 'to' => 'red-600', 'border' => 'red-500', 'bg' => 'red-50', 'text' => 'red-700'],
+    'orange' => ['name' => '🧡 Orange', 'desc' => 'Energiegeladen & freundlich', 'from' => 'orange-500', 'to' => 'orange-600', 'border' => 'orange-500', 'bg' => 'orange-50', 'text' => 'orange-700'],
+    'gray' => ['name' => '🤍 Grau', 'desc' => 'Zeitlos & minimalistisch', 'from' => 'gray-500', 'to' => 'gray-600', 'border' => 'gray-500', 'bg' => 'gray-50', 'text' => 'gray-700']
+];
 ?>
 
             <div class="admin-header">
                 <h1 class="text-2xl font-bold text-gray-900">🎨 Farben & Design</h1>
                 <p class="text-gray-600">Wählen Sie das Farbthema für Ihre Website</p>
+                
+                <?php if ($current_theme): ?>
+                    <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-<?php echo $themes[$current_theme]['bg']; ?> text-<?php echo $themes[$current_theme]['text']; ?>">
+                        <i class="fas fa-paint-brush mr-2"></i>
+                        Aktuell: <?php echo $themes[$current_theme]['name']; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <?php if ($message): ?>
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
                     <?php echo htmlspecialchars($message); ?>
                 </div>
             <?php endif; ?>
@@ -55,104 +73,39 @@ include 'includes/sidebar.php';
                     <h2 class="text-xl font-semibold mb-6">Farbthema auswählen</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Green Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'green' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-green-300'; ?> rounded-lg p-4 transition-all cursor-pointer">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="green" <?php echo $current_theme === 'green' ? 'checked' : ''; ?> class="sr-only peer" onchange="this.form.submit()">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-lg mb-3 relative">
-                                        <?php if ($current_theme === 'green'): ?>
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <i class="fas fa-check text-white text-2xl"></i>
+                        <?php foreach ($themes as $theme_key => $theme_data): ?>
+                            <div class="border-2 <?php echo $current_theme === $theme_key ? 'border-' . $theme_data['border'] . ' bg-' . $theme_data['bg'] . ' shadow-lg' : 'border-gray-200 hover:border-' . $theme_data['border'] . ' hover:shadow-md'; ?> rounded-lg p-4 transition-all cursor-pointer">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="color_theme" value="<?php echo $theme_key; ?>" 
+                                           <?php echo $current_theme === $theme_key ? 'checked' : ''; ?> 
+                                           class="sr-only peer" onchange="this.form.submit()">
+                                    <div class="text-center">
+                                        <div class="w-full h-20 bg-gradient-to-r from-<?php echo $theme_data['from']; ?> to-<?php echo $theme_data['to']; ?> rounded-lg mb-3 relative">
+                                            <?php if ($current_theme === $theme_key): ?>
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                                        <i class="fas fa-check text-<?php echo $theme_data['border']; ?> text-lg"></i>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <h3 class="font-semibold <?php echo $current_theme === $theme_key ? 'text-' . $theme_data['text'] : 'text-gray-900'; ?>">
+                                            <?php echo $theme_data['name']; ?>
+                                        </h3>
+                                        <p class="text-sm text-gray-600"><?php echo $theme_data['desc']; ?></p>
+                                        <?php if ($current_theme === $theme_key): ?>
+                                            <div class="mt-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold text-<?php echo $theme_data['text']; ?> bg-<?php echo $theme_data['bg']; ?>">
+                                                <i class="fas fa-star mr-1"></i>
+                                                AKTIV
                                             </div>
                                         <?php endif; ?>
                                     </div>
-                                    <h3 class="font-semibold <?php echo $current_theme === 'green' ? 'text-green-700' : 'text-gray-900'; ?>">🌿 Grün</h3>
-                                    <p class="text-sm text-gray-600">Natürlich & frisch</p>
-                                    <?php if ($current_theme === 'green'): ?>
-                                        <p class="text-xs text-green-600 font-medium mt-1">✓ AKTIV</p>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'green' ? 'border-green-500 bg-green-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Blue Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'blue' ? 'border-blue-500' : 'border-gray-200'; ?> rounded-lg p-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="blue" <?php echo $current_theme === 'blue' ? 'checked' : ''; ?> class="sr-only peer">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">💙 Blau</h3>
-                                    <p class="text-sm text-gray-600">Professional & vertrauensvoll</p>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'blue' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Purple Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'purple' ? 'border-purple-500' : 'border-gray-200'; ?> rounded-lg p-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="purple" <?php echo $current_theme === 'purple' ? 'checked' : ''; ?> class="sr-only peer">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">💜 Lila</h3>
-                                    <p class="text-sm text-gray-600">Elegant & modern</p>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'purple' ? 'border-purple-500 bg-purple-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Red Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'red' ? 'border-red-500' : 'border-gray-200'; ?> rounded-lg p-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="red" <?php echo $current_theme === 'red' ? 'checked' : ''; ?> class="sr-only peer">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">❤️ Rot</h3>
-                                    <p class="text-sm text-gray-600">Kraftvoll & aufmerksamkeitsstark</p>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'red' ? 'border-red-500 bg-red-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Orange Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'orange' ? 'border-orange-500' : 'border-gray-200'; ?> rounded-lg p-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="orange" <?php echo $current_theme === 'orange' ? 'checked' : ''; ?> class="sr-only peer">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">🧡 Orange</h3>
-                                    <p class="text-sm text-gray-600">Energiegeladen & freundlich</p>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'orange' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Gray Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'gray' ? 'border-gray-500' : 'border-gray-200'; ?> rounded-lg p-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="gray" <?php echo $current_theme === 'gray' ? 'checked' : ''; ?> class="sr-only peer">
-                                <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">🤍 Grau</h3>
-                                    <p class="text-sm text-gray-600">Zeitlos & minimalistisch</p>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'gray' ? 'border-gray-500 bg-gray-500' : 'border-gray-300'; ?> transition-all"></span>
-                                </div>
-                            </label>
-                        </div>
+                                    <div class="mt-3 text-center">
+                                        <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === $theme_key ? 'border-' . $theme_data['border'] . ' bg-' . $theme_data['border'] : 'border-gray-300'; ?> transition-all"></span>
+                                    </div>
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
 
                     <div class="mt-8 flex justify-end">
@@ -173,6 +126,7 @@ include 'includes/sidebar.php';
                         <h3 class="text-sm font-medium text-blue-800">Hinweis</h3>
                         <div class="mt-2 text-sm text-blue-700">
                             <p>Das gewählte Farbthema wird sofort auf der gesamten Website angewendet. Die Änderungen sind für alle Besucher sichtbar.</p>
+                            <p class="mt-1">Für erweiterte Farbanpassungen nutzen Sie die <a href="colors_advanced.php" class="underline font-medium">Erweiterte Farb-Verwaltung</a>.</p>
                         </div>
                     </div>
                 </div>
