@@ -110,6 +110,10 @@ try {
     $button_secondary = $homepage['button_secondary_color'] ?? '#6b7280';
     $accent_color = $homepage['accent_color'] ?? '#3b82f6';
     $body_text = $homepage['body_text_color'] ?? '#374151';
+    $heading_color = $homepage['heading_color'] ?? '#1f2937';
+    $subheading_color = $homepage['subheading_color'] ?? '#374151';
+    $link_color = $homepage['link_color'] ?? '#2563eb';
+    $highlight_color = $homepage['highlight_color'] ?? '#059669';
 } catch (Exception $e) {
     $error = '❌ Fehler beim Laden der Daten: ' . $e->getMessage();
     // Fallback-Werte
