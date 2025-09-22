@@ -25,6 +25,10 @@ $button_primary = ($homepage && isset($homepage['button_primary_color']) && $hom
 $button_secondary = ($homepage && isset($homepage['button_secondary_color']) && $homepage['button_secondary_color']) ? $homepage['button_secondary_color'] : '#6b7280';
 $accent_color = ($homepage && isset($homepage['accent_color']) && $homepage['accent_color']) ? $homepage['accent_color'] : '#3b82f6';
 $body_text = ($homepage && isset($homepage['body_text_color']) && $homepage['body_text_color']) ? $homepage['body_text_color'] : '#374151';
+$heading_color = ($homepage && isset($homepage['heading_color']) && $homepage['heading_color']) ? $homepage['heading_color'] : '#1f2937';
+$subheading_color = ($homepage && isset($homepage['subheading_color']) && $homepage['subheading_color']) ? $homepage['subheading_color'] : '#374151';
+$link_color = ($homepage && isset($homepage['link_color']) && $homepage['link_color']) ? $homepage['link_color'] : '#2563eb';
+$highlight_color = ($homepage && isset($homepage['highlight_color']) && $homepage['highlight_color']) ? $homepage['highlight_color'] : '#059669';
 $current_theme = ($homepage && isset($homepage['color_theme'])) ? $homepage['color_theme'] : 'green';
 
 // Theme-basierte Farben
