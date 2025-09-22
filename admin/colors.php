@@ -4,6 +4,7 @@
  */
 
 require_once '../config/auth.php';
+require_once 'includes/functions.php';
 requireAuth();
 
 require_once '../config/database.php';
