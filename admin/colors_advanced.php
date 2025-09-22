@@ -290,7 +290,7 @@ if ($error) {
                             <i class="fas fa-undo mr-2"></i>
                             Zurücksetzen
                         </button>
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition duration-200 font-semibold">
+                        <button type="submit" class="btn-primary">
                             <i class="fas fa-save mr-2"></i>
                             Farben speichern
                         </button>
