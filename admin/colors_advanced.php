@@ -294,6 +294,44 @@ if ($error) {
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Erweiterte Text-Farben -->
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <i class="fas fa-heading mr-2 text-gray-600"></i>
+                                Überschriften & Texte
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Hauptüberschriften (H1, H2)</label>
+                                    <input type="color" name="heading_color" value="<?php echo $heading_color; ?>" 
+                                           class="w-full h-12 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" name="heading_color_display" value="<?php echo $heading_color; ?>" 
+                                           class="w-full mt-1 px-2 py-1 border border-gray-300 rounded text-sm" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Unterüberschriften (H3, H4)</label>
+                                    <input type="color" name="subheading_color" value="<?php echo $subheading_color; ?>" 
+                                           class="w-full h-12 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" name="subheading_color_display" value="<?php echo $subheading_color; ?>" 
+                                           class="w-full mt-1 px-2 py-1 border border-gray-300 rounded text-sm" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Links</label>
+                                    <input type="color" name="link_color" value="<?php echo $link_color; ?>" 
+                                           class="w-full h-12 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" name="link_color_display" value="<?php echo $link_color; ?>" 
+                                           class="w-full mt-1 px-2 py-1 border border-gray-300 rounded text-sm" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Highlight-Text</label>
+                                    <input type="color" name="highlight_color" value="<?php echo $highlight_color; ?>" 
+                                           class="w-full h-12 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" name="highlight_color_display" value="<?php echo $highlight_color; ?>" 
+                                           class="w-full mt-1 px-2 py-1 border border-gray-300 rounded text-sm" readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-6 flex justify-between">
