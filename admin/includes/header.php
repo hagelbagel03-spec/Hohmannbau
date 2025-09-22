@@ -17,6 +17,22 @@
             background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
         }
         
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-main {
+            flex: 1;
+            padding: 32px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            margin-bottom: 24px;
+        }
+        
         .admin-content {
             background: #f8fafc;
             min-height: 100vh;
