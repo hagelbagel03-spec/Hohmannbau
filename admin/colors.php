@@ -56,13 +56,22 @@ include 'includes/sidebar.php';
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Green Theme -->
-                        <div class="border-2 <?php echo $current_theme === 'green' ? 'border-green-500' : 'border-gray-200'; ?> rounded-lg p-4">
+                        <div class="border-2 <?php echo $current_theme === 'green' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-green-300'; ?> rounded-lg p-4 transition-all cursor-pointer">
                             <label class="cursor-pointer">
-                                <input type="radio" name="color_theme" value="green" <?php echo $current_theme === 'green' ? 'checked' : ''; ?> class="sr-only peer">
+                                <input type="radio" name="color_theme" value="green" <?php echo $current_theme === 'green' ? 'checked' : ''; ?> class="sr-only peer" onchange="this.form.submit()">
                                 <div class="text-center">
-                                    <div class="w-full h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-lg mb-3"></div>
-                                    <h3 class="font-semibold text-gray-900">🌿 Grün</h3>
+                                    <div class="w-full h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-lg mb-3 relative">
+                                        <?php if ($current_theme === 'green'): ?>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <i class="fas fa-check text-white text-2xl"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h3 class="font-semibold <?php echo $current_theme === 'green' ? 'text-green-700' : 'text-gray-900'; ?>">🌿 Grün</h3>
                                     <p class="text-sm text-gray-600">Natürlich & frisch</p>
+                                    <?php if ($current_theme === 'green'): ?>
+                                        <p class="text-xs text-green-600 font-medium mt-1">✓ AKTIV</p>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="mt-3 text-center">
                                     <span class="inline-block w-4 h-4 rounded-full border-2 <?php echo $current_theme === 'green' ? 'border-green-500 bg-green-500' : 'border-gray-300'; ?> transition-all"></span>
