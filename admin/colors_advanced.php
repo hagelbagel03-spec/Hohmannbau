@@ -119,6 +119,21 @@ $pageTitle = 'Erweiterte Design-Anpassung';
 $pageSubtitle = 'Passen Sie alle Farben und Design-Elemente Ihrer Website an';
 include 'includes/header.php';
 include 'includes/sidebar.php';
+
+// Flash messages
+if ($message) {
+    echo '<div class="alert alert-success slide-in">';
+    echo '<i class="fas fa-check-circle"></i>';
+    echo '<span>' . htmlspecialchars($message) . '</span>';
+    echo '</div>';
+}
+
+if ($error) {
+    echo '<div class="alert alert-error slide-in">';
+    echo '<i class="fas fa-exclamation-circle"></i>';
+    echo '<span>' . htmlspecialchars($error) . '</span>';
+    echo '</div>';
+}
 ?>
 
             <!-- Live Preview -->
