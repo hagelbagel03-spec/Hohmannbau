@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $homepage = $db->query("SELECT color_theme FROM homepage WHERE id = '1'")->fetch();
 $current_theme = $homepage['color_theme'] ?? 'green';
 
-include '../admin/includes/header.php';
+include 'includes/header.php';
 ?>
 
 <div class="admin-container">
