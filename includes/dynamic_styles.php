@@ -84,14 +84,14 @@ header, .header, nav {
     color: var(--header-text) !important;
 }
 
-/* Button-Styling */
-.btn-primary, .button-primary {
+/* Button-Styling - Kompatibel mit allen Button-Klassen */
+.btn-primary, .button-primary, .btn-primary-pro {
     background: linear-gradient(135deg, var(--button-primary) 0%, var(--theme-secondary) 100%) !important;
     border-color: var(--button-primary) !important;
     color: white !important;
 }
 
-.btn-primary:hover, .button-primary:hover {
+.btn-primary:hover, .button-primary:hover, .btn-primary-pro:hover {
     background: var(--theme-secondary) !important;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(<?php echo hexdec(substr($button_primary, 1, 2)); ?>, <?php echo hexdec(substr($button_primary, 3, 2)); ?>, <?php echo hexdec(substr($button_primary, 5, 2)); ?>, 0.4);
