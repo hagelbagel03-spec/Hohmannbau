@@ -38,6 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $button_secondary = sanitizeInput($_POST['button_secondary'] ?? '#6b7280');
                     $accent_color = sanitizeInput($_POST['accent_color'] ?? '#3b82f6');
                     $body_text = sanitizeInput($_POST['body_text'] ?? '#374151');
+                    $heading_color = sanitizeInput($_POST['heading_color'] ?? '#1f2937');
+                    $subheading_color = sanitizeInput($_POST['subheading_color'] ?? '#374151');
+                    $link_color = sanitizeInput($_POST['link_color'] ?? '#2563eb');
+                    $highlight_color = sanitizeInput($_POST['highlight_color'] ?? '#059669');
                     
                     // Einfacher UPDATE-Ansatz
                     $stmt = $db->prepare("
@@ -49,12 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         button_primary_color = ?,
                         button_secondary_color = ?,
                         accent_color = ?,
-                        body_text_color = ?
+                        body_text_color = ?,
+                        heading_color = ?,
+                        subheading_color = ?,
+                        link_color = ?,
+                        highlight_color = ?
                         WHERE id = '1'
                     ");
                     
                     if ($stmt->execute([$footer_bg, $footer_text, $header_bg, $header_text, 
-                                      $button_primary, $button_secondary, $accent_color, $body_text])) {
+                                      $button_primary, $button_secondary, $accent_color, $body_text,
+                                      $heading_color, $subheading_color, $link_color, $highlight_color])) {
                         $message = '✅ Individuelle Farben wurden erfolgreich gespeichert!';
                     } else {
                         $error = '❌ Fehler beim Speichern der Farben.';
