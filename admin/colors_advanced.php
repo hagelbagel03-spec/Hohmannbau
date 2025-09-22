@@ -285,7 +285,7 @@ if ($error) {
 
                     <div class="mt-6 flex justify-between">
                         <button type="submit" name="action" value="reset_colors" 
-                                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200"
+                                class="btn-secondary"
                                 onclick="return confirm('Alle Farben auf Standard zurücksetzen?')">
                             <i class="fas fa-undo mr-2"></i>
                             Zurücksetzen
