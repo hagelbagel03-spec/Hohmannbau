@@ -2,29 +2,18 @@
 /**
  * Dynamic CSS Generation
  * Generiert CSS basierend auf Admin-Farbeinstellungen
- * WIRD NUR GELADEN WENN EXPLIZIT AUFGERUFEN
  */
 
-// Nur laden wenn explizit angefordert
-if (!isset($load_dynamic_styles) || !$load_dynamic_styles) {
-    return;
-}
-
 // Hole aktuelle Farbeinstellungen aus der Datenbank
-if (isset($db)) {
-    try {
-        $homepage = $db->query("SELECT * FROM homepage WHERE id = '1'")->fetch();
-    } catch (Exception $e) {
-        return; // Fehlschlag = keine dynamischen Styles
-    }
-} else {
-    try {
+try {
+    if (!isset($db)) {
         require_once 'config/database.php';
         $db = getDB();
-        $homepage = $db->query("SELECT * FROM homepage WHERE id = '1'")->fetch();
-    } catch (Exception $e) {
-        return; // Fehlschlag = keine dynamischen Styles
     }
+    $homepage = $db->query("SELECT * FROM homepage WHERE id = '1'")->fetch();
+} catch (Exception $e) {
+    // Fallback bei Fehler
+    $homepage = false;
 }
 
 // Standard-Farben falls Spalten nicht existieren
