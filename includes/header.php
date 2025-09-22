@@ -10,6 +10,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Custom CSS -->
+    
+    <!-- Dynamic Styles from Admin Panel -->
+    <?php 
+    if (!isset($dynamic_styles_loaded)) {
+        include_once 'includes/dynamic_styles.php';
+        $dynamic_styles_loaded = true;
+    }
+    ?>
+    
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
