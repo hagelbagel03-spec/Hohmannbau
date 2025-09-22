@@ -35,7 +35,7 @@ include 'includes/header.php';
 <div class="admin-container">
     <?php include 'includes/sidebar.php'; ?>
     
-    <main class="admin-main">
+    <!-- Content wird bereits in sidebar.php gestartet -->
         <div class="admin-header">
             <h1 class="text-2xl font-bold text-gray-900">🎨 Farben & Design</h1>
             <p class="text-gray-600">Wählen Sie das Farbthema für Ihre Website</p>
