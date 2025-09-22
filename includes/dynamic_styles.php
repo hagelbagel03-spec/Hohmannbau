@@ -16,16 +16,16 @@ try {
     $homepage = false;
 }
 
-// Standard-Farben falls Spalten nicht existieren
-$footer_bg = $homepage['footer_bg_color'] ?? '#1f2937';
-$footer_text = $homepage['footer_text_color'] ?? '#ffffff';
-$header_bg = $homepage['header_bg_color'] ?? '#ffffff';
-$header_text = $homepage['header_text_color'] ?? '#1f2937';
-$button_primary = $homepage['button_primary_color'] ?? '#10b981';
-$button_secondary = $homepage['button_secondary_color'] ?? '#6b7280';
-$accent_color = $homepage['accent_color'] ?? '#3b82f6';
-$body_text = $homepage['body_text_color'] ?? '#374151';
-$current_theme = $homepage['color_theme'] ?? 'green';
+// Standard-Farben falls Spalten nicht existieren oder leer sind
+$footer_bg = ($homepage && isset($homepage['footer_bg_color']) && $homepage['footer_bg_color']) ? $homepage['footer_bg_color'] : '#1f2937';
+$footer_text = ($homepage && isset($homepage['footer_text_color']) && $homepage['footer_text_color']) ? $homepage['footer_text_color'] : '#ffffff';
+$header_bg = ($homepage && isset($homepage['header_bg_color']) && $homepage['header_bg_color']) ? $homepage['header_bg_color'] : '#ffffff';
+$header_text = ($homepage && isset($homepage['header_text_color']) && $homepage['header_text_color']) ? $homepage['header_text_color'] : '#1f2937';
+$button_primary = ($homepage && isset($homepage['button_primary_color']) && $homepage['button_primary_color']) ? $homepage['button_primary_color'] : '#22c55e';
+$button_secondary = ($homepage && isset($homepage['button_secondary_color']) && $homepage['button_secondary_color']) ? $homepage['button_secondary_color'] : '#6b7280';
+$accent_color = ($homepage && isset($homepage['accent_color']) && $homepage['accent_color']) ? $homepage['accent_color'] : '#3b82f6';
+$body_text = ($homepage && isset($homepage['body_text_color']) && $homepage['body_text_color']) ? $homepage['body_text_color'] : '#374151';
+$current_theme = ($homepage && isset($homepage['color_theme'])) ? $homepage['color_theme'] : 'green';
 
 // Theme-basierte Farben
 $theme_colors = [
