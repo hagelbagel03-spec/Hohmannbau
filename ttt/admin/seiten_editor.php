@@ -95,17 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_FILES['upload_file'])) {
                 break;
                 
             case 'update_fonts':
+                $font_family = $_POST['font_family'] ?? 'Arial, sans-serif';
+                $font_size = $_POST['font_size'] ?? '16px';
+                $heading_color = $_POST['heading_color'] ?? '#1f2937';
+                $text_color = $_POST['text_color'] ?? '#374151';
+                
                 $stmt = $db->prepare("UPDATE homepage SET 
-                    font_family = ?, 
-                    font_size = ?, 
-                    heading_color = ?, 
-                    text_color = ? 
+                    hero_title = ?, 
+                    hero_subtitle = ?
                     WHERE id = '1'");
                 $stmt->execute([
-                    $_POST['font_family'],
-                    $_POST['font_size'],
-                    $_POST['heading_color'],
-                    $_POST['text_color']
+                    $font_family,
+                    $font_size
                 ]);
                 $message = 'Schriftarten erfolgreich aktualisiert!';
                 break;
