@@ -1,72 +1,62 @@
 <?php
 /**
- * Moderne Hohmann Bau Homepage mit besserer Fallback-Behandlung
+ * Moderne Hohmann Bau Homepage mit bearbeitbaren Texten
  */
 
 require_once 'config/database.php';
-
-// Sichere Funktion zum Abrufen von Array-Werten
-function getArrayValue($array, $key, $default = '') {
-    return isset($array[$key]) && !empty($array[$key]) ? $array[$key] : $default;
-}
 
 // Get dynamic data with fallbacks
 try {
     $db = getDBConnection();
     $homepage = $db->query("SELECT * FROM homepage WHERE id = '1'")->fetch();
 } catch (Exception $e) {
-    $homepage = [];
+    $homepage = null;
 }
 
-// Sichere Datenextraktion mit Fallbacks
-$data = [
-    'company_name' => getArrayValue($homepage, 'company_name', 'Hohmann Bau'),
-    'company_tagline' => getArrayValue($homepage, 'company_tagline', 'Garten & Landschaftsbau'),
-    'hero_title' => getArrayValue($homepage, 'hero_title', 'Ihr Experte für Garten- und Landschaftsbau'),
-    'hero_subtitle' => getArrayValue($homepage, 'hero_subtitle', 'Professionelle Gartengestaltung seit über 20 Jahren mit Leidenschaft für die Natur'),
-    
-    // Navigation
-    'nav_home_text' => getArrayValue($homepage, 'nav_home_text', 'Home'),
-    'nav_about_text' => getArrayValue($homepage, 'nav_about_text', 'Über uns'),
-    'nav_services_text' => getArrayValue($homepage, 'nav_services_text', 'Leistungen'),
-    'nav_team_text' => getArrayValue($homepage, 'nav_team_text', 'Team'),
-    'nav_careers_text' => getArrayValue($homepage, 'nav_careers_text', 'Karriere'),
-    'nav_news_text' => getArrayValue($homepage, 'nav_news_text', 'Aktuelles'),
-    'nav_contact_text' => getArrayValue($homepage, 'nav_contact_text', 'Kontakt'),
-    
-    // Sektionen
-    'services_section_title' => getArrayValue($homepage, 'services_section_title', 'Unsere Leistungen'),
-    'services_section_description' => getArrayValue($homepage, 'services_section_description', 'Von der Planung bis zur Pflege - wir bieten Ihnen den kompletten Service für Ihren Traumgarten'),
-    'team_section_title' => getArrayValue($homepage, 'team_section_title', 'Unser Expertenteam'),
-    'team_section_description' => getArrayValue($homepage, 'team_section_description', 'Erfahrene Fachkräfte mit Leidenschaft für Garten und Landschaft'),
-    'news_section_title' => getArrayValue($homepage, 'news_section_title', 'Aktuelles'),
-    'news_section_description' => getArrayValue($homepage, 'news_section_description', 'Neuigkeiten und Informationen rund um Garten und Landschaftsbau'),
-    
-    // CTA
-    'cta_section_title' => getArrayValue($homepage, 'cta_section_title', 'Bereit für Ihren Traumgarten?'),
-    'cta_section_description' => getArrayValue($homepage, 'cta_section_description', 'Lassen Sie uns gemeinsam Ihre Vorstellungen in die Realität umsetzen. Kontaktieren Sie uns für ein unverbindliches Beratungsgespräch.'),
-    'cta_button_text' => getArrayValue($homepage, 'cta_button_text', 'Beratungstermin vereinbaren'),
-    'cta_phone_button_text' => getArrayValue($homepage, 'cta_phone_button_text', 'Jetzt anrufen'),
-    
-    // Trust Indicators
-    'trust_indicator_1_value' => getArrayValue($homepage, 'trust_indicator_1_value', '25+'),
-    'trust_indicator_1_label' => getArrayValue($homepage, 'trust_indicator_1_label', 'Jahre Erfahrung'),
-    'trust_indicator_2_value' => getArrayValue($homepage, 'trust_indicator_2_value', '150+'),
-    'trust_indicator_2_label' => getArrayValue($homepage, 'trust_indicator_2_label', 'Projekte/Jahr'),
-    'trust_indicator_3_value' => getArrayValue($homepage, 'trust_indicator_3_value', '98%'),
-    'trust_indicator_3_label' => getArrayValue($homepage, 'trust_indicator_3_label', 'Zufriedenheit'),
-    
-    // Kontakt
-    'phone_number' => getArrayValue($homepage, 'phone_number', '+49 123 456-789'),
-    'email' => getArrayValue($homepage, 'email', 'info@hohmann-bau.de'),
-    
-    // Bilder
-    'hero_background_image' => getArrayValue($homepage, 'hero_background_image', ''),
-    'gallery_image_1' => getArrayValue($homepage, 'gallery_image_1', ''),
-    'gallery_image_2' => getArrayValue($homepage, 'gallery_image_2', ''),
-    'gallery_image_3' => getArrayValue($homepage, 'gallery_image_3', ''),
-    'gallery_image_4' => getArrayValue($homepage, 'gallery_image_4', '')
+// Fallback-Daten falls Datenbank nicht verfügbar
+$default_data = [
+    'company_name' => 'Hohmann Bau',
+    'company_tagline' => 'Garten & Landschaftsbau',
+    'hero_title' => 'Ihr Experte für Garten- und Landschaftsbau',
+    'hero_subtitle' => 'Professionelle Gartengestaltung seit über 20 Jahren mit Leidenschaft für die Natur',
+    'nav_home_text' => 'Home',
+    'nav_about_text' => 'Über uns',
+    'nav_services_text' => 'Leistungen',
+    'nav_team_text' => 'Team',
+    'nav_careers_text' => 'Karriere',
+    'nav_news_text' => 'Aktuelles',
+    'nav_contact_text' => 'Kontakt',
+    'services_section_title' => 'Unsere Leistungen',
+    'services_section_description' => 'Von der Planung bis zur Pflege - wir bieten Ihnen den kompletten Service für Ihren Traumgarten',
+    'team_section_title' => 'Unser Expertenteam',
+    'team_section_description' => 'Erfahrene Fachkräfte mit Leidenschaft für Garten und Landschaft',
+    'news_section_title' => 'Aktuelles',
+    'news_section_description' => 'Neuigkeiten und Informationen rund um Garten und Landschaftsbau',
+    'cta_section_title' => 'Bereit für Ihren Traumgarten?',
+    'cta_section_description' => 'Lassen Sie uns gemeinsam Ihre Vorstellungen in die Realität umsetzen. Kontaktieren Sie uns für ein unverbindliches Beratungsgespräch.',
+    'cta_button_text' => 'Beratungstermin vereinbaren',
+    'cta_phone_button_text' => 'Jetzt anrufen',
+    'trust_indicator_1_value' => '25+',
+    'trust_indicator_1_label' => 'Jahre Erfahrung',
+    'trust_indicator_2_value' => '150+',
+    'trust_indicator_2_label' => 'Projekte/Jahr',
+    'trust_indicator_3_value' => '98%',
+    'trust_indicator_3_label' => 'Zufriedenheit',
+    'phone_number' => '+49 123 456-789',
+    'email' => 'info@hohmann-bau.de',
+    'hero_background_image' => '',
+    'gallery_image_1' => '',
+    'gallery_image_2' => '',
+    'gallery_image_3' => '',
+    'gallery_image_4' => ''
 ];
+
+// Merge database data with defaults
+foreach ($default_data as $key => $value) {
+    if (!isset($homepage[$key]) || empty($homepage[$key])) {
+        $homepage[$key] = $value;
+    }
+}
 
 // Services data
 $services_data = [
@@ -138,8 +128,8 @@ $news_data = [
     ]
 ];
 
-$title = $data['company_name'] . ' - ' . $data['hero_title'];
-$description = $data['hero_subtitle'];
+$title = $homepage['company_name'] . ' - ' . $homepage['hero_title'];
+$description = $homepage['hero_subtitle'];
 
 include 'includes/header.php';
 ?>
@@ -155,10 +145,10 @@ include 'includes/header.php';
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 editable-text" data-field="company_name">
-                        <?php echo htmlspecialchars($data['company_name']); ?>
+                        <?php echo htmlspecialchars($homepage['company_name']); ?>
                     </h1>
                     <p class="text-sm text-green-600 font-medium editable-text" data-field="company_tagline">
-                        <?php echo htmlspecialchars($data['company_tagline']); ?>
+                        <?php echo htmlspecialchars($homepage['company_tagline']); ?>
                     </p>
                 </div>
             </div>
@@ -166,33 +156,33 @@ include 'includes/header.php';
             <!-- Navigation Links -->
             <div class="hidden lg:flex items-center space-x-2">
                 <a href="index.php" class="nav-link active editable-text" data-field="nav_home_text">
-                    <?php echo htmlspecialchars($data['nav_home_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_home_text']); ?>
                 </a>
                 <a href="about.php" class="nav-link editable-text" data-field="nav_about_text">
-                    <?php echo htmlspecialchars($data['nav_about_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_about_text']); ?>
                 </a>
                 <a href="services.php" class="nav-link editable-text" data-field="nav_services_text">
-                    <?php echo htmlspecialchars($data['nav_services_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_services_text']); ?>
                 </a>
                 <a href="team.php" class="nav-link editable-text" data-field="nav_team_text">
-                    <?php echo htmlspecialchars($data['nav_team_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_team_text']); ?>
                 </a>
                 <a href="careers.php" class="nav-link editable-text" data-field="nav_careers_text">
-                    <?php echo htmlspecialchars($data['nav_careers_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_careers_text']); ?>
                 </a>
                 <a href="news.php" class="nav-link editable-text" data-field="nav_news_text">
-                    <?php echo htmlspecialchars($data['nav_news_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_news_text']); ?>
                 </a>
                 <a href="contact.php" class="nav-link editable-text" data-field="nav_contact_text">
-                    <?php echo htmlspecialchars($data['nav_contact_text']); ?>
+                    <?php echo htmlspecialchars($homepage['nav_contact_text']); ?>
                 </a>
             </div>
             
             <!-- CTA Button -->
             <div class="flex items-center space-x-4">
-                <a href="tel:<?php echo $data['phone_number']; ?>" class="hidden sm:flex items-center space-x-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
+                <a href="tel:<?php echo $homepage['phone_number']; ?>" class="hidden sm:flex items-center space-x-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
                     <i class="fas fa-phone text-sm"></i>
-                    <span class="text-body"><?php echo $data['phone_number']; ?></span>
+                    <span class="text-body"><?php echo $homepage['phone_number']; ?></span>
                 </a>
                 <a href="contact.php" class="btn-primary-pro bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
                     <i class="fas fa-calendar-alt"></i>
@@ -206,9 +196,9 @@ include 'includes/header.php';
 <!-- Moderner Hero Section -->
 <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100">
     <!-- Background Image -->
-    <?php if (!empty($data['hero_background_image'])): ?>
+    <?php if (!empty($homepage['hero_background_image'])): ?>
         <div class="absolute inset-0 z-0">
-            <img src="<?php echo htmlspecialchars($data['hero_background_image']); ?>" 
+            <img src="<?php echo htmlspecialchars($homepage['hero_background_image']); ?>" 
                  alt="Hohmann Bau Gartenprojekt" 
                  class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-r from-green-900/80 to-green-800/60"></div>
@@ -235,11 +225,11 @@ include 'includes/header.php';
         <!-- Hero Content -->
         <div class="space-y-8 animate-fade-in-up">
             <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight editable-text" data-field="hero_title">
-                <?php echo htmlspecialchars($data['hero_title']); ?>
+                <?php echo htmlspecialchars($homepage['hero_title']); ?>
             </h1>
             
             <p class="text-xl md:text-2xl text-green-100 max-w-4xl mx-auto leading-relaxed editable-text" data-field="hero_subtitle">
-                <?php echo htmlspecialchars($data['hero_subtitle']); ?>
+                <?php echo htmlspecialchars($homepage['hero_subtitle']); ?>
             </p>
             
             <!-- Hero CTAs -->
@@ -247,13 +237,13 @@ include 'includes/header.php';
                 <a href="contact.php" class="btn-primary-pro bg-white text-green-600 hover:bg-green-50 px-8 py-4 text-lg">
                     <i class="fas fa-calendar-alt mr-2"></i>
                     <span class="editable-text" data-field="cta_button_text">
-                        <?php echo htmlspecialchars($data['cta_button_text']); ?>
+                        <?php echo htmlspecialchars($homepage['cta_button_text']); ?>
                     </span>
                 </a>
-                <a href="tel:<?php echo $data['phone_number']; ?>" class="btn-secondary-pro border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg">
+                <a href="tel:<?php echo $homepage['phone_number']; ?>" class="btn-secondary-pro border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg">
                     <i class="fas fa-phone mr-2"></i>
                     <span class="editable-text" data-field="cta_phone_button_text">
-                        <?php echo htmlspecialchars($data['cta_phone_button_text']); ?>
+                        <?php echo htmlspecialchars($homepage['cta_phone_button_text']); ?>
                     </span>
                 </a>
             </div>
@@ -263,26 +253,26 @@ include 'includes/header.php';
                 <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
                     <div class="text-center">
                         <div class="text-4xl md:text-5xl font-bold text-white mb-2 editable-text" data-field="trust_indicator_1_value">
-                            <?php echo htmlspecialchars($data['trust_indicator_1_value']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_1_value']); ?>
                         </div>
                         <div class="text-green-200 font-medium editable-text" data-field="trust_indicator_1_label">
-                            <?php echo htmlspecialchars($data['trust_indicator_1_label']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_1_label']); ?>
                         </div>
                     </div>
                     <div class="text-center">
                         <div class="text-4xl md:text-5xl font-bold text-white mb-2 editable-text" data-field="trust_indicator_2_value">
-                            <?php echo htmlspecialchars($data['trust_indicator_2_value']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_2_value']); ?>
                         </div>
                         <div class="text-green-200 font-medium editable-text" data-field="trust_indicator_2_label">
-                            <?php echo htmlspecialchars($data['trust_indicator_2_label']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_2_label']); ?>
                         </div>
                     </div>
                     <div class="text-center">
                         <div class="text-4xl md:text-5xl font-bold text-white mb-2 editable-text" data-field="trust_indicator_3_value">
-                            <?php echo htmlspecialchars($data['trust_indicator_3_value']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_3_value']); ?>
                         </div>
                         <div class="text-green-200 font-medium editable-text" data-field="trust_indicator_3_label">
-                            <?php echo htmlspecialchars($data['trust_indicator_3_label']); ?>
+                            <?php echo htmlspecialchars($homepage['trust_indicator_3_label']); ?>
                         </div>
                     </div>
                 </div>
@@ -304,10 +294,10 @@ include 'includes/header.php';
         <!-- Section Header -->
         <div class="text-center mb-20">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 editable-text" data-field="services_section_title">
-                <?php echo htmlspecialchars($data['services_section_title']); ?>
+                <?php echo htmlspecialchars($homepage['services_section_title']); ?>
             </h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed editable-text" data-field="services_section_description">
-                <?php echo htmlspecialchars($data['services_section_description']); ?>
+                <?php echo htmlspecialchars($homepage['services_section_description']); ?>
             </p>
         </div>
         
@@ -318,7 +308,7 @@ include 'includes/header.php';
                     <div class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
                         <!-- Service Image -->
                         <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 relative overflow-hidden">
-                            <?php if (!empty($service['image']) && file_exists('.' . $service['image'])): ?>
+                            <?php if (!empty($service['image'])): ?>
                                 <img src="<?php echo htmlspecialchars($service['image']); ?>" 
                                      alt="<?php echo htmlspecialchars($service['title']); ?>" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -363,8 +353,8 @@ include 'includes/header.php';
             <?php for ($i = 1; $i <= 4; $i++): ?>
                 <div class="group relative overflow-hidden rounded-2xl aspect-square">
                     <?php 
-                    $galleryImage = $data["gallery_image_$i"];
-                    if (!empty($galleryImage) && file_exists('.' . $galleryImage)): ?>
+                    $galleryImage = $homepage["gallery_image_$i"];
+                    if (!empty($galleryImage)): ?>
                         <img src="<?php echo htmlspecialchars($galleryImage); ?>" 
                              alt="Gartenprojekt <?php echo $i; ?>" 
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -393,10 +383,10 @@ include 'includes/header.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-20">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 editable-text" data-field="team_section_title">
-                <?php echo htmlspecialchars($data['team_section_title']); ?>
+                <?php echo htmlspecialchars($homepage['team_section_title']); ?>
             </h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto editable-text" data-field="team_section_description">
-                <?php echo htmlspecialchars($data['team_section_description']); ?>
+                <?php echo htmlspecialchars($homepage['team_section_description']); ?>
             </p>
         </div>
         
@@ -406,7 +396,7 @@ include 'includes/header.php';
                     <div class="relative">
                         <!-- Team Member Image -->
                         <div class="w-64 h-64 mx-auto rounded-2xl overflow-hidden bg-gradient-to-br from-green-400 to-green-600 relative">
-                            <?php if (!empty($member['image']) && file_exists('.' . $member['image'])): ?>
+                            <?php if (!empty($member['image'])): ?>
                                 <img src="<?php echo htmlspecialchars($member['image']); ?>" 
                                      alt="<?php echo htmlspecialchars($member['name']); ?>" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -441,10 +431,10 @@ include 'includes/header.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-20">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 editable-text" data-field="news_section_title">
-                <?php echo htmlspecialchars($data['news_section_title']); ?>
+                <?php echo htmlspecialchars($homepage['news_section_title']); ?>
             </h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto editable-text" data-field="news_section_description">
-                <?php echo htmlspecialchars($data['news_section_description']); ?>
+                <?php echo htmlspecialchars($homepage['news_section_description']); ?>
             </p>
         </div>
         
@@ -452,7 +442,7 @@ include 'includes/header.php';
             <?php foreach ($news_data as $article): ?>
                 <article class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
                     <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 relative overflow-hidden">
-                        <?php if (!empty($article['image']) && file_exists('.' . $article['image'])): ?>
+                        <?php if (!empty($article['image'])): ?>
                             <img src="<?php echo htmlspecialchars($article['image']); ?>" 
                                  alt="<?php echo htmlspecialchars($article['title']); ?>" 
                                  class="w-full h-full object-cover">
@@ -485,22 +475,22 @@ include 'includes/header.php';
     <div class="absolute inset-0 bg-gradient-to-r from-green-900/20 to-transparent"></div>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h2 class="text-4xl md:text-5xl font-bold mb-6 editable-text" data-field="cta_section_title">
-            <?php echo htmlspecialchars($data['cta_section_title']); ?>
+            <?php echo htmlspecialchars($homepage['cta_section_title']); ?>
         </h2>
         <p class="text-xl text-green-100 mb-8 leading-relaxed editable-text" data-field="cta_section_description">
-            <?php echo htmlspecialchars($data['cta_section_description']); ?>
+            <?php echo htmlspecialchars($homepage['cta_section_description']); ?>
         </p>
         
         <div class="flex flex-col sm:flex-row gap-6 justify-center">
             <a href="contact.php" class="btn-primary-pro bg-white text-green-600 hover:bg-green-50 px-8 py-4 text-lg">
                 <i class="fas fa-calendar-alt mr-2"></i>
                 <span class="editable-text" data-field="cta_button_text">
-                    <?php echo htmlspecialchars($data['cta_button_text']); ?>
+                    <?php echo htmlspecialchars($homepage['cta_button_text']); ?>
                 </span>
             </a>
-            <a href="tel:<?php echo $data['phone_number']; ?>" class="btn-secondary-pro border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg">
+            <a href="tel:<?php echo $homepage['phone_number']; ?>" class="btn-secondary-pro border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg">
                 <i class="fas fa-phone mr-2"></i>
-                <span><?php echo $data['phone_number']; ?></span>
+                <span><?php echo $homepage['phone_number']; ?></span>
             </a>
         </div>
     </div>
