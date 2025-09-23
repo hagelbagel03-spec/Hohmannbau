@@ -89,8 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_FILES['upload_file'])) {
                 break;
                 
             case 'update_colors':
+                $color_theme = $_POST['color_theme'] ?? '#10b981';
                 $stmt = $db->prepare("UPDATE homepage SET color_theme = ? WHERE id = '1'");
-                $stmt->execute([$_POST['color_theme']]);
+                $stmt->execute([$color_theme]);
                 $message = 'Farben erfolgreich aktualisiert!';
                 break;
                 
