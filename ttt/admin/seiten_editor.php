@@ -31,6 +31,7 @@ function getArrayValue($array, $key, $default = '') {
 // Handle file uploads
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['upload_file'])) {
     $category = $_POST['upload_category'] ?? 'general';
+    $alt_text = $_POST['alt_text'] ?? '';
     $file = $_FILES['upload_file'];
     
     if ($file['error'] === UPLOAD_ERR_OK) {
@@ -53,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['upload_file'])) {
         } else {
             $error = 'Nur Bild-Dateien sind erlaubt (JPEG, PNG, GIF, WebP).';
         }
+    } else {
+        $error = 'Fehler beim Datei-Upload.';
     }
 }
 
