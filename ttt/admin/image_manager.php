@@ -330,8 +330,8 @@ try {
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="border rounded-lg p-4">
                         <h3 class="font-semibold mb-3">Hero Hintergrundbild</h3>
-                        <?php if ($homepage['hero_background_image']): ?>
-                            <img src="<?php echo htmlspecialchars($homepage['hero_background_image']); ?>" class="image-thumbnail w-full current-image">
+                        <?php if (getArrayValue($homepage, 'hero_background_image')): ?>
+                            <img src="<?php echo htmlspecialchars(getArrayValue($homepage, 'hero_background_image')); ?>" class="image-thumbnail w-full current-image">
                             <p class="text-sm text-green-600 mt-2">✓ Zugewiesen</p>
                         <?php else: ?>
                             <div class="image-thumbnail w-full bg-gray-100 flex items-center justify-center">
@@ -343,8 +343,8 @@ try {
                     
                     <div class="border rounded-lg p-4">
                         <h3 class="font-semibold mb-3">Über uns Bild</h3>
-                        <?php if ($homepage['about_image']): ?>
-                            <img src="<?php echo htmlspecialchars($homepage['about_image']); ?>" class="image-thumbnail w-full current-image">
+                        <?php if (getArrayValue($homepage, 'about_image')): ?>
+                            <img src="<?php echo htmlspecialchars(getArrayValue($homepage, 'about_image')); ?>" class="image-thumbnail w-full current-image">
                             <p class="text-sm text-green-600 mt-2">✓ Zugewiesen</p>
                         <?php else: ?>
                             <div class="image-thumbnail w-full bg-gray-100 flex items-center justify-center">
@@ -359,8 +359,8 @@ try {
                             <h3 class="font-semibold mb-3">Galerie Bild <?php echo $i; ?></h3>
                             <?php 
                             $galleryField = "gallery_image_$i";
-                            if ($homepage[$galleryField]): ?>
-                                <img src="<?php echo htmlspecialchars($homepage[$galleryField]); ?>" class="image-thumbnail w-full current-image">
+                            if (getArrayValue($homepage, $galleryField)): ?>
+                                <img src="<?php echo htmlspecialchars(getArrayValue($homepage, $galleryField)); ?>" class="image-thumbnail w-full current-image">
                                 <p class="text-sm text-green-600 mt-2">✓ Zugewiesen</p>
                             <?php else: ?>
                                 <div class="image-thumbnail w-full bg-gray-100 flex items-center justify-center">
