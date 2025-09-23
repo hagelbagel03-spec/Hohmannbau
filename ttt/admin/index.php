@@ -192,6 +192,18 @@ include 'includes/sidebar.php';
                         </div>
                     </a>
                     
+                    <a href="simple_upload.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">📤 Einfacher Upload</h3>
+                                <p class="text-gray-600 text-sm">Bilder hochladen</p>
+                            </div>
+                            <div class="bg-orange-100 rounded-full p-3">
+                                <i class="fas fa-upload text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </a>
+                    
                     <a href="services.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
                         <div class="flex items-center justify-between">
                             <div>
