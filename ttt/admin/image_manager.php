@@ -15,6 +15,11 @@ $db = getDB();
 $message = '';
 $error = '';
 
+// Sichere Funktion zum Abrufen von Array-Werten
+function getArrayValue($array, $key, $default = '') {
+    return isset($array[$key]) && !empty($array[$key]) ? $array[$key] : $default;
+}
+
 // Stelle sicher, dass Upload-Verzeichnisse existieren
 $uploadDirs = [
     '../uploads',
