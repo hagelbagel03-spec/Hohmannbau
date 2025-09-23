@@ -68,10 +68,15 @@ $themes = [
                 <h1 class="text-2xl font-bold text-gray-900">🎨 Farben & Design</h1>
                 <p class="text-gray-600">Wählen Sie das Farbthema für Ihre Website</p>
                 
-                <?php if ($current_theme): ?>
+                <?php if ($current_theme && isset($themes[$current_theme])): ?>
                     <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-<?php echo $themes[$current_theme]['bg']; ?> text-<?php echo $themes[$current_theme]['text']; ?>">
                         <i class="fas fa-paint-brush mr-2"></i>
                         Aktuell: <?php echo $themes[$current_theme]['name']; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-paint-brush mr-2"></i>
+                        Aktuell: Standard (Grün)
                     </div>
                 <?php endif; ?>
             </div>
