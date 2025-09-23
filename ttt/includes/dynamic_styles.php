@@ -30,7 +30,9 @@ $subheading_color = ($homepage && isset($homepage['subheading_color']) && $homep
 $link_color = ($homepage && isset($homepage['link_color']) && $homepage['link_color']) ? $homepage['link_color'] : '#2563eb';
 $highlight_color = ($homepage && isset($homepage['highlight_color']) && $homepage['highlight_color']) ? $homepage['highlight_color'] : '#059669';
 $service_description_color = ($homepage && isset($homepage['service_description_color']) && $homepage['service_description_color']) ? $homepage['service_description_color'] : '#374151';
-$current_theme = ($homepage && isset($homepage['color_theme'])) ? $homepage['color_theme'] : 'green';
+
+// Primärfarbe für Berechnungen
+$primary_color = ($homepage && isset($homepage['color_theme'])) ? $homepage['color_theme'] : '#10b981';
 
 // Theme-basierte Farben
 $theme_colors = [
