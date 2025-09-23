@@ -42,6 +42,34 @@ $theme_colors = [
     'gray' => ['primary' => '#6b7280', 'secondary' => '#374151', 'accent' => '#9ca3af']
 ];
 
+// Sichere Theme-Bestimmung mit Fallback
+$current_theme = 'green'; // Sicherer Fallback
+
+// Prüfe ob theme in der Datenbank ein gültiges Theme ist
+$valid_themes = array_keys($theme_colors);
+if (isset($homepage['theme']) && in_array($homepage['theme'], $valid_themes)) {
+    $current_theme = $homepage['theme'];
+} else {
+    // Fallback basierend auf primary_color
+    $color_to_theme_mapping = [
+        '#10b981' => 'green',
+        '#3b82f6' => 'blue',
+        '#8b5cf6' => 'purple', 
+        '#ef4444' => 'red',
+        '#f59e0b' => 'orange',
+        '#6b7280' => 'gray'
+    ];
+    
+    if (isset($color_to_theme_mapping[$primary_color])) {
+        $current_theme = $color_to_theme_mapping[$primary_color];
+    }
+}
+
+// Sichere Theme-Farben mit Existenz-Prüfung
+if (!isset($theme_colors[$current_theme])) {
+    $current_theme = 'green'; // Zurück zum sicheren Fallback
+}
+
 $theme_primary = $theme_colors[$current_theme]['primary'];
 $theme_secondary = $theme_colors[$current_theme]['secondary'];
 $theme_accent = $theme_colors[$current_theme]['accent'];
