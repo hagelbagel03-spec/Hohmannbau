@@ -63,23 +63,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_FILES['upload_file'])) {
     try {
         switch ($action) {
             case 'update_page_content':
+                // Sichere POST-Daten mit Fallbacks
+                $page_title = $_POST['page_title'] ?? '';
+                $page_subtitle = $_POST['page_subtitle'] ?? '';
+                $page_description = $_POST['page_description'] ?? '';
+                $background_color = $_POST['background_color'] ?? '#ffffff';
+                $text_color = $_POST['text_color'] ?? '#333333';
+                $button_color = $_POST['button_color'] ?? '#10b981';
+                
                 // Dynamisches Update je nach Seite
                 $page_key = str_replace('.php', '', $current_page);
                 $stmt = $db->prepare("UPDATE homepage SET 
-                    {$page_key}_title = ?, 
-                    {$page_key}_subtitle = ?, 
-                    {$page_key}_description = ?,
-                    {$page_key}_background_color = ?,
-                    {$page_key}_text_color = ?,
-                    {$page_key}_button_color = ?
+                    hero_title = ?, 
+                    hero_subtitle = ?, 
+                    about_description = ?,
+                    color_theme = ?
                     WHERE id = '1'");
                 $stmt->execute([
-                    $_POST['page_title'],
-                    $_POST['page_subtitle'],
-                    $_POST['page_description'],
-                    $_POST['background_color'],
-                    $_POST['text_color'],
-                    $_POST['button_color']
+                    $page_title,
+                    $page_subtitle,
+                    $page_description,
+                    $background_color
                 ]);
                 $message = 'Seite erfolgreich aktualisiert!';
                 break;
