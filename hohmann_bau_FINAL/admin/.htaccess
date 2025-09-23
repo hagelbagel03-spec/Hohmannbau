@@ -1,0 +1,21 @@
+RewriteEngine On
+
+# Admin directory specific rules
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^login$ login.php [L]
+RewriteRule ^logout$ logout.php [L]
+RewriteRule ^services$ services.php [L]
+RewriteRule ^team$ team.php [L]
+RewriteRule ^jobs$ jobs.php [L]
+RewriteRule ^reports$ reports.php [L]
+RewriteRule ^applications$ applications.php [L]
+RewriteRule ^feedback$ feedback.php [L]
+RewriteRule ^news$ news.php [L]
+RewriteRule ^chat$ chat.php [L]
+RewriteRule ^content$ content.php [L]
+
+# Default to index if no specific page
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^$ index.php [L]
