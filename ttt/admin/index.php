@@ -154,55 +154,82 @@ include 'includes/sidebar.php';
                     </div>
                 </div>
                 
-                <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <a href="text_editor.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">📝 Text Editor</h3>
-                                <p class="text-gray-600 text-sm">Alle Texte bearbeiten</p>
+                <!-- Quick Actions - WICHTIGE ADMIN-TOOLS -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">🔧 Website-Management</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-green-100 rounded-full p-3">
+                                    <i class="fas fa-edit text-green-600 text-xl"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">📝</div>
+                                </div>
                             </div>
-                            <div class="bg-green-100 rounded-full p-3">
-                                <i class="fas fa-edit text-green-600 text-xl"></i>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Text Editor</h3>
+                            <p class="text-gray-600 text-sm mb-4">Alle Texte der Website bearbeiten</p>
+                            <a href="text_editor.php" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                                Öffnen →
+                            </a>
                         </div>
-                    </a>
-                    
-                    <a href="image_manager.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">🖼️ Bilder verwalten</h3>
-                                <p class="text-gray-600 text-sm">Upload & Zuweisungen</p>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-blue-100 rounded-full p-3">
+                                    <i class="fas fa-images text-blue-600 text-xl"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">🖼️</div>
+                                </div>
                             </div>
-                            <div class="bg-blue-100 rounded-full p-3">
-                                <i class="fas fa-images text-blue-600 text-xl"></i>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Bilder Manager</h3>
+                            <p class="text-gray-600 text-sm mb-4">Upload & Bildverwaltung</p>
+                            <a href="image_manager.php" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                Öffnen →
+                            </a>
                         </div>
-                    </a>
-                    
-                    <a href="page_editor.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">🎨 Seiten Editor</h3>
-                                <p class="text-gray-600 text-sm">Farben & Layout</p>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-purple-100 rounded-full p-3">
+                                    <i class="fas fa-palette text-purple-600 text-xl"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">🎨</div>
+                                </div>
                             </div>
-                            <div class="bg-purple-100 rounded-full p-3">
-                                <i class="fas fa-palette text-purple-600 text-xl"></i>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Seiten Editor</h3>
+                            <p class="text-gray-600 text-sm mb-4">Farben & Layout anpassen</p>
+                            <a href="page_editor.php" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+                                Öffnen →
+                            </a>
                         </div>
-                    </a>
-                    
-                    <a href="simple_upload.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">📤 Einfacher Upload</h3>
-                                <p class="text-gray-600 text-sm">Bilder hochladen</p>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-orange-100 rounded-full p-3">
+                                    <i class="fas fa-upload text-orange-600 text-xl"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">📤</div>
+                                </div>
                             </div>
-                            <div class="bg-orange-100 rounded-full p-3">
-                                <i class="fas fa-upload text-orange-600 text-xl"></i>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Einfacher Upload</h3>
+                            <p class="text-gray-600 text-sm mb-4">Bilder direkt hochladen</p>
+                            <a href="simple_upload.php" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium">
+                                Öffnen →
+                            </a>
                         </div>
-                    </a>
+                        
+                    </div>
+                </div>
+                
+                <!-- Statistiken -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">📊 Übersicht</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <a href="services.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
                         <div class="flex items-center justify-between">
