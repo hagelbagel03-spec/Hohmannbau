@@ -156,14 +156,38 @@ include 'includes/sidebar.php';
                 
                 <!-- Quick Actions -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <a href="text_editor.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">📝 Text Editor</h3>
+                                <p class="text-gray-600 text-sm">Alle Texte bearbeiten</p>
+                            </div>
+                            <div class="bg-green-100 rounded-full p-3">
+                                <i class="fas fa-edit text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="image_manager.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">🖼️ Bilder verwalten</h3>
+                                <p class="text-gray-600 text-sm">Upload & Zuweisungen</p>
+                            </div>
+                            <div class="bg-blue-100 rounded-full p-3">
+                                <i class="fas fa-images text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </a>
+                    
                     <a href="page_editor.php" class="bg-white rounded-xl shadow-lg p-6 card-hover block hover:no-underline">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">🎨 Seiten Editor</h3>
-                                <p class="text-gray-600 text-sm">Alle Seiten bearbeiten</p>
+                                <p class="text-gray-600 text-sm">Farben & Layout</p>
                             </div>
-                            <div class="bg-green-100 rounded-full p-3">
-                                <i class="fas fa-edit text-green-600 text-xl"></i>
+                            <div class="bg-purple-100 rounded-full p-3">
+                                <i class="fas fa-palette text-purple-600 text-xl"></i>
                             </div>
                         </div>
                     </a>
