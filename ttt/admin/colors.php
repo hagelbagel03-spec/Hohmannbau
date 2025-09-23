@@ -26,12 +26,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get current color theme
+// Get current color theme with safe mapping
 try {
     $homepage = $db->query("SELECT color_theme FROM homepage WHERE id = '1'")->fetch();
-    $current_theme = $homepage['color_theme'] ?? 'green';
+    $primary_color = $homepage['color_theme'] ?? '#10b981';
+    
+    // Map hex colors to theme names
+    $color_to_theme = [
+        '#10b981' => 'green',
+        '#3b82f6' => 'blue', 
+        '#8b5cf6' => 'purple',
+        '#ef4444' => 'red',
+        '#f59e0b' => 'orange',
+        '#6b7280' => 'gray'
+    ];
+    
+    // Safe theme mapping with fallback
+    $current_theme = $color_to_theme[$primary_color] ?? 'green';
+    
 } catch (Exception $e) {
-    $current_theme = 'green'; // Fallback
+    $current_theme = 'green'; // Safe fallback
+    $primary_color = '#10b981';
 }
 
 $pageTitle = 'Farben & Design';
