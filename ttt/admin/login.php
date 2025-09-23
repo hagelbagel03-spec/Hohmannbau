@@ -22,12 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once '../config/auth.php';
     
     if (Auth::login($username, $password)) {
+        $_SESSION['admin_id'] = 'admin-db';
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_username'] = $username;
         header('Location: index.php');
         exit;
     } 
     // Fallback to hardcoded authentication
     else if ($username === 'admin' && $password === 'admin123') {
         $_SESSION['admin_id'] = 'admin-1';
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_username'] = 'admin';
         $_SESSION['admin_username'] = 'admin';
         $_SESSION['admin_logged_in'] = true;
         header('Location: index.php');
